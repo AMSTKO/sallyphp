@@ -3,12 +3,12 @@
 class Sally
 {
 
-  const title = 'SallyPHP MVC Framework';
+  const name = 'SallyPHP MVC Framework';
   const version = '1.130309.1';
   const site = 'sallyphp.com';
   const path = __DIR__;
 
-  public $_out = null;
+  private $_out = null;
   private $_cfg = array();
   private $_module = array();
   protected static $_instance = false;
@@ -23,7 +23,7 @@ class Sally
     $this->_cfg['application'] = $_SERVER['DOCUMENT_ROOT'] . '/application';
     $this->_cfg['controller.default'] = 'index';
     $this->_cfg['module.default'] = 'site';
-    $this->_cfg['rijndael.key'] = 'default';
+    $this->_cfg['rijndael.key'] = 'define a key';
     $this->_cfg['cookie.domain'] = null;
     $this->_cfg['cookie.name'] = 'sally';
   }
