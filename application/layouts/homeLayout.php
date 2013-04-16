@@ -12,11 +12,11 @@
   </head>
   <body>
     <div id="main-menu">
-      menu<br>m<br>m<br>m<br>mlol
+      Menu
     </div>
     <div id="wrapper">
       <div id="header">
-        <a class="main-menu-action">menu</a> header
+        <a class="main-menu-action">hide menu</a> Header
       </div>
       <div id="content">
         <?=$content?>

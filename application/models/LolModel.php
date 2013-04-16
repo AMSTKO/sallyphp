@@ -9,4 +9,9 @@ class LolModel extends Sally_Model
     $result = $stmt->fetch();
     return $result['email'];
   }
+
+  public function sayLol()
+  {
+    return 'lol';
+  }
 }

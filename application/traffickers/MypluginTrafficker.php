@@ -1,6 +1,6 @@
 <?php
 
-class OutirlTrafficker extends Sally_Trafficker_Abstract
+class MypluginTrafficker extends Sally_Trafficker_Abstract
 {
   function __construct()
   {
@@ -17,6 +17,5 @@ class OutirlTrafficker extends Sally_Trafficker_Abstract
 
   function preDelivery()
   {
-    //echo 'preDelivery!!!';
   }
 }

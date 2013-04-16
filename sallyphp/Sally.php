@@ -238,7 +238,7 @@ class Sally
           $tmp.= '<b>' . $id . '</b> ' . $trace['file'] . ' line ' . $trace['line'] . '<br>';
         }
         $tmp.= '<br>';
-        $tmp.= '<small>' . Sally::title . ' ' . Sally::version . '</small>';
+        $tmp.= '<small>' . Sally::name . ' ' . Sally::version . '</small>';
       $tmp.= '<p>';
     $tmp.= '</div>';
     echo $tmp;

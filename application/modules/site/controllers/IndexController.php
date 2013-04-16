@@ -9,6 +9,6 @@ class IndexController extends Sally_Controller
   public function index()
   {
     $lol = $this->model('/lol');
-    echo $lol->getEmail() . ' site<br>' . $this->request->controller;
+    echo $lol->sayLol() . ' site<br>' . $this->request->controller;
   }
 }

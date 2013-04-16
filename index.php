@@ -8,13 +8,16 @@ $trafficker = Sally_Trafficker::getInstance();
 $PHPMailer = Sally_PHPMailer::getInstance();
 
 // set configuration
-Sally::set('application', '/srv/myproject/application');
+Sally::set('application', '/var/www/sallyphp/application');
 Sally::set('module.default', 'site');
 Sally::set('rijndael.key', 'define a key!');
 Sally::set('cookie.name', 'myproject');
 Sally::set('cookie.iv', '123456');
-Sally::set('path', '/');
-Sally::set('static', '/static/');
+
+if (getenv('environnement') == 'local') {
+  Sally::set('path', '/sallyphp/');
+  Sally::set('static', '/sallyphp/static/');
+}
 
 // set modules for HMVC
 $sally->addModule('site');
@@ -23,24 +26,15 @@ $sally->addModule('admin');
 // set traffickers
 $trafficker->add('myplugin');
 
-// set two databases
-$db->add(array(
+// set one databases
+/*$db->add(array(
   'type' => 'mysql_pdo',
   'name' => 'my local db',
   'host' => '127.0.0.1',
   'dbname' => 'mydbname',
   'user' => 'myuser',
   'passwd' => 'mypasswd'
-));
-
-$db->add(array(
-  'type' => 'mysql_pdo',
-  'name' => 'a other db'
-  'host' => '192.168.1.16',
-  'dbname' => 'mydbname2',
-  'user' => 'myuser2',
-  'passwd' => 'mypasswd2'
-));
+));*/
 
 // set SMTP server
 $PHPMailer->IsSMTP();
