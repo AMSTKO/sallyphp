@@ -36,6 +36,77 @@ class Sally
     return self::$_instance;
   }
 
+  public function init($request_string = '')
+  {
+    $pre_request = explode('/', substr($request_string, strrpos(Sally::get('path'), '/')));
+    $hasModule = count($this->_module) > 0 ? true : false;
+    $passe = false;
+    $requestIndex = 0;
+    $module_name = null;
+    $controller_name = null;
+    $action_name = null;
+    $logicControllerIndex = 0;
+    $logicActionIndex = 1;
+    $logicDataIndex = 2;
+
+    foreach ($pre_request as $key => $row) {
+      $row = strtolower($row);
+      if ($passe) {
+        $passe = false;
+        continue;
+      }
+      if (!empty($row)) {
+        if ($requestIndex >= $logicDataIndex) {
+          $value = $pre_request[($key + 1)];
+          if (!empty($value)) {
+            $this->request->data[$row] = $value;
+            $passe = true;
+          }
+        } else {
+          if ($hasModule) {
+            if ($requestIndex == 0) {
+              if (in_array($row, $this->_module)) {
+                $module_name = $row;
+                $logicControllerIndex++;
+                $logicActionIndex++;
+                $logicDataIndex++;
+              }
+            }
+          }
+          if ($requestIndex == $logicControllerIndex) {
+            $controller_name = $row;
+          }
+          if ($requestIndex == $logicActionIndex) {
+            $action_name = $row;
+          }
+        }
+        $requestIndex++;
+      }
+    }
+
+    if ($hasModule) {
+      if ($module_name != null) {
+        $this->request->module = $module_name;
+      } else {
+        $this->request->module = strtolower($this->get('module.default'));
+      }
+    }
+
+    if ($controller_name != null) {
+      $this->request->controller = $controller_name;
+    } else {
+      $this->request->controller = strtolower($this->get('controller.default'));
+    }
+
+    if ($action_name != null) {
+      $this->request->action = $action_name;
+    } else {
+      $this->request->action = 'index';
+    }
+
+    return $this->call();
+  }
+
   public function getFile($value, $type)
   {
     $module = '';
@@ -118,82 +189,6 @@ class Sally
 
     $trafficker->preDelivery();
     return $this->_out;
-  }
-
-  public function programm()
-  {
-  }
-
-  public function page()
-  {
-    $request_string = $_SERVER['REQUEST_URI'];
-    $pre_request = explode('/', substr(Sally::get('path'), strrpos(Sally::get('path'), '/')));
-    $hasModule = count($this->_module) > 0 ? true : false;
-    $passe = false;
-    $requestIndex = 0;
-    $module_name = null;
-    $controller_name = null;
-    $action_name = null;
-    $logicControllerIndex = 0;
-    $logicActionIndex = 1;
-    $logicDataIndex = 2;
-
-    foreach ($pre_request as $key => $row) {
-      $row = strtolower($row);
-      if ($passe) {
-        $passe = false;
-        continue;
-      }
-      if (!empty($row)) {
-        if ($requestIndex >= $logicDataIndex) {
-          $value = $pre_request[($key + 1)];
-          if (!empty($value)) {
-            $this->request->data[$row] = $value;
-            $passe = true;
-          }
-        } else {
-          if ($hasModule) {
-            if ($requestIndex == 0) {
-              if (in_array($row, $this->_module)) {
-                $module_name = $row;
-                $logicControllerIndex++;
-                $logicActionIndex++;
-                $logicDataIndex++;
-              }
-            }
-          }
-          if ($requestIndex == $logicControllerIndex) {
-            $controller_name = $row;
-          }
-          if ($requestIndex == $logicActionIndex) {
-            $action_name = $row;
-          }
-        }
-        $requestIndex++;
-      }
-    }
-
-    if ($hasModule) {
-      if ($module_name != null) {
-        $this->request->module = $module_name;
-      } else {
-        $this->request->module = strtolower($this->get('module.default'));
-      }
-    }
-
-    if ($controller_name != null) {
-      $this->request->controller = $controller_name;
-    } else {
-      $this->request->controller = strtolower($this->get('controller.default'));
-    }
-
-    if ($action_name != null) {
-      $this->request->action = $action_name;
-    } else {
-      $this->request->action = 'index';
-    }
-
-    return $this->call();
   }
 
   public function addModule($name)

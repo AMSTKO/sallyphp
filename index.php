@@ -55,4 +55,4 @@ $acl->allow('guest', 'admin_index', array('index', 'error'));
 $acl->allow('admin', 'admin');
 
 // display the page
-echo $sally->page();
+echo $sally->init($_SERVER['REQUEST_URI']);
