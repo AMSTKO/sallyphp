@@ -9,7 +9,6 @@ $view = Sally_View::getInstance();
 Sally::set('application', __DIR__ . '/application');
 Sally::set('module.default', 'cli');
 Sally::set('rijndael.key', 'a5f8yu9i4d5z4h6w6q4m7d2b6gt4z96');
-Sally::set('google.key', 'AIzaSyDevJhaPbTO3JjmafGYB04dB59I9FkxD30');
 
 $sally->addModule('cli');
 
