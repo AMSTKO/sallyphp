@@ -1,1 +1,1 @@
-view!!!!!!!!!!!
+a_var : <?=$this->a_var?>

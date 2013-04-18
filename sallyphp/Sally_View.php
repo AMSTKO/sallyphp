@@ -2,6 +2,7 @@
 
 class Sally_View
 {
+  public $_display = true;
   protected static $_instance = false;
 
   public function __construct()

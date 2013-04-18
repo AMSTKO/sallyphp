@@ -1,6 +1,6 @@
 <?php
 
-function helperiam()
+function a_helper()
 {
-  echo '-helper.i.am-';
+  echo 'display me!';
 }

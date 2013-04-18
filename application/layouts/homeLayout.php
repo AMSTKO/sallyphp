@@ -9,6 +9,8 @@
 
     <link href="<?=Sally::get('static')?>css/bootstrap.min.css" rel="stylesheet">
     <link href="<?=Sally::get('static')?>css/template.css" rel="stylesheet">
+    <link rel="stylesheet" href="<?=Sally::get('static')?>leaflet/leaflet.css"/>
+    <script src="<?=Sally::get('static')?>leaflet/leaflet.js"></script>
   </head>
   <body>
     <div id="main-menu">

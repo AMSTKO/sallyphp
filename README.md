@@ -9,7 +9,10 @@ L'exemple fournit dans les sources est configuré pour fonctionner depuis l'adre
 
 Configuration Apache :
 
-    Alias /sallyphp "/var/www/sallyphp"
-    <Directory "/var/www/sallyphp">
+    Alias /sallyphp "/var/www/sallyphp/public"
+    <Directory "/var/www/sallyphp/public">
         SetEnv environnement local
     </Directory>
+
+
+Essayez d'accéder à *http://127.0.0.1/sallyphp* et *http://127.0.0.1/sallyphp/admin*

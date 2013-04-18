@@ -38,6 +38,7 @@ class Sally_Db {
             $name = 'default';
           }
           $this->_connection[$name] = new PDO('mysql:host=' . $cfg['host'] . ';dbname=' . $cfg['dbname'], $cfg['user'], $cfg['passwd']);
+          $this->_connection[$name]->exec('set names utf8');
         } else {
           throw new Exception('Configuration mysql invalide');
         }

@@ -21,6 +21,7 @@ class Sally
     $this->request = Sally_Request::getInstance();
 
     $this->_cfg['application'] = $_SERVER['DOCUMENT_ROOT'] . '/application';
+    $this->_cfg['path'] = '/';
     $this->_cfg['controller.default'] = 'index';
     $this->_cfg['module.default'] = 'site';
     $this->_cfg['rijndael.key'] = 'define a key';
@@ -177,7 +178,9 @@ class Sally
     $controller->{$this->request->action}();
 
     $view = Sally_View::getInstance();
-    $view->load($this->request->controller . '/' . $this->request->action);
+    if ($view->_display) {
+      $view->load($this->request->controller . '/' . $this->request->action);
+    }
 
     $this->_out = ob_get_contents();
     ob_end_clean();

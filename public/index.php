@@ -1,5 +1,5 @@
 <?php
-include 'sallyphp/initializer.php';
+include '../sallyphp/initializer.php';
 
 $sally = Sally::getInstance();
 $db = Sally_Db::getInstance();
@@ -8,7 +8,7 @@ $trafficker = Sally_Trafficker::getInstance();
 $PHPMailer = Sally_PHPMailer::getInstance();
 
 // set configuration
-Sally::set('application', '/var/www/sallyphp/application');
+Sally::set('application', __DIR__ . '/../application');
 Sally::set('module.default', 'site');
 Sally::set('rijndael.key', 'define a key!');
 Sally::set('cookie.name', 'myproject');
@@ -37,12 +37,12 @@ $trafficker->add('myplugin');
 ));*/
 
 // set SMTP server
-$PHPMailer->IsSMTP();
+/*$PHPMailer->IsSMTP();
 $PHPMailer->Host = 'in.mailjet.com';
 $PHPMailer->SMTPAuth = true;
 $PHPMailer->Username = 'username';
 $PHPMailer->Password = 'password';
-$PHPMailer->SMTPSecure = 'tls'; 
+$PHPMailer->SMTPSecure = 'tls'; */
 
 // set ACL (access-control-list)
 $acl->addRole('guest');
