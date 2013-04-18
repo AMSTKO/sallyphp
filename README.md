@@ -16,3 +16,7 @@ Configuration Apache :
 
 
 Essayez d'accéder à *http://127.0.0.1/sallyphp* et *http://127.0.0.1/sallyphp/admin*
+
+Pour un accès en ligne de commande vous pouvez essayer : 
+
+  php cli.php /controller/action
