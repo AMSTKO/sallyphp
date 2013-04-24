@@ -21,24 +21,45 @@ Configuration Apache :
 Sally_Acl
 ---------
 
-*Ajouter des rôles*
+**Ajouter des rôles**
 
     $acl->addRole('guest');
     $acl->addRole('user', 'guest');
 
-*Ajouter des ressources*
+**Ajouter des ressources**
 
     $acl->AddRessource('public');
     $acl->AddRessource('account');
 
-*Ajouter des autorisations*
+**Ajouter des autorisations**
 
     $acl->allow('guest', 'public');
     $acl->allow('guest', 'account', array('signin', 'signup', 'request'));
     $acl->allow('user', 'account');
 
-*Vérifier si un utilisation à le droit d'accéder à une ressource*
+**Ajouter une restriction**
+
+    $acl->deny('guest', 'public', array('action_name'));
+
+**Vérifier si un utilisation à le droit d'accéder à une ressource**
 
     if (!$acl->isAllowed($role_name, $ressource_name, $action_name)) {
       exit;
     }
+
+Sally_Db
+--------
+
+**SGBD pris en charges**
+
+- Mysql (avec les API suivantes : PDO)
+
+**Ajouter une connection à une base de données**
+
+    $db->add(array(
+      'type' => 'mysql_pdo',
+      'host' => '127.0.0.1',
+      'dbname' => 'db_name',
+      'user' => 'db_user',
+      'passwd' => 'db_pasword'
+    ));
