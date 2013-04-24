@@ -164,9 +164,9 @@ Sally_Request
 
 Les requêtes peuvent être faites sous différentes formes :
 
-> /module/controller/action
-> /controller/action (en définissant le module par defaut dans la conf)
-> /controller/action/dataName1/dataValue1/dataName2/dataValue2
+- /module/controller/action
+- /controller/action (en définissant le module par defaut dans la conf)
+- /controller/action/dataName1/dataValue1/dataName2/dataValue2
 
 **Récupérer l'instance**
 
