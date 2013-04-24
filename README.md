@@ -117,6 +117,48 @@ Sinon il suffit de préciser le nom de la connexion.
     }
 
 
+Sally_Request
+-------------
+
+Les requêtes peuvent être faites sous différentes formes :
+
+- /module/controller/action
+- /controller/action (en définissant le module par defaut dans la conf)
+- /controller/action/dataName1/dataValue1/dataName2/dataValue2
+
+**Récupérer l'instance**
+
+    $request = Sally_Request::getInstance();
+
+**Récupérer les valeurs des données passées dans la requête**
+
+    $request->getRequest('dataName1'); // False si inexistante
+
+**Redéfinir le module**
+
+    $request->setModule('module_name');
+
+**Redéfinir le controleur**
+
+    $request->setController('controller_name');
+
+**Redéfinir l'action**
+
+    $request->setAction('action_name');
+
+**Récupérer le nom du module en cours**
+
+    $request->getModule();
+
+**Récupérer le nom du controleur en cours**
+
+    $request->getController();
+
+**Récupérer le nom de l'action en cours**
+
+    $request->getAction();
+
+
 Sally_Layout
 ------------
 
@@ -126,7 +168,7 @@ Sally_Layout
 
 **Définir un layout**
 
-En ajoutant un slash devant le nom du layout celui ci sera cherché dans la répertoire *layout* à la racine de l'application. Sinon il sera cherché dans le répertoire *layout* du module demandé par la requête.
+En ajoutant un slash devant le nom du layout celui ci sera cherché dans la répertoire *layouts* à la racine de l'application. Sinon il sera cherché dans le répertoire *layouts* du module demandé par la requête.
 
     $layout->set('/home');
 
@@ -159,39 +201,74 @@ Sally_View
     $view->controllerViewIsEnabled(); // Boolean
 
 
-Sally_Request
+Sally_Session
 -------------
 
-Les requêtes peuvent être faites sous différentes formes :
+Sally_Session est assez specifique à votre projet, vous pouvez jetter un oeil à ce qui a été fait.
 
-- /module/controller/action
-- /controller/action (en définissant le module par defaut dans la conf)
-- /controller/action/dataName1/dataValue1/dataName2/dataValue2
+
+Sally_Helper
+------------
+
+Les helpers sont de basiques fonctions PHP appelable depuis n'importe ou.
 
 **Récupérer l'instance**
 
-    $request = Sally_Request::getInstance();
+    $helper = Sally_Helper::getInstance();
 
-**Redéfinir le module**
+**Charger un helper**
 
-    $request->setModule('module_name');
+En ajoutant un slash devant le nom du halper celui ci sera cherché dans la répertoire *helpers* à la racine de l'application. Sinon il sera cherché dans le répertoire *helpers* du module demandé par la requête.
 
-**Redéfinir le controleur**
+    $helper->load('helper_name');
 
-    $request->setController('controller_name');
+**Exemple de helper : toStrongHelper.php**
+    
+    <?php
+    function toStrong($text)
+    {
+      echo '<strong>' . $text . '</strong>';
+    }
 
-**Redéfinir l'action**
 
-    $request->setAction('action_name');
+Sally_Trafficker
+----------------
 
-**Récupérer le nom du module en cours**
+Le trafiquant permet d'agir à 2 endroits :
 
-    $request->getModule();
+- avant l'appel d'un controleur;
+- avant de retourner le contenu de la requête;
 
-**Récupérer le nom du controleur en cours**
+**avant l'appel d'un controleur**
 
-    $request->getController();
+Trafiquer la requête en redéfinissant le nom du controleur (mais aussi bien du module ou de l'action) demandé (pour par exemple afficher une page d'erreur).
 
-**Récupérer le nom de l'action en cours**
+**avant de retourner le contenu de la requête**
 
-    $request->getAction();
+Trafiquer le retour de la requête au dernier moment.
+
+**Exemple de trafiquant : MyTrafficker.php**
+
+    class MyTrafficker extends Sally_Trafficker_Abstract
+    {
+      function __construct()
+      {
+        $this->layout = Sally_Layout::getInstance();
+        $this->view = Sally_View::getInstance();
+        $this->request = Sally_Request::getInstance();
+      }
+
+      function preDeal()
+      {
+        $this->layout->set('/home');
+        if ($this->request->getAction() == 'request') {
+          $this->layout->disableLayout();
+          $this->view->disableControllerView();
+        }
+      }
+
+      function preDelivery()
+      {
+        // je n'ai rien à faire ici
+      }
+    }
