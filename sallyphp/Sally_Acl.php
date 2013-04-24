@@ -2,7 +2,6 @@
 
 class Sally_Acl
 {
-
   private $_role = array();
   private $_ressource = array();
   private $_privilage = array();

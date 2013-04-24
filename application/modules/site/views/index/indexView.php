@@ -1,1 +1,1 @@
-display view
+Hello world!

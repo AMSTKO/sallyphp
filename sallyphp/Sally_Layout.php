@@ -1,15 +1,10 @@
 <?php
 class Sally_Layout
 {
-
-  public $request;
-  public $use = false;
+  private $_layout = false;
+  private $_enable = true;
+  private $_content = false;
   protected static $_instance = false;
-
-  public function __construct()
-  {
-    $this->request = Sally_Request::getInstance();
-  }
 
   public static function getInstance()
   {
@@ -19,13 +14,43 @@ class Sally_Layout
     return self::$_instance;
   }
 
-  public function integrate($content)
+  public function getContent()
+  {
+    return $this->_content;
+  }
+
+  public function load()
   {
     ob_start();
-    require_once $this->use;
+    require_once $this->_layout;
     $out = ob_get_contents();
     ob_end_clean();
     return $out;
+  }
+
+  public function integrate($_content)
+  {
+    $this->_content = $_content;
+    return $this->load();
+  }
+
+  public function isDefined()
+  {
+    if ($this->_layout) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public function isEnabled()
+  {
+    return $this->_enable;
+  }
+
+  public function disableLayout()
+  {
+    $this->_enable = false;
   }
 
   public function set($name)
@@ -35,6 +60,6 @@ class Sally_Layout
     if (!file_exists($layout_file)) {
       throw new Exception('Le layout "' . $layout_name . '" n\'existe pas.');
     }
-    $this->use = $layout_file;
+    $this->_layout = $layout_file;
   }
 }

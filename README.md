@@ -5,7 +5,10 @@ SallyPHP est un framework permettant de développer des applications web sur les
 
 ## Hello world!
 
-L'exemple fournit dans les sources est configuré pour fonctionner depuis l'adresse *http://127.0.0.1/sallyphp* en admettant que le repertoire sallyphp se trouve dans le répertoire */var/www/*.
+Caractéristes de l'exemple fournit avec les sources :
+
+- Structure HMVC (répertoire modules, contenant plusieurs sous structures MVC)
+- Près à être utilisé en local (http://127.0.0.1/sallyphp/index.php)
 
 Configuration Apache :
 
@@ -13,10 +16,3 @@ Configuration Apache :
     <Directory "/var/www/sallyphp/public">
         SetEnv environnement local
     </Directory>
-
-
-Essayez d'accéder à *http://127.0.0.1/sallyphp* et *http://127.0.0.1/sallyphp/admin*
-
-Pour un accès en ligne de commande vous pouvez essayer : 
-
-    php cli.php /controller/action

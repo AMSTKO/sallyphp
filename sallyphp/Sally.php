@@ -60,7 +60,7 @@ class Sally
         if ($requestIndex >= $logicDataIndex) {
           $value = $pre_request[($key + 1)];
           if (!empty($value)) {
-            $this->request->data[$row] = $value;
+            $this->request->setRequest($row, $value);
             $passe = true;
           }
         } else {
@@ -87,22 +87,23 @@ class Sally
 
     if ($hasModule) {
       if ($module_name != null) {
-        $this->request->module = $module_name;
+        $this->request->setModule($module_name);
       } else {
-        $this->request->module = strtolower($this->get('module.default'));
+        $this->request->setModule(strtolower($this->get('module.default')));
       }
     }
 
     if ($controller_name != null) {
-      $this->request->controller = $controller_name;
+      $this->request->setController($controller_name);
     } else {
-      $this->request->controller = strtolower($this->get('controller.default'));
+      $this->request->setController(strtolower($this->get('controller.default')));
+
     }
 
     if ($action_name != null) {
-      $this->request->action = $action_name;
+      $this->request->setAction($action_name);
     } else {
-      $this->request->action = 'index';
+      $this->request->setAction('index');
     }
 
     return $this->call();
@@ -120,8 +121,8 @@ class Sally
       $path = '';
     }
 
-    if ($this->request->module && $value[0] != '/') {
-      $module = 'modules/' . $this->request->module . '/';
+    if ($this->request->getModule() && $value[0] != '/') {
+      $module = 'modules/' . $this->request->getModule() . '/';
     }
 
     if ($type == 'helper') {
@@ -161,32 +162,32 @@ class Sally
     $trafficker = Sally_Trafficker::getInstance();
     $trafficker->preDeal();
 
-    list($controller_file, $controller_class_name) = $this->getFile($this->request->controller, 'controller');
+    list($controller_file, $controller_class_name) = $this->getFile($this->request->getController(), 'controller');
 
     ob_start();
     require $controller_file;
     $controller = new $controller_class_name();
 
-    if (!method_exists($controller, $this->request->action)) {
-      throw new Exception('L\'action "' . $this->request->action . '" n\'existe pas dans le controller "' . $this->request->controller . '".');
+    if (!method_exists($controller, $this->request->getAction())) {
+      throw new Exception('L\'action "' . $this->request->getAction() . '" n\'existe pas dans le controller "' . $this->request->getController() . '".');
     }
 
     if (method_exists($controller, 'init')) {
       $controller->init();
     }
 
-    $controller->{$this->request->action}();
+    $controller->{$this->request->getAction()}();
 
     $view = Sally_View::getInstance();
-    if ($view->_display) {
-      $view->load($this->request->controller . '/' . $this->request->action);
+    if ($view->controllerViewIsEnabled()) {
+      $view->load($this->request->getController() . '/' . $this->request->getAction());
     }
 
     $this->_out = ob_get_contents();
     ob_end_clean();
 
     $layout = Sally_Layout::getInstance();
-    if ($layout->use) {
+    if ($layout->isDefined() && $layout->isEnabled()) {
       $this->_out = $layout->integrate($this->_out);
     }
 

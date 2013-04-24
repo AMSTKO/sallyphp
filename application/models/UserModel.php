@@ -1,5 +1,5 @@
 <?php
-class LolModel extends Sally_Model
+class UserModel extends Sally_Model
 {
   public function getEmail()
   {
@@ -8,10 +8,5 @@ class LolModel extends Sally_Model
     $stmt->execute(array('id' => 1));
     $result = $stmt->fetch();
     return $result['email'];
-  }
-
-  public function sayLol()
-  {
-    return 'lol';
   }
 }

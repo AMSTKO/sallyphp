@@ -3,11 +3,14 @@ class IndexController extends Sally_Controller
 {
   public function init()
   {
-    
   }
 
   public function index()
   {
-    $lol = $this->model('/lol');
+  }
+
+  public function request()
+  {
+    echo 'request (ajax)';
   }
 }

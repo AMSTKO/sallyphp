@@ -1,1 +1,1 @@
-a_var : <?=$this->a_var?>
+Request from admin.

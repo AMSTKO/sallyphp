@@ -2,7 +2,7 @@
 
 class Sally_View
 {
-  public $_display = true;
+  public $_controllerView = true;
   protected static $_instance = false;
 
   public function __construct()
@@ -22,5 +22,15 @@ class Sally_View
     $sally = Sally::getInstance();
     list($view_file, $view_fileName) = $sally->getFile($name, 'view');
     require_once $view_file;
+  }
+
+  public function disableControllerView()
+  {
+    $this->_controllerView = false;
+  }
+
+  public function controllerViewIsEnabled()
+  {
+    return $this->_controllerView;
   }
 }
