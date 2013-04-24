@@ -125,7 +125,6 @@ Sally_Layout
     $layout = Sally_Layout::getInstance();
 
 **Définir un layout**
-
 En ajoutant un slash devant le nom du layout celui ci sera cherché dans la répertoire *layout* à la racine de l'application. Sinon il sera cherché dans le répertoire *layout* du module demandé par la requête.
 
     $layout->set('/home');
