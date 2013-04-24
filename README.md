@@ -30,7 +30,6 @@ Structure
           view/
         cli/
           controllers/
-          view/
         site/
           controllers/
           view/
