@@ -39,6 +39,29 @@ Structure
     sallyphp/
 
 
+Sally
+-----
+
+**Récupérer l'instance**
+
+    $sally = Sally::getInstance();
+
+**Récupérer la réponse**
+
+Par exemple il peut être utile de récupérer la réponse pour la modifier dans un *trafficker*.
+
+    $sally->getOut();
+
+**Écraser la réponse**
+
+    $sally->setOut('404 Not Found');
+
+**Récupérer un retour de controleur**
+
+Avec Sally les controleurs ont la possibilité de retourner des valeurs. Vous pourriez récupérer ces valeurs dans un *trafficker* pour les modifier (ajouter un token...).
+
+    $sally->getDataBack();
+
 Sally_Acl
 ---------
 

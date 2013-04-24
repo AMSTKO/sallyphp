@@ -9,6 +9,7 @@ class Sally
   const path = __DIR__;
 
   private $_out = null;
+  private $_dataBack = null;
   private $_cfg = array();
   private $_module = array();
   protected static $_instance = false;
@@ -176,7 +177,7 @@ class Sally
       $controller->init();
     }
 
-    $controller->{$this->request->getAction()}();
+    $this->_dataBack = $controller->{$this->request->getAction()}();
 
     $view = Sally_View::getInstance();
     if ($view->controllerViewIsEnabled()) {
@@ -204,6 +205,21 @@ class Sally
       }
       array_push($this->_module, $module_name);
     }
+  }
+
+  public function getDataBack()
+  {
+    return $this->_dataBack;
+  }
+
+  public function getOut()
+  {
+    return $this->_out;
+  }
+
+  public function setOut($out)
+  {
+    $this->_out = $out;
   }
 
   public static function get($name)
