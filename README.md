@@ -16,3 +16,29 @@ Configuration Apache :
     <Directory "/var/www/sallyphp/public">
         SetEnv environnement local
     </Directory>
+
+
+Sally_Acl
+---------
+
+*Ajouter des rôles*
+
+    $acl->addRole('guest');
+    $acl->addRole('user', 'guest');
+
+*Ajouter des ressources*
+
+    $acl->AddRessource('public');
+    $acl->AddRessource('account');
+
+*Ajouter des autorisations*
+
+    $acl->allow('guest', 'public');
+    $acl->allow('guest', 'account', array('signin', 'signup', 'request'));
+    $acl->allow('user', 'account');
+
+*Vérifier si un utilisation à le droit d'accéder à une ressource*
+
+    if (!$acl->isAllowed($role_name, $ressource_name, $action_name)) {
+      exit;
+    }
