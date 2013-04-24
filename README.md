@@ -125,6 +125,7 @@ Sally_Layout
     $layout = Sally_Layout::getInstance();
 
 **Définir un layout**
+
 En ajoutant un slash devant le nom du layout celui ci sera cherché dans la répertoire *layout* à la racine de l'application. Sinon il sera cherché dans le répertoire *layout* du module demandé par la requête.
 
     $layout->set('/home');
@@ -135,8 +136,62 @@ En ajoutant un slash devant le nom du layout celui ci sera cherché dans la rép
 
 **Vérifier si le layout n'a pas été désactivé**
 
-    $layout->isEnabled();
+    $layout->isEnabled(); // Boolean
 
 **Vérifier si un layout est définit**
 
-    $layout->isDefined();
+    $layout->isDefined(); // Boolean
+
+
+Sally_View
+----------
+
+**Récupérer l'instance**
+
+    $view = Sally_View::getInstance();
+
+**Désactiver l'appel automatique d'une vue pour l'action du controleur**
+
+    $view->disableControllerView();
+
+**Vérifier si l'appel automatique d'une vue n'a pas été désactivé**
+
+    $view->controllerViewIsEnabled(); // Boolean
+
+
+Sally_Request
+-------------
+
+Les requêtes peuvent être faites sous différentes formes :
+
+> /module/controller/action
+> /controller/action (en définissant le module par defaut dans la conf)
+> /controller/action/dataName1/dataValue1/dataName2/dataValue2
+
+**Récupérer l'instance**
+
+    $request = Sally_Request::getInstance();
+
+**Redéfinir le module**
+
+    $request->setModule('module_name');
+
+**Redéfinir le controleur**
+
+    $request->setController('controller_name');
+
+**Redéfinir l'action**
+
+    $request->setAction('action_name');
+
+**Récupérer le nom du module en cours**
+
+    $request->getModule();
+
+**Récupérer le nom du controleur en cours**
+
+    $request->getController();
+
+**Récupérer le nom de l'action en cours**
+
+    $request->getAction();
