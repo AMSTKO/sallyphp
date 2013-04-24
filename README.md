@@ -17,6 +17,28 @@ Configuration Apache :
         SetEnv environnement local
     </Directory>
 
+Structure
+---------
+
+    application/
+      helpers/
+      layouts/
+      models/
+      modules/ 
+        admin/
+          controllers/
+          view/
+        cli/
+          controllers/
+          view/
+        site/
+          controllers/
+          view/
+      traffickers/
+    public/
+      static/
+    sallyphp/
+
 
 Sally_Acl
 ---------
