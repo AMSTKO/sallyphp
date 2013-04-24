@@ -204,13 +204,13 @@ Sally_View
 Sally_Session
 -------------
 
-Sally_Session est assez specifique à votre projet, vous pouvez jetter un oeil à ce qui a été fait.
+Sally_Session est assez specifique à votre projet, vous pouvez jetter un oeil a ce qui a été fait.
 
 
 Sally_Helper
 ------------
 
-Les helpers sont de basiques fonctions PHP appelable depuis n'importe ou.
+Les helpers sont de basiques fonctions PHP appelable n'importe ou.
 
 **Récupérer l'instance**
 
