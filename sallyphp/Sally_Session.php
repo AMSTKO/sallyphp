@@ -2,7 +2,7 @@
 
 class Sally_Session
 {
-  protected $_hasIdentity = false;
+  protected $_isLogged = false;
   protected $_content = array();
   protected static $_instance = false;
 
@@ -13,8 +13,10 @@ class Sally_Session
     // check cookie
     if($this->getCookie()) {
       if (isset($this->_content['logged']) && $this->_content['logged'] == 1) {
-        $this->_hasIdentity = true;
+        $this->_isLogged = true;
       }
+    } else {
+      $this->setGuest();
     }
   }
 
@@ -26,9 +28,9 @@ class Sally_Session
     return self::$_instance;
   }
 
-  public function hasIdentity()
+  public function isLogged()
   {
-    return $this->_hasIdentity;
+    return $this->_isLogged;
   }
 
   public function getIdentity()
@@ -36,12 +38,33 @@ class Sally_Session
     return $this->_content;
   }
 
-  public function logout()
+  public function set($name, $value)
   {
-    $this->_content = array();
+    $this->_content[$name] = $value;
+  }
+
+  public function get($name)
+  {
+    if (array_key_exists($name, $this->_content)) {
+      return $this->_content[$name];
+    } else {
+      return false;
+    }
+  }
+
+  public function signout()
+  {
+    $this->_isLogged = false;
+    $this->setGuest();
+  }
+
+  protected function setGuest()
+  {
+    $this->_content = array(
+      'logged' => 0,
+      'guest' => uniqid('_', true)
+    );
     $this->setCookie();
-    unset($_COOKIE[Sally::get('cookie.name')]);
-    $this->_hasIdentity = false;
   }
 
   protected function getCookie()
@@ -61,7 +84,7 @@ class Sally_Session
 
       // ctrl checksum
       if (!isset($this->_content['checksum']) || $this->_content['checksum'] != $checksum) {
-        $this->logout();
+        $this->signout();
         return false;
       }
 

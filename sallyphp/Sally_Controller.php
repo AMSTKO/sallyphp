@@ -20,4 +20,10 @@ class Sally_Controller
     $helper = Sally_Helper::getInstance();
     return $helper->load($name);
   }
+
+  public function redirect($url)
+  {
+    header('Location: ' . $url);
+    exit;
+  }
 }

@@ -97,6 +97,12 @@ Depuis un controleur vous pouvez appeler les méthodes suivantes.
 
     $this->helper('/tostrong');
 
+**Redirection**
+
+    $this->redirect('http://google.fr');
+
+**__contruct**
+
 Si vous ajoutez votre méthode __contruct au controleur alors il faudra faire référénce au contructeur parent :
 
     class IndexController extends Sally_Controller
@@ -312,6 +318,19 @@ Sally_Layout
 **Vérifier si un layout est définit**
 
     $layout->isDefined(); // Boolean
+
+**Transmettre des variables dans le layout**
+
+    $>layout->setData('name1', 'value1');
+
+    // or
+
+    $layout->setData(array(
+      'name1' => 'value1',
+      'name2' => 'value2'
+    ));
+
+    // in view file : echo $name1; // display value1
 
 
 Sally_View

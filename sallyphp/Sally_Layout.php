@@ -4,6 +4,7 @@ class Sally_Layout
   private $_layout = false;
   private $_enable = true;
   private $_content = false;
+  private $_data = array();
   protected static $_instance = false;
 
   public static function getInstance()
@@ -22,6 +23,11 @@ class Sally_Layout
   public function load()
   {
     ob_start();
+
+    foreach ($this->_data as $key => $row) {
+      $$key = $row;
+    }
+      
     require_once $this->_layout;
     $out = ob_get_contents();
     ob_end_clean();
@@ -58,5 +64,14 @@ class Sally_Layout
     $sally = Sally::getInstance();
     list($layout_file, $layout_name) = $sally->getFile($name, 'layout');
     $this->_layout = $layout_file;
+  }
+
+  public function setData($data, $value = null)
+  {
+    if (is_string($data)) {
+      $this->_data[$data] = $value;
+    } elseif (is_array($data)) {
+      $this->_data = array_merge($this->_data, $data);
+    }
   }
 }
