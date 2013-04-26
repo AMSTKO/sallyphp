@@ -103,7 +103,7 @@ Depuis un controleur vous pouvez appeler les méthodes suivantes.
 
 **__contruct**
 
-Si vous ajoutez votre méthode __contruct au controleur alors il faudra faire référénce au contructeur parent :
+Si vous ajoutez votre méthode __contruct au controleur alors il faudra faire référence au contructeur parent :
 
     class IndexController extends Sally_Controller
     {
