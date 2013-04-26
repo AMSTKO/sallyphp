@@ -61,7 +61,7 @@ Inventaire
 Note
 ----
 
-En ajoutant un slash devant le nom d'un élément à charger (helper, view, model, layout ou trafficker) celui ci sera cherché dans son répertoire à la racine de l'application. Sinon il sera cherché dans son répertoire contenu dans le module demandé par la requête.
+En ajoutant un slash devant le nom d'un élément à charger (helper, view, model, layout ou trafficker) celui ci sera cherché dans son répertoire à la racine de l'application. Sinon il sera cherché dans son répertoire depus le module demandé par la requête.
 
 Sally_Controller
 ----------------
