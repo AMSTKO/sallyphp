@@ -293,8 +293,9 @@ Le trafiquant permet d'agir à 2 endroits :
 
 **avant l'appel d'un controleur : preDeal**
 
-Trafiquer la requête en redéfinissant le nom du controleur (mais aussi bien du module ou de l'action) demandé pour par exemple :
+Intercepter la requête au début du traitement.
 
+- redéfinir le nom du module, du controleur ou de l'action pour afficher une autre page que prévu;
 - vérifier les droits ACL et faire un choix d'affichage ou redirection à ce moment la;
 - définir un layout en fonction de l'utilisateur;
 - afficher une page d'erreur;
