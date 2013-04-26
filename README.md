@@ -44,21 +44,21 @@ Inventaire
 
 **Principal**
 
-$sally = Sally::getInstance();
-$acl = Sally_Acl::getInstance();
-$db = Sally_Db::getInstance();
-$request = Sally_Request::getInstance();
-$layout = Sally_Layout::getInstance();
-$view = Sally_View::getInstance();
-$helper = Sally_Helper::getInstance();
-$session = Sally_Session::getInstance();
-$trafficker = Sally_Trafficker::getInstance();
-$view = Sally_View::getInstance();
+- $sally = Sally::getInstance();
+- $acl = Sally_Acl::getInstance();
+- $db = Sally_Db::getInstance();
+- $request = Sally_Request::getInstance();
+- $layout = Sally_Layout::getInstance();
+- $view = Sally_View::getInstance();
+- $helper = Sally_Helper::getInstance();
+- $session = Sally_Session::getInstance();
+- $trafficker = Sally_Trafficker::getInstance();
+- $view = Sally_View::getInstance();
 
 **Divers**
 
-$rijndael = Sally_Rijndael::getInstance();
-$PHPMailer = Sally_PHPMailer::getInstance();
+- $rijndael = Sally_Rijndael::getInstance();
+- $PHPMailer = Sally_PHPMailer::getInstance();
 
 
 Sally
