@@ -291,7 +291,7 @@ Le trafiquant permet d'agir à 2 endroits :
 - avant l'appel d'un controleur;
 - avant de retourner le contenu de la requête;
 
-**avant l'appel d'un controleur : preDeal**
+**avant l'appel d'un controleur : preDeal() {}**
 
 Intercepter la requête au début du traitement.
 
@@ -301,7 +301,7 @@ Intercepter la requête au début du traitement.
 - afficher une page d'erreur;
 - ...
 
-**avant de retourner le contenu de la requête : preDelivery**
+**avant de retourner le contenu de la requête : preDelivery() {}**
 
 Trafiquer le retour de la requête au dernier moment.
 
