@@ -39,6 +39,28 @@ Structure
     sallyphp/
 
 
+Inventaire
+----------
+
+**Principal**
+
+$sally = Sally::getInstance();
+$acl = Sally_Acl::getInstance();
+$db = Sally_Db::getInstance();
+$request = Sally_Request::getInstance();
+$layout = Sally_Layout::getInstance();
+$view = Sally_View::getInstance();
+$helper = Sally_Helper::getInstance();
+$session = Sally_Session::getInstance();
+$trafficker = Sally_Trafficker::getInstance();
+$view = Sally_View::getInstance();
+
+**Divers**
+
+$rijndael = Sally_Rijndael::getInstance();
+$PHPMailer = Sally_PHPMailer::getInstance();
+
+
 Sally
 -----
 
@@ -349,3 +371,23 @@ Je vais avoir beaucoup de requêtes ajax sur mon projet. Alors je décide que ch
         }
       }
     }
+
+
+Sally_Rijndael
+--------------
+
+**Récupérer l'instance**
+
+    $rijndael = Sally_Rijndael::getInstance();
+
+**Définir une clef de cryptage**
+
+    $rijndael->setKey('your key');
+
+**Crypter des données**
+
+    $rijndael->encrypt('data');
+
+**Décrypter des données**
+
+    $rijndael->decrypt('dataCrypted');
