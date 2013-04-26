@@ -178,6 +178,14 @@ Les requêtes peuvent être faites sous différentes formes :
 
     $request->getRequest('dataName1'); // False si inexistante
 
+**Écraser des valeurs passées dans la requête**
+
+    $request->setRequest('dataName1', 'dataValue1');
+
+**Récupérer des données $_POST**
+
+    $request->getPost('name'); // value or false
+
 **Redéfinir le module**
 
     $request->setModule('module_name');
@@ -283,19 +291,34 @@ Le trafiquant permet d'agir à 2 endroits :
 - avant l'appel d'un controleur;
 - avant de retourner le contenu de la requête;
 
-**avant l'appel d'un controleur**
+**avant l'appel d'un controleur : preDeal**
 
 Trafiquer la requête en redéfinissant le nom du controleur (mais aussi bien du module ou de l'action) demandé pour par exemple :
 
 - vérifier les droits ACL et faire un choix d'affichage ou redirection à ce moment la;
 - définir un layout en fonction de l'utilisateur;
 - afficher une page d'erreur;
+- ...
 
-**avant de retourner le contenu de la requête**
+**avant de retourner le contenu de la requête : preDelivery**
 
 Trafiquer le retour de la requête au dernier moment.
 
+- ajouter une token;
+- ajouter une information (temps de traitement...);
+- ...
+
+**Récupérer l'instance**
+
+    $trafficker = Sally_Trafficker::getInstance();
+
+**Charger un trafiquant**
+
+    $trafficker->add('my');
+
 **Exemple de trafiquant : MyTrafficker.php**
+
+Je vais avoir beaucoup de requêtes ajax sur mon projet. Alors je décide que chaque controleur aura une action nommée "request" qui permettra de traiter ces requêtes. Dans un premier temps (preDeal) on désactive le layout et la vue par defaut pour l'action "request". Une fois la requête prête à être renvoyée (preDelivery) on ajoute des valeurs (ici un token).
 
     class MyTrafficker extends Sally_Trafficker_Abstract
     {
@@ -317,6 +340,11 @@ Trafiquer le retour de la requête au dernier moment.
 
       function preDelivery()
       {
-        // je n'ai rien à faire ici
+        if ($this->request->getAction() == 'request') {
+          $sally = Sally::getInstance();
+          $sally->setOut(json_encode(array_merge(array(
+            'token' => 12456
+          ), $sally->getDataBack())));
+        }
       }
     }

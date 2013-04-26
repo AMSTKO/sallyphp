@@ -2,9 +2,7 @@
 
 class Sally_Trafficker
 {
-
-  public $request;
-  public $traffickers = array();
+  private $traffickers = array();
   protected static $_instance = false;
 
   public function __construct()

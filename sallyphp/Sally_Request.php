@@ -35,6 +35,15 @@ class Sally_Request {
     }
   }
 
+  public function getPost($name)
+  {
+    if (array_key_exists($name, $_POST)) {
+      return $_POST[$name];
+    } else {
+      return false;
+    }
+  }
+
   public function setModule($name)
   {
     $this->_module = $name;
