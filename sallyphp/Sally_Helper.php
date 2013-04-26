@@ -21,9 +21,6 @@ class Sally_Helper
   public function load($name)
   {
     list($helper_file, $helper_name) = $this->sally->getFile($name, 'helper');
-    if (!file_exists($helper_file)) {
-      throw new Exception('Le helper "' . $helper_name . '" n\'existe pas.');
-    }
     require_once $helper_file;
   }
 }

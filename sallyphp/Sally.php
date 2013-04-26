@@ -2,7 +2,6 @@
 
 class Sally
 {
-
   const name = 'SallyPHP MVC Framework';
   const version = '1.130309.1';
   const site = 'sallyphp.com';
@@ -117,6 +116,10 @@ class Sally
     if (preg_match('/\//', $value)) {
       $pre_file = strtolower(substr($value, strrpos($value, '/') + 1));
       $path = substr($value, 0, strrpos($value, '/') + 1);
+
+      if ($path == '/') {
+        $path = '';
+      }
     } else {
       $pre_file = $value;
       $path = '';
@@ -173,15 +176,11 @@ class Sally
       throw new Exception('L\'action "' . $this->request->getAction() . '" n\'existe pas dans le controller "' . $this->request->getController() . '".');
     }
 
-    if (method_exists($controller, 'init')) {
-      $controller->init();
-    }
-
     $this->_dataBack = $controller->{$this->request->getAction()}();
 
     $view = Sally_View::getInstance();
     if ($view->controllerViewIsEnabled()) {
-      $view->load($this->request->getController() . '/' . $this->request->getAction());
+      echo $view->load($this->request->getController() . '/' . $this->request->getAction(), null, true);
     }
 
     $this->_out = ob_get_contents();

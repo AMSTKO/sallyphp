@@ -2,16 +2,17 @@
 
 class Sally_Model
 {
+  protected static $_instance = false;
 
-  protected $sally;
-  protected $request;
-
-  public function __construct()
+  public static function getInstance()
   {
-    $this->request = Sally_Request::getInstance();
+    if (!self::$_instance) {
+      self::$_instance = new self();
+    }
+    return self::$_instance;
   }
 
-  public function model($name)
+  public function load($name)
   {
     $sally = Sally::getInstance();
     list($model_file, $model_class_name) = $sally->getFile($name, 'model');

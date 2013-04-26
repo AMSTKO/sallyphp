@@ -57,9 +57,6 @@ class Sally_Layout
   {
     $sally = Sally::getInstance();
     list($layout_file, $layout_name) = $sally->getFile($name, 'layout');
-    if (!file_exists($layout_file)) {
-      throw new Exception('Le layout "' . $layout_name . '" n\'existe pas.');
-    }
     $this->_layout = $layout_file;
   }
 }

@@ -2,21 +2,22 @@
 
 class Sally_Controller
 {
-
-  protected $sally;
-  protected $request;
+  public $view;
 
   public function __construct()
   {
-    $this->request = Sally_Request::getInstance();
     $this->view = Sally_View::getInstance();
   }
 
   public function model($name)
   {
-    $sally = Sally::getInstance();
-    list($model_file, $model_class_name) = $sally->getFile($name, 'model');
-    require_once $model_file;
-    return new $model_class_name();
+    $model = Sally_Model::getInstance();
+    return $model->load($name);
+  }
+
+  public function helper($name)
+  {
+    $helper = Sally_Helper::getInstance();
+    return $helper->load($name);
   }
 }

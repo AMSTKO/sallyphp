@@ -2,12 +2,9 @@
 
 class Sally_View
 {
-  public $_controllerView = true;
+  private $_controllerView = true;
+  private $_data = array();
   protected static $_instance = false;
-
-  public function __construct()
-  {
-  }
 
   public static function getInstance()
   {
@@ -17,11 +14,37 @@ class Sally_View
     return self::$_instance;
   }
 
-  public function load($name)
+  public function load($name, $data = null, $main = false)
   {
     $sally = Sally::getInstance();
     list($view_file, $view_fileName) = $sally->getFile($name, 'view');
+    ob_start();
+
+    if (is_array($data)) {
+      foreach ($data as $key => $row) {
+        $$key = $row;
+      }
+    }
+
+    if ($main) {
+      foreach ($this->_data as $key => $row) {
+        $$key = $row;
+      }
+    }
+
     require_once $view_file;
+    $out = ob_get_contents();
+    ob_end_clean();
+    return $out;
+  }
+
+  public function setData($data, $value = null)
+  {
+    if (is_string($data)) {
+      $this->_data[$data] = $value;
+    } elseif (is_array($data)) {
+      $this->_data = array_merge($this->_data, $data);
+    }
   }
 
   public function disableControllerView()

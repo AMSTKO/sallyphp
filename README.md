@@ -42,23 +42,80 @@ Structure
 Inventaire
 ----------
 
-**Principal**
+**Utiles**
 
 - $sally = Sally::getInstance();
 - $acl = Sally_Acl::getInstance();
 - $db = Sally_Db::getInstance();
 - $request = Sally_Request::getInstance();
 - $layout = Sally_Layout::getInstance();
-- $view = Sally_View::getInstance();
 - $helper = Sally_Helper::getInstance();
 - $session = Sally_Session::getInstance();
 - $trafficker = Sally_Trafficker::getInstance();
-- $view = Sally_View::getInstance();
 
 **Divers**
 
 - $rijndael = Sally_Rijndael::getInstance();
 - $PHPMailer = Sally_PHPMailer::getInstance();
+
+Note
+----
+
+En ajoutant un slash devant le nom d'un élément à charger (helper, view, model, layout ou trafficker) celui ci sera cherché dans son répertoire à la racine de l'application. Sinon il sera cherché dans son répertoire contenu dans le module demandé par la requête.
+
+Sally_Controller
+----------------
+
+Depuis un controleur vous pouvez appeler les méthodes suivantes.
+
+**Charger un model**
+
+    $this->model('/user'); // return Class Object
+
+**Transmettre des variables dans la vue principale**
+
+    $this->view->setData('name1', 'value1');
+
+    // or
+
+    $this->view->setData(array(
+      'name1' => 'value1',
+      'name2' => 'value2'
+    ));
+
+    // in view file : echo $name1; // display value1
+
+**Charger une vue**
+
+    echo $this->view->load('/sidebar', array(
+      'login' => 'Mr.Ping'
+    ));
+
+    // in view file : echo $login; // display Mr.Ping
+
+**Charger un helper**
+
+    $this->helper('/tostrong');
+
+Si vous ajoutez votre méthode __contruct au controleur alors il faudra faire référénce au contructeur parent :
+
+    class IndexController extends Sally_Controller
+    {
+      public function __construct()
+      {
+        parent::__construct();
+      }
+    }
+
+
+Sally_Model
+-----------
+
+Depuis un model vous pouvez appeler les méthodes suivantes.
+
+**Charger un model dans un model**
+
+    $this->load('/other_model'); // return Class Object
 
 
 Sally
@@ -242,8 +299,6 @@ Sally_Layout
 
 **Définir un layout**
 
-En ajoutant un slash devant le nom du layout celui ci sera cherché dans la répertoire *layouts* à la racine de l'application. Sinon il sera cherché dans le répertoire *layouts* du module demandé par la requête.
-
     $layout->set('/home');
 
 **Désactiver le layout**
@@ -291,8 +346,6 @@ Les helpers sont de basiques fonctions PHP appelable n'importe ou.
     $helper = Sally_Helper::getInstance();
 
 **Charger un helper**
-
-En ajoutant un slash devant le nom du halper celui ci sera cherché dans la répertoire *helpers* à la racine de l'application. Sinon il sera cherché dans le répertoire *helpers* du module demandé par la requête.
 
     $helper->load('helper_name');
 

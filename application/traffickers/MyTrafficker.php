@@ -24,8 +24,4 @@ class MyTrafficker extends Sally_Trafficker_Abstract
       $this->view->disableControllerView();
     }
   }
-
-  function preDelivery()
-  {
-  }
 }
