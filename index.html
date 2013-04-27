@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=640" />
+
+    <link rel="stylesheet" href="stylesheets/core.css" media="screen"/>
+    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)"/>
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+
+    <script type="text/javascript" src="javascripts/modernizr.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#main_content').headsmart()
+      })
+    </script>
+    <title>Sallyphp by MrPing</title>
+  </head>
+
+  <body>
+    <a id="forkme_banner" href="https://github.com/MrPing/sallyphp">View on GitHub</a>
+    <div class="shell">
+
+      <header>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <h1>Sallyphp</h1>
+            <h2>Sally : PHP HMVC Framework</h2>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+      </header>
+
+      <section id="downloads">
+        <span class="inner">
+          <a href="https://github.com/MrPing/sallyphp/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/MrPing/sallyphp/tarball/master" class="tgz"><em>download</em> .TGZ</a>
+        </span>
+      </section>
+
+
+      <span class="banner-fix"></span>
+
+
+      <section id="main_content">
+        <h1>SallyPHP</h1>
+
+<p>SallyPHP est un framework permettant de développer des applications web sur les modèles MVC et HMVC (hierarchical model–view–controller). Il fournit des outils simples, légés et rapides à prendre en main afin de créer des applications riches et structurées.</p>
+
+<h2>Hello world!</h2>
+
+<p>Caractéristes de l'exemple fournit avec les sources :</p>
+
+<ul>
+<li>Structure HMVC (répertoire modules, contenant plusieurs sous structures MVC)</li>
+<li>Près à être utilisé en local (<a href="http://127.0.0.1/sallyphp/index.php">http://127.0.0.1/sallyphp/index.php</a>)</li>
+</ul><p>Configuration Apache :</p>
+
+<pre><code>Alias /sallyphp "/var/www/sallyphp/public"
+&lt;Directory "/var/www/sallyphp/public"&gt;
+    SetEnv environnement local
+&lt;/Directory&gt;
+</code></pre>
+
+<h2>Structure</h2>
+
+<pre><code>application/
+  helpers/
+  layouts/
+  models/
+  modules/ 
+    admin/
+      controllers/
+      view/
+    cli/
+      controllers/
+    site/
+      controllers/
+      view/
+  traffickers/
+public/
+  static/
+sallyphp/
+</code></pre>
+
+<h2>Inventaire</h2>
+
+<p><strong>Utiles</strong></p>
+
+<ul>
+<li>$sally = Sally::getInstance();</li>
+<li>$acl = Sally_Acl::getInstance();</li>
+<li>$db = Sally_Db::getInstance();</li>
+<li>$request = Sally_Request::getInstance();</li>
+<li>$layout = Sally_Layout::getInstance();</li>
+<li>$helper = Sally_Helper::getInstance();</li>
+<li>$session = Sally_Session::getInstance();</li>
+<li>$trafficker = Sally_Trafficker::getInstance();</li>
+</ul><p><strong>Divers</strong></p>
+
+<ul>
+<li>$rijndael = Sally_Rijndael::getInstance();</li>
+<li>$PHPMailer = Sally_PHPMailer::getInstance();</li>
+</ul><h2>Note</h2>
+
+<p>En ajoutant un slash devant le nom d'un élément à charger (helper, view, model, layout ou trafficker) celui ci sera cherché dans son répertoire à la racine de l'application. Sinon il sera cherché dans son répertoire depus le module demandé par la requête.</p>
+
+<h2>Sally_Controller</h2>
+
+<p>Depuis un controleur vous pouvez appeler les méthodes suivantes.</p>
+
+<p><strong>Charger un model</strong></p>
+
+<pre><code>$this-&gt;model('/user'); // return Class Object
+</code></pre>
+
+<p><strong>Transmettre des variables dans la vue principale</strong></p>
+
+<pre><code>$this-&gt;view-&gt;setData('name1', 'value1');
+
+// or
+
+$this-&gt;view-&gt;setData(array(
+  'name1' =&gt; 'value1',
+  'name2' =&gt; 'value2'
+));
+
+// in view file : echo $name1; // display value1
+</code></pre>
+
+<p><strong>Charger une vue</strong></p>
+
+<pre><code>echo $this-&gt;view-&gt;load('/sidebar', array(
+  'login' =&gt; 'Mr.Ping'
+));
+
+// in view file : echo $login; // display Mr.Ping
+</code></pre>
+
+<p><strong>Charger un helper</strong></p>
+
+<pre><code>$this-&gt;helper('/tostrong');
+</code></pre>
+
+<p><strong>Redirection</strong></p>
+
+<pre><code>$this-&gt;redirect('http://google.fr');
+</code></pre>
+
+<p><strong>__contruct</strong></p>
+
+<p>Si vous ajoutez votre méthode __contruct au controleur alors il faudra faire référence au contructeur parent :</p>
+
+<pre><code>class IndexController extends Sally_Controller
+{
+  public function __construct()
+  {
+    parent::__construct();
+  }
+}
+</code></pre>
+
+<h2>Sally_Model</h2>
+
+<p>Depuis un model vous pouvez appeler les méthodes suivantes.</p>
+
+<p><strong>Charger un model dans un model</strong></p>
+
+<pre><code>$this-&gt;load('/other_model'); // return Class Object
+</code></pre>
+
+<h2>Sally</h2>
+
+<p><strong>Récupérer l'instance</strong></p>
+
+<pre><code>$sally = Sally::getInstance();
+</code></pre>
+
+<p><strong>Récupérer la réponse</strong></p>
+
+<p>Par exemple il peut être utile de récupérer la réponse pour la modifier dans un <em>trafficker</em>.</p>
+
+<pre><code>$sally-&gt;getOut();
+</code></pre>
+
+<p><strong>Écraser la réponse</strong></p>
+
+<pre><code>$sally-&gt;setOut('404 Not Found');
+</code></pre>
+
+<p><strong>Récupérer un retour de controleur</strong></p>
+
+<p>Avec Sally les controleurs ont la possibilité de retourner des valeurs. Vous pourriez récupérer ces valeurs dans un <em>trafficker</em> pour les modifier (ajouter un token...).</p>
+
+<pre><code>$sally-&gt;getDataBack();
+</code></pre>
+
+<h2>Sally_Acl</h2>
+
+<p><strong>Récupérer l'instance</strong></p>
+
+<pre><code>$acl = Sally_Acl::getInstance();
+</code></pre>
+
+<p><strong>Ajouter des rôles</strong></p>
+
+<pre><code>$acl-&gt;addRole('guest');
+$acl-&gt;addRole('user', 'guest');
+</code></pre>
+
+<p><strong>Ajouter des ressources</strong></p>
+
+<pre><code>$acl-&gt;AddRessource('public');
+$acl-&gt;AddRessource('account');
+</code></pre>
+
+<p><strong>Ajouter des autorisations</strong></p>
+
+<pre><code>$acl-&gt;allow('guest', 'public');
+$acl-&gt;allow('guest', 'account', array('signin', 'signup', 'request'));
+$acl-&gt;allow('user', 'account');
+</code></pre>
+
+<p><strong>Ajouter une restriction</strong></p>
+
+<pre><code>$acl-&gt;deny('guest', 'public', array('action_name'));
+</code></pre>
+
+<p><strong>Vérifier si un utilisateur a le droit d'accéder à une ressource</strong></p>
+
+<pre><code>if (!$acl-&gt;isAllowed($role_name, $ressource_name, $action_name)) {
+  exit;
+}
+</code></pre>
+
+<h2>Sally_Db</h2>
+
+<p><strong>Récupérer l'instance</strong></p>
+
+<pre><code>$db = Sally_Db::getInstance();
+</code></pre>
+
+<p><strong>SGBD pris en charges</strong></p>
+
+<ul>
+<li>Mysql (avec les API suivantes : PDO)</li>
+</ul><p><strong>Ajouter une connexion à une base de données</strong></p>
+
+<pre><code>$db-&gt;add(array(
+  'type' =&gt; 'mysql_pdo',
+  'host' =&gt; '127.0.0.1',
+  'dbname' =&gt; 'db_name',
+  'user' =&gt; 'db_user',
+  'passwd' =&gt; 'db_pasword'
+));
+</code></pre>
+
+<p><strong>Ajouter d'autres bases de données</strong></p>
+
+<p>Sally_Db gère les multi-connexions avec PDO. Il suffit d'ajouter le nom de la connexion lors de l'ajout. Par defaut le nom de la connexion est <em>default</em></p>
+
+<pre><code>$db-&gt;add(array(
+  'name' =&gt; 'principal'
+  'type' =&gt; 'mysql_pdo',
+  'host' =&gt; '127.0.0.1',
+  'dbname' =&gt; 'db_name',
+  'user' =&gt; 'db_user',
+  'passwd' =&gt; 'db_pasword'
+));
+
+$db-&gt;add(array(
+  'name' =&gt; 'other'
+  'type' =&gt; 'mysql_pdo',
+  'host' =&gt; '192.168.1.12',
+  'dbname' =&gt; 'db_name',
+  'user' =&gt; 'db_user',
+  'passwd' =&gt; 'db_pasword'
+));
+</code></pre>
+
+<p><strong>Récupérer une instance de connexion</strong></p>
+
+<p>Sans argument il vous sera renvoyé la première connexion, <em>default</em>.</p>
+
+<pre><code>$db = Sally_Db::getConnection();
+</code></pre>
+
+<p>Sinon il suffit de préciser le nom de la connexion.</p>
+
+<pre><code>$db = Sally_Db::getConnection('other');
+</code></pre>
+
+<p><strong>Exemple de requête avec PDO</strong></p>
+
+<pre><code>public function getEmail()
+{
+  $db = Sally_Db::getConnection();
+  $stmt = $db-&gt;prepare('SELECT email FROM users WHERE id = :id LIMIT 1');
+  $stmt-&gt;execute(array('id' =&gt; 1));
+  $result = $stmt-&gt;fetch();
+  return $result['email'];
+}
+</code></pre>
+
+<h2>Sally_Request</h2>
+
+<p>Les requêtes peuvent être faites sous différentes formes :</p>
+
+<ul>
+<li>/module/controller/action</li>
+<li>/controller/action (en définissant le module par defaut dans la conf)</li>
+<li>/controller/action/dataName1/dataValue1/dataName2/dataValue2</li>
+</ul><p><strong>Récupérer l'instance</strong></p>
+
+<pre><code>$request = Sally_Request::getInstance();
+</code></pre>
+
+<p><strong>Récupérer les valeurs des données passées dans la requête</strong></p>
+
+<pre><code>$request-&gt;getRequest('dataName1'); // False si inexistante
+</code></pre>
+
+<p><strong>Écraser des valeurs passées dans la requête</strong></p>
+
+<pre><code>$request-&gt;setRequest('dataName1', 'dataValue1');
+</code></pre>
+
+<p><strong>Récupérer des données $_POST</strong></p>
+
+<pre><code>$request-&gt;getPost('name'); // value or false
+</code></pre>
+
+<p><strong>Redéfinir le module</strong></p>
+
+<pre><code>$request-&gt;setModule('module_name');
+</code></pre>
+
+<p><strong>Redéfinir le controleur</strong></p>
+
+<pre><code>$request-&gt;setController('controller_name');
+</code></pre>
+
+<p><strong>Redéfinir l'action</strong></p>
+
+<pre><code>$request-&gt;setAction('action_name');
+</code></pre>
+
+<p><strong>Récupérer le nom du module en cours</strong></p>
+
+<pre><code>$request-&gt;getModule();
+</code></pre>
+
+<p><strong>Récupérer le nom du controleur en cours</strong></p>
+
+<pre><code>$request-&gt;getController();
+</code></pre>
+
+<p><strong>Récupérer le nom de l'action en cours</strong></p>
+
+<pre><code>$request-&gt;getAction();
+</code></pre>
+
+<h2>Sally_Layout</h2>
+
+<p><strong>Récupérer l'instance</strong></p>
+
+<pre><code>$layout = Sally_Layout::getInstance();
+</code></pre>
+
+<p><strong>Définir un layout</strong></p>
+
+<pre><code>$layout-&gt;set('/home');
+</code></pre>
+
+<p><strong>Désactiver le layout</strong></p>
+
+<pre><code>$layout-&gt;disableLayout();
+</code></pre>
+
+<p><strong>Vérifier si le layout n'a pas été désactivé</strong></p>
+
+<pre><code>$layout-&gt;isEnabled(); // Boolean
+</code></pre>
+
+<p><strong>Vérifier si un layout est définit</strong></p>
+
+<pre><code>$layout-&gt;isDefined(); // Boolean
+</code></pre>
+
+<p><strong>Transmettre des variables dans le layout</strong></p>
+
+<pre><code>$&gt;layout-&gt;setData('name1', 'value1');
+
+// or
+
+$layout-&gt;setData(array(
+  'name1' =&gt; 'value1',
+  'name2' =&gt; 'value2'
+));
+
+// in view file : echo $name1; // display value1
+</code></pre>
+
+<h2>Sally_View</h2>
+
+<p><strong>Récupérer l'instance</strong></p>
+
+<pre><code>$view = Sally_View::getInstance();
+</code></pre>
+
+<p><strong>Désactiver l'appel automatique d'une vue pour l'action du controleur</strong></p>
+
+<pre><code>$view-&gt;disableControllerView();
+</code></pre>
+
+<p><strong>Vérifier si l'appel automatique d'une vue n'a pas été désactivé</strong></p>
+
+<pre><code>$view-&gt;controllerViewIsEnabled(); // Boolean
+</code></pre>
+
+<h2>Sally_Session</h2>
+
+<p>Sally_Session est assez specifique à votre projet, vous pouvez jetter un oeil a ce qui a été fait.</p>
+
+<h2>Sally_Helper</h2>
+
+<p>Les helpers sont de basiques fonctions PHP appelable n'importe ou.</p>
+
+<p><strong>Récupérer l'instance</strong></p>
+
+<pre><code>$helper = Sally_Helper::getInstance();
+</code></pre>
+
+<p><strong>Charger un helper</strong></p>
+
+<pre><code>$helper-&gt;load('helper_name');
+</code></pre>
+
+<p><strong>Exemple de helper : toStrongHelper.php</strong></p>
+
+<pre><code>&lt;?php
+function toStrong($text)
+{
+  echo '&lt;strong&gt;' . $text . '&lt;/strong&gt;';
+}
+</code></pre>
+
+<h2>Sally_Trafficker</h2>
+
+<p>Le trafiquant permet d'agir à 2 endroits :</p>
+
+<ul>
+<li>avant l'appel d'un controleur;</li>
+<li>avant de retourner le contenu de la requête;</li>
+</ul><p><strong>avant l'appel d'un controleur : preDeal() {}</strong></p>
+
+<p>Intercepter la requête au début du traitement.</p>
+
+<ul>
+<li>redéfinir le nom du module, du controleur ou de l'action pour afficher une autre page que prévu;</li>
+<li>vérifier les droits ACL et faire un choix d'affichage ou redirection à ce moment la;</li>
+<li>définir un layout en fonction de l'utilisateur;</li>
+<li>afficher une page d'erreur;</li>
+<li>...</li>
+</ul><p><strong>avant de retourner le contenu de la requête : preDelivery() {}</strong></p>
+
+<p>Trafiquer le retour de la requête au dernier moment.</p>
+
+<ul>
+<li>ajouter une token;</li>
+<li>ajouter une information (temps de traitement...);</li>
+<li>...</li>
+</ul><p><strong>Récupérer l'instance</strong></p>
+
+<pre><code>$trafficker = Sally_Trafficker::getInstance();
+</code></pre>
+
+<p><strong>Charger un trafiquant</strong></p>
+
+<pre><code>$trafficker-&gt;add('my');
+</code></pre>
+
+<p><strong>Exemple de trafiquant : MyTrafficker.php</strong></p>
+
+<p>Je vais avoir beaucoup de requêtes ajax sur mon projet. Alors je décide que chaque controleur aura une action nommée "request" qui permettra de traiter ces requêtes. Dans un premier temps (preDeal) on désactive le layout et la vue par defaut pour l'action "request". Une fois la requête prête à être renvoyée (preDelivery) on ajoute des valeurs (ici un token).</p>
+
+<pre><code>class MyTrafficker extends Sally_Trafficker_Abstract
+{
+  function __construct()
+  {
+    $this-&gt;layout = Sally_Layout::getInstance();
+    $this-&gt;view = Sally_View::getInstance();
+    $this-&gt;request = Sally_Request::getInstance();
+  }
+
+  function preDeal()
+  {
+    $this-&gt;layout-&gt;set('/home');
+    if ($this-&gt;request-&gt;getAction() == 'request') {
+      $this-&gt;layout-&gt;disableLayout();
+      $this-&gt;view-&gt;disableControllerView();
+    }
+  }
+
+  function preDelivery()
+  {
+    if ($this-&gt;request-&gt;getAction() == 'request') {
+      $sally = Sally::getInstance();
+      $sally-&gt;setOut(json_encode(array_merge(array(
+        'token' =&gt; 12456
+      ), $sally-&gt;getDataBack())));
+    }
+  }
+}
+</code></pre>
+
+<h2>Sally_Rijndael</h2>
+
+<p><strong>Récupérer l'instance</strong></p>
+
+<pre><code>$rijndael = Sally_Rijndael::getInstance();
+</code></pre>
+
+<p><strong>Définir une clef de cryptage</strong></p>
+
+<pre><code>$rijndael-&gt;setKey('your key');
+</code></pre>
+
+<p><strong>Crypter des données</strong></p>
+
+<pre><code>$rijndael-&gt;encrypt('data');
+</code></pre>
+
+<p><strong>Décrypter des données</strong></p>
+
+<pre><code>$rijndael-&gt;decrypt('dataCrypted');
+</code></pre>
+      </section>
+
+      <footer>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <p>this project by <a href="https://github.com/MrPing">MrPing</a> can be found on <a href="https://github.com/MrPing/sallyphp">GitHub</a></p>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
+        <span class="octocat"></span>
+      </footer>
+
+    </div>
+
+    
+  </body>
+</html>
