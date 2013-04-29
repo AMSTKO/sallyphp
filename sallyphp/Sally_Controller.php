@@ -26,4 +26,25 @@ class Sally_Controller
     header('Location: ' . $url);
     exit;
   }
+
+  public function forward($action = 'index', $controller = null, $module = null)
+  {
+    $sally = Sally::getInstance();
+    $request = Sally_Request::getInstance();
+
+    if ($module == null) {
+      $request->setModule($request->getModule());
+    } else {
+      $request->setModule($module);
+    }
+
+    if ($controller == null) {
+      $request->setController($request->getController());
+    } else {
+      $request->setController($controller);
+    }
+
+    $request->setAction($action);
+    $sally->enableForward();
+  }
 }

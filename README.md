@@ -101,6 +101,22 @@ Depuis un controleur vous pouvez appeler les méthodes suivantes.
 
     $this->redirect('http://google.fr');
 
+**Rediriger vers une autre action dans la même requête**
+
+    $this->forward($action, $controleur, $module);
+
+Il est nécessaire de préciser au moins l'action (controleur et module seront ceux en cours). En accédant à l'index il y aura une redirection transparente vers l'action "maintenance" du controleur "erreur".
+
+    class IndexController extends Sally_Controller
+    {
+      public function index()
+      {
+        $this->forward('maintenance', 'erreur');
+      }
+    }
+
+
+
 **__contruct**
 
 Si vous ajoutez votre méthode __contruct au controleur alors il faudra faire référence au contructeur parent :

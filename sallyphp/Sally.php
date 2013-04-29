@@ -9,6 +9,7 @@ class Sally
 
   private $_out = null;
   private $_dataBack = null;
+  private $_forward = false;
   private $_cfg = array();
   private $_module = array();
   protected static $_instance = false;
@@ -169,7 +170,7 @@ class Sally
     list($controller_file, $controller_class_name) = $this->getFile($this->request->getController(), 'controller');
 
     ob_start();
-    require $controller_file;
+    require_once $controller_file;
     $controller = new $controller_class_name();
 
     if (!method_exists($controller, $this->request->getAction())) {
@@ -177,6 +178,12 @@ class Sally
     }
 
     $this->_dataBack = $controller->{$this->request->getAction()}();
+
+    if ($this->_forward) {
+      ob_end_clean();
+      $this->disableForward();
+      return $this->call();
+    }
 
     $view = Sally_View::getInstance();
     if ($view->controllerViewIsEnabled()) {
@@ -236,6 +243,16 @@ class Sally
     $instance = self::getInstance();
     $instance->_cfg[$name] = $value;
     return true;
+  }
+
+  public function enableForward()
+  {
+    $this->_forward = true;
+  }
+
+  public function disableForward()
+  {
+    $this->_forward = false;
   }
 
   public function exception($e)
