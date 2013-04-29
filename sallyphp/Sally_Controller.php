@@ -7,6 +7,7 @@ class Sally_Controller
   public function __construct()
   {
     $this->view = Sally_View::getInstance();
+    $this->request = Sally_Request::getInstance();
   }
 
   public function model($name)
@@ -30,21 +31,20 @@ class Sally_Controller
   public function forward($action = 'index', $controller = null, $module = null)
   {
     $sally = Sally::getInstance();
-    $request = Sally_Request::getInstance();
 
     if ($module == null) {
-      $request->setModule($request->getModule());
+      $this->request->setModule($this->request->getModule());
     } else {
-      $request->setModule($module);
+      $this->request->setModule($module);
     }
 
     if ($controller == null) {
-      $request->setController($request->getController());
+      $this->request->setController($this->request->getController());
     } else {
-      $request->setController($controller);
+      $this->request->setController($controller);
     }
 
-    $request->setAction($action);
+    $this->request->setAction($action);
     $sally->enableForward();
   }
 }

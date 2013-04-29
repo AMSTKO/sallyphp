@@ -2,6 +2,7 @@
 
 class Sally_Trafficker
 {
+  private $_preDealExec = false;
   private $traffickers = array();
   protected static $_instance = false;
 
@@ -23,6 +24,7 @@ class Sally_Trafficker
     foreach ($this->traffickers as $object) {
       $object->preDeal();
     }
+    $this->_preDealExec = true;
   }
 
   public function preDelivery()
@@ -39,5 +41,10 @@ class Sally_Trafficker
     require_once $trafficker_file;
     $trafficker = new $trafficker_name();
     array_push($this->traffickers, $trafficker);
+  }
+
+  public function preDealIsExec()
+  {
+    return $this->_preDealExec;
   }
 }

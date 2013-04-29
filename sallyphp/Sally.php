@@ -165,7 +165,10 @@ class Sally
   private function call()
   {
     $trafficker = Sally_Trafficker::getInstance();
-    $trafficker->preDeal();
+
+    if (!$trafficker->preDealIsExec()) {
+      $trafficker->preDeal();
+    }
 
     list($controller_file, $controller_class_name) = $this->getFile($this->request->getController(), 'controller');
 
