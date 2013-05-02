@@ -1,4 +1,12 @@
 <?php
+/**
+ * SallyPHP
+ *
+ * @link      https://github.com/MrPing/sallyphp
+ * @copyright Copyright (c) 2013, Jonathan Amsellem.
+ * @license   https://github.com/MrPing/sallyphp#license
+ */
+
 include __DIR__ . '/Sally.php';
 include __DIR__ . '/Sally_Request.php';
 include __DIR__ . '/Sally_Db.php';

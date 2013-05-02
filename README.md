@@ -8,7 +8,7 @@ SallyPHP est un framework permettant de développer des applications web sur les
 Caractéristes de l'exemple fournit avec les sources :
 
 - Structure HMVC (répertoire modules, contenant plusieurs sous structures MVC)
-- Près à être utilisé en local (http://127.0.0.1/sallyphp/index.php)
+- Près à être utilisé en local (http://127.0.0.1/sallyphp/index.php/index)
 
 Configuration Apache :
 
@@ -21,15 +21,33 @@ Sommaire
 --------
 
 - [Structure](#structure)
+- [Inventaire](#inventaire)
+- [Notes](#notes)
+
+- [Sally](#sally)
+- [Sally_Controller](#sally_controller)
+- [Sally_Model](#sally_model)
+- [Sally_View](#sally_view)
+- [Sally_Layout](#sally_layout)
+- [Sally_Acl](#sally_acl)
+- [Sally_Db](#sally_db)
+- [Sally_Request](#sally_request)
+- [Sally_Helper](#sally_helper)
+- [Sally_Session](#sally_session)
+- [Sally_Trafficker](#sally_trafficker)
+- [Sally_Rijndael](#sally_rijndael)
+- [Sally_PHPMailer](#sally_phpmailer)
+
+- [License](#license)
 
 Structure
 ---------
 
     application/
       helpers/
-      layouts/
+      layouts/ (templates)
       models/
-      modules/ 
+      modules/
         admin/
           controllers/
           view/
@@ -40,42 +58,89 @@ Structure
           view/
       traffickers/
     public/
-      static/
-    sallyphp/
+      static/ (img, js, css...)
+    sallyphp/ (class of Sally)
 
 
 Inventaire
 ----------
 
-**Utiles**
+Liste des class auxquelles vous pourrez avoir besoin au cours de votre développement.
 
-- $sally = Sally::getInstance();
-- $acl = Sally_Acl::getInstance();
-- $db = Sally_Db::getInstance();
-- $request = Sally_Request::getInstance();
-- $layout = Sally_Layout::getInstance();
-- $helper = Sally_Helper::getInstance();
-- $session = Sally_Session::getInstance();
-- $trafficker = Sally_Trafficker::getInstance();
+    $sally = Sally::getInstance();
+    $acl = Sally_Acl::getInstance();
+    $db = Sally_Db::getInstance();
+    $request = Sally_Request::getInstance();
+    $layout = Sally_Layout::getInstance();
+    $helper = Sally_Helper::getInstance();
+    $session = Sally_Session::getInstance();
+    $trafficker = Sally_Trafficker::getInstance();
 
 **Divers**
 
-- $rijndael = Sally_Rijndael::getInstance();
-- $PHPMailer = Sally_PHPMailer::getInstance();
+    $rijndael = Sally_Rijndael::getInstance();
+    $PHPMailer = Sally_PHPMailer::getInstance();
 
-Note
-----
+Notes
+-----
+
+**slash devant éléments à charger**
 
 En ajoutant un slash devant le nom d'un élément à charger (helper, view, model, layout ou trafficker) celui ci sera cherché dans son répertoire à la racine de l'application. Sinon il sera cherché dans son répertoire depus le module demandé par la requête.
+
+
+Sally
+-----
+
+**Récupérer l'instance**
+
+    $sally = Sally::getInstance();
+
+**Récupérer et écraser la réponse de la requête**
+
+*Retourner le contenu qui sera envoyé au navigateur :*
+
+    $sally->getOut();
+
+*Écraser ce contenu pour renvoyer autre chose :*
+
+    $sally->setOut('your content...');
+
+Exemple d'utilisation : Dans un *trafficker*, avant de délivrer le contenu au navigateur, vous pourriez retirer tous les espaces d'indendations pour économiser de la bande passante.
+
+    class MyTrafficker extends Sally_Trafficker_Abstract
+    {
+      function preDelivery()
+      {
+        $sally->setOut(preg_replace('/\s\s+/', ' ', $sally->getOut());
+      }
+    }
+
+**Récupérer un retour de controleur**
+
+Les controleurs ont la possibilité de retourner des valeurs. Vous pourriez récupérer ces valeurs dans un *trafficker* pour les modifier (ajouter un token... exemple disponible sur la documentation du trafficker).
+
+    $sally->getDataBack();
+
 
 Sally_Controller
 ----------------
 
-Depuis un controleur vous pouvez appeler les méthodes suivantes.
+**__contruct**
+
+Si vous ajoutez votre méthode __contruct au controleur alors il faudra faire référence au contructeur parent :
+
+    class IndexController extends Sally_Controller
+    {
+      public function __construct()
+      {
+        parent::__construct();
+      }
+    }
 
 **Charger un model**
 
-    $this->model('/user'); // return Class Object
+    $this->model('/user'); // return class object
 
 **Transmettre des variables dans la vue principale**
 
@@ -110,7 +175,7 @@ Depuis un controleur vous pouvez appeler les méthodes suivantes.
 
     $this->forward($action, $controleur, $module);
 
-Il est nécessaire de préciser au moins l'action (controleur et module seront ceux en cours). En accédant à l'index il y aura une redirection transparente vers l'action "maintenance" du controleur "erreur".
+Il est nécessaire de préciser au moins l'action (controleur et module seront ceux en cours). Exemple :
 
     class IndexController extends Sally_Controller
     {
@@ -120,53 +185,69 @@ Il est nécessaire de préciser au moins l'action (controleur et module seront c
       }
     }
 
-
-
-**__contruct**
-
-Si vous ajoutez votre méthode __contruct au controleur alors il faudra faire référence au contructeur parent :
-
-    class IndexController extends Sally_Controller
-    {
-      public function __construct()
-      {
-        parent::__construct();
-      }
-    }
+En accédant à l'index il y aura une redirection transparente vers l'action "maintenance" du controleur "erreur".
 
 
 Sally_Model
 -----------
 
-Depuis un model vous pouvez appeler les méthodes suivantes.
+**Charger un model depuis un model**
 
-**Charger un model dans un model**
-
-    $this->load('/other_model'); // return Class Object
+    $this->load('/other_model'); // return class object
 
 
-Sally
------
+Sally_View
+----------
 
 **Récupérer l'instance**
 
-    $sally = Sally::getInstance();
+    $view = Sally_View::getInstance();
 
-**Récupérer la réponse**
+**Désactiver l'appel automatique d'une vue pour l'action du controleur**
 
-Par exemple il peut être utile de récupérer la réponse pour la modifier dans un *trafficker*.
+    $view->disableControllerView();
 
-    $sally->getOut();
+**Vérifier si l'appel automatique d'une vue n'a pas été désactivé**
 
-**Écraser la réponse**
+    $view->controllerViewIsEnabled(); // Boolean
 
-    $sally->setOut('404 Not Found');
 
-**Récupérer un retour de controleur**
+Sally_Layout
+------------
 
-Avec Sally les controleurs ont la possibilité de retourner des valeurs. Vous pourriez récupérer ces valeurs dans un *trafficker* pour les modifier (ajouter un token...).
+**Récupérer l'instance**
 
-    $sally->getDataBack();
+    $layout = Sally_Layout::getInstance();
+
+**Définir un layout**
+
+    $layout->set('/home');
+
+**Désactiver le layout**
+
+    $layout->disableLayout();
+
+**Vérifier si le layout n'a pas été désactivé**
+
+    $layout->isEnabled(); // Boolean
+
+**Vérifier si un layout est définit**
+
+    $layout->isDefined(); // Boolean
+
+**Transmettre des variables dans le layout**
+
+    $>layout->setData('name1', 'value1');
+
+    // or
+
+    $layout->setData(array(
+      'name1' => 'value1',
+      'name2' => 'value2'
+    ));
+
+    // in view file : echo $name1; // display value1
+
 
 Sally_Acl
 ---------
@@ -211,7 +292,7 @@ Sally_Db
 
 **SGBD pris en charges**
 
-- Mysql (avec les API suivantes : PDO)
+- Mysql (avec PDO)
 
 **Ajouter une connexion à une base de données**
 
@@ -257,11 +338,11 @@ Sinon il suffit de préciser le nom de la connexion.
 
 **Exemple de requête avec PDO**
 
-    public function getEmail()
+    public function getEmail($user)
     {
       $db = Sally_Db::getConnection();
       $stmt = $db->prepare('SELECT email FROM users WHERE id = :id LIMIT 1');
-      $stmt->execute(array('id' => 1));
+      $stmt->execute(array('id' => $user));
       $result = $stmt->fetch();
       return $result['email'];
     }
@@ -317,63 +398,41 @@ Les requêtes peuvent être faites sous différentes formes :
     $request->getAction();
 
 
-Sally_Layout
-------------
-
-**Récupérer l'instance**
-
-    $layout = Sally_Layout::getInstance();
-
-**Définir un layout**
-
-    $layout->set('/home');
-
-**Désactiver le layout**
-
-    $layout->disableLayout();
-
-**Vérifier si le layout n'a pas été désactivé**
-
-    $layout->isEnabled(); // Boolean
-
-**Vérifier si un layout est définit**
-
-    $layout->isDefined(); // Boolean
-
-**Transmettre des variables dans le layout**
-
-    $>layout->setData('name1', 'value1');
-
-    // or
-
-    $layout->setData(array(
-      'name1' => 'value1',
-      'name2' => 'value2'
-    ));
-
-    // in view file : echo $name1; // display value1
-
-
-Sally_View
-----------
-
-**Récupérer l'instance**
-
-    $view = Sally_View::getInstance();
-
-**Désactiver l'appel automatique d'une vue pour l'action du controleur**
-
-    $view->disableControllerView();
-
-**Vérifier si l'appel automatique d'une vue n'a pas été désactivé**
-
-    $view->controllerViewIsEnabled(); // Boolean
-
-
 Sally_Session
 -------------
 
-Sally_Session est assez specifique à votre projet, vous pouvez jetter un oeil a ce qui a été fait.
+Sally créer un cookie dont la valeur est cryptée avec l'ago Rijndael en 128b (MCRYPT_RIJNDAEL_128). La valeur correspond à un tableau sérialisé contenant vos informations.
+
+**Récupérer l'instance**
+
+    $session = Sally_Session::getInstance();
+
+**Savoir si l'utilisateur avait déjà le cookie**
+
+    $session->hasCookie(); // Boolean
+
+**Définir une valeur dans le cookie**
+
+    $session->set('logged', 1);
+
+**Récupérer une valeur du cookie**
+
+    $session->get('logged');
+
+**Récupérer le tableau content toutes les valeurs du cookie**
+
+    $session->getContent();
+
+**Écraser tous le contenu du cookie**
+
+    $session->setContent();
+
+    // ou
+
+    $session->setContent(array(
+      'logged' => 1,
+      'username' => 'Pingoo'
+    ));
 
 
 Sally_Helper
@@ -486,17 +545,48 @@ Sally_Rijndael
     $rijndael->decrypt('dataCrypted');
 
 
+Sally_PHPMailer
+--------------
+
+Pour d'avantage de documentation rendez-vous sur https://github.com/Synchro/PHPMailer
+
+**Récupérer l'instance**
+
+    $PHPMailer = Sally_PHPMailer::getInstance();
+
+**Configuration**
+
+    $PHPMailer->IsSMTP();
+    $PHPMailer->Host = 'in.mailjet.com';
+    $PHPMailer->Port = 587;
+    $PHPMailer->SMTPAuth = true;
+    $PHPMailer->Username = 'username';
+    $PHPMailer->Password = 'password';
+    $PHPMailer->SMTPSecure = 'tls';
+
+**Envoyer un e-mail**
+
+    $PHPMailer->From = 'from@example.com';
+    $PHPMailer->AddAddress('ellen@example.com');
+    $PHPMailer->IsHTML(true);
+    $PHPMailer->Subject = 'Here is the subject';
+    $PHPMailer->Body    = 'This is the HTML message body <b>in bold!</b>';
+    $PHPMailer->AltBody = 'This is the body in plain text for non-HTML mail clients';
+    $PHPMailer->Send(); // Boolean
+
 
 License
 -------
 
-New BSD License
+**New BSD License**
 
-    Copyright (c) 2013, Jonathan Amsellem.
+Copyright (c) 2013, Jonathan Amsellem.
 
-    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-    Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-    Neither the name of Jonathan Amsellem nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+Neither the name of Jonathan Amsellem nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

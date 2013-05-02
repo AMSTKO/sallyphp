@@ -1,22 +1,33 @@
 <?php
+/**
+ * SallyPHP
+ *
+ * @link      https://github.com/MrPing/sallyphp
+ * @copyright Copyright (c) 2013, Jonathan Amsellem.
+ * @license   https://github.com/MrPing/sallyphp#license
+ */
 
 class Sally_Session
 {
-  protected $_isLogged = false;
-  protected $_content = array();
+  private $_hasCookie = false;
+  private $_content = array();
+  private $_isSet = false;
   protected static $_instance = false;
 
   public function __construct()
   {
     $this->rijndael = Sally_Rijndael::getInstance();
-
-    // check cookie
-    if($this->getCookie()) {
-      if (isset($this->_content['logged']) && $this->_content['logged'] == 1) {
-        $this->_isLogged = true;
-      }
+    if ($this->getCookie()) {
+      $this->_hasCookie = true;
     } else {
-      $this->setGuest();
+      $this->_hasCookie = false;
+    }
+  }
+
+  public function __destruct()
+  {
+    if ($this->_isSet) {
+      $this->setCookie();
     }
   }
 
@@ -28,19 +39,25 @@ class Sally_Session
     return self::$_instance;
   }
 
-  public function isLogged()
+  public function hasCookie()
   {
-    return $this->_isLogged;
+    return $this->_hasCookie;
   }
 
-  public function getIdentity()
+  public function getContent()
   {
     return $this->_content;
+  }
+
+  public function setContent($content = array())
+  {
+    $this->_content = $content;
   }
 
   public function set($name, $value)
   {
     $this->_content[$name] = $value;
+    $this->_isSet = true;
   }
 
   public function get($name)
@@ -52,28 +69,12 @@ class Sally_Session
     }
   }
 
-  public function signout()
-  {
-    $this->_isLogged = false;
-    $this->setGuest();
-  }
-
-  protected function setGuest()
-  {
-    $this->_content = array(
-      'logged' => 0,
-      'guest' => uniqid('_', true)
-    );
-    $this->setCookie();
-  }
-
   protected function getCookie()
   {
     if (isset($_COOKIE[Sally::get('cookie.name')])) {
       $content = $this->rijndael->decrypt($_COOKIE[Sally::get('cookie.name')]);
       $checksum = crc32(Sally::get('cookie.iv') . substr($content, 0, strrpos($content, '¤') + 2));
 
-      // unserialize content
       $tmp = explode('¤', $content);
       foreach ($tmp as $row) {
         $tmp2 = explode('|', $row);
@@ -82,7 +83,6 @@ class Sally_Session
         }
       }
 
-      // ctrl checksum
       if (!isset($this->_content['checksum']) || $this->_content['checksum'] != $checksum) {
         $this->signout();
         return false;
@@ -94,7 +94,7 @@ class Sally_Session
     }
   }
 
-  public function setCookie()
+  protected function setCookie()
   {
     $cookie = '';
     foreach ($this->_content as $key => $row) {

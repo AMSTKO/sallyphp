@@ -1,12 +1,18 @@
 <?php
+/**
+ * SallyPHP
+ *
+ * @link      https://github.com/MrPing/sallyphp
+ * @copyright Copyright (c) 2013, Jonathan Amsellem.
+ * @license   https://github.com/MrPing/sallyphp#license
+ */
 
 class Sally
 {
   const name = 'SallyPHP MVC Framework';
-  const version = '1.130309.1';
+  const version = '1.130402.1';
   const site = 'sallyphp.com';
   const path = __DIR__;
-
   private $_out = null;
   private $_dataBack = null;
   private $_forward = false;
@@ -181,7 +187,6 @@ class Sally
     }
 
     $this->_dataBack = $controller->{$this->request->getAction()}();
-
     if ($this->_forward) {
       ob_end_clean();
       $this->disableForward();
@@ -237,7 +242,7 @@ class Sally
     if (array_key_exists($name, $instance->_cfg)) {
       return $instance->_cfg[$name];
     } else {
-      throw new Exception('Le paramètre de configuration "' . $name .'" n\'existe pas.');
+      return false;
     }
   }
 

@@ -1,4 +1,11 @@
 <?php
+/**
+ * SallyPHP
+ *
+ * @link      https://github.com/MrPing/sallyphp
+ * @copyright Copyright (c) 2013, Jonathan Amsellem.
+ * @license   https://github.com/MrPing/sallyphp#license
+ */
 
 class Sally_View
 {
@@ -32,7 +39,7 @@ class Sally_View
       }
     }
 
-    require_once $view_file;
+    require $view_file;
     $out = ob_get_contents();
     ob_end_clean();
     return $out;
