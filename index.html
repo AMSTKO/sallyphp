@@ -56,7 +56,7 @@
 
 <ul>
 <li>Structure HMVC (répertoire modules, contenant plusieurs sous structures MVC)</li>
-<li>Près à être utilisé en local (<a href="http://127.0.0.1/sallyphp/index.php">http://127.0.0.1/sallyphp/index.php</a>)</li>
+<li>Près à être utilisé en local (<a href="http://127.0.0.1/sallyphp/index.php/index">http://127.0.0.1/sallyphp/index.php/index</a>)</li>
 </ul><p>Configuration Apache :</p>
 
 <pre><code>Alias /sallyphp "/var/www/sallyphp/public"
@@ -65,13 +65,33 @@
 &lt;/Directory&gt;
 </code></pre>
 
-<h2>Structure</h2>
+<h2>Sommaire</h2>
+
+<ul>
+<li><a href="#structure">Structure</a></li>
+<li><a href="#inventaire">Inventaire</a></li>
+<li><a href="#notes">Notes</a></li>
+<li><a href="#sally">Sally</a></li>
+<li><a href="#sally_controller">Sally_Controller</a></li>
+<li><a href="#sally_model">Sally_Model</a></li>
+<li><a href="#sally_view">Sally_View</a></li>
+<li><a href="#sally_layout">Sally_Layout</a></li>
+<li><a href="#sally_acl">Sally_Acl</a></li>
+<li><a href="#sally_db">Sally_Db</a></li>
+<li><a href="#sally_request">Sally_Request</a></li>
+<li><a href="#sally_helper">Sally_Helper</a></li>
+<li><a href="#sally_session">Sally_Session</a></li>
+<li><a href="#sally_trafficker">Sally_Trafficker</a></li>
+<li><a href="#sally_rijndael">Sally_Rijndael</a></li>
+<li><a href="#sally_phpmailer">Sally_PHPMailer</a></li>
+<li><a href="#license">License</a></li>
+</ul><h2>Structure</h2>
 
 <pre><code>application/
   helpers/
-  layouts/
+  layouts/ (templates)
   models/
-  modules/ 
+  modules/
     admin/
       controllers/
       view/
@@ -82,39 +102,91 @@
       view/
   traffickers/
 public/
-  static/
-sallyphp/
+  static/ (img, js, css...)
+sallyphp/ (class of Sally)
 </code></pre>
 
 <h2>Inventaire</h2>
 
-<p><strong>Utiles</strong></p>
+<p>Liste des class auxquelles vous pourrez avoir besoin au cours de votre développement.</p>
 
-<ul>
-<li>$sally = Sally::getInstance();</li>
-<li>$acl = Sally_Acl::getInstance();</li>
-<li>$db = Sally_Db::getInstance();</li>
-<li>$request = Sally_Request::getInstance();</li>
-<li>$layout = Sally_Layout::getInstance();</li>
-<li>$helper = Sally_Helper::getInstance();</li>
-<li>$session = Sally_Session::getInstance();</li>
-<li>$trafficker = Sally_Trafficker::getInstance();</li>
-</ul><p><strong>Divers</strong></p>
+<pre><code>$sally = Sally::getInstance();
+$acl = Sally_Acl::getInstance();
+$db = Sally_Db::getInstance();
+$request = Sally_Request::getInstance();
+$layout = Sally_Layout::getInstance();
+$helper = Sally_Helper::getInstance();
+$session = Sally_Session::getInstance();
+$trafficker = Sally_Trafficker::getInstance();
+</code></pre>
 
-<ul>
-<li>$rijndael = Sally_Rijndael::getInstance();</li>
-<li>$PHPMailer = Sally_PHPMailer::getInstance();</li>
-</ul><h2>Note</h2>
+<p><strong>Divers</strong></p>
+
+<pre><code>$rijndael = Sally_Rijndael::getInstance();
+$PHPMailer = Sally_PHPMailer::getInstance();
+</code></pre>
+
+<h2>Notes</h2>
+
+<p><strong>slash devant éléments à charger</strong></p>
 
 <p>En ajoutant un slash devant le nom d'un élément à charger (helper, view, model, layout ou trafficker) celui ci sera cherché dans son répertoire à la racine de l'application. Sinon il sera cherché dans son répertoire depus le module demandé par la requête.</p>
 
+<h2>Sally</h2>
+
+<p><strong>Récupérer l'instance</strong></p>
+
+<pre><code>$sally = Sally::getInstance();
+</code></pre>
+
+<p><strong>Récupérer et écraser la réponse de la requête</strong></p>
+
+<p><em>Retourner le contenu qui sera envoyé au navigateur :</em></p>
+
+<pre><code>$sally-&gt;getOut();
+</code></pre>
+
+<p><em>Écraser ce contenu pour renvoyer autre chose :</em></p>
+
+<pre><code>$sally-&gt;setOut('your content...');
+</code></pre>
+
+<p>Exemple d'utilisation : Dans un <em>trafficker</em>, avant de délivrer le contenu au navigateur, vous pourriez retirer tous les espaces d'indendations pour économiser de la bande passante.</p>
+
+<pre><code>class MyTrafficker extends Sally_Trafficker_Abstract
+{
+  function preDelivery()
+  {
+    $sally-&gt;setOut(preg_replace('/\s\s+/', ' ', $sally-&gt;getOut());
+  }
+}
+</code></pre>
+
+<p><strong>Récupérer un retour de controleur</strong></p>
+
+<p>Les controleurs ont la possibilité de retourner des valeurs. Vous pourriez récupérer ces valeurs dans un <em>trafficker</em> pour les modifier (ajouter un token... exemple disponible sur la documentation du trafficker).</p>
+
+<pre><code>$sally-&gt;getDataBack();
+</code></pre>
+
 <h2>Sally_Controller</h2>
 
-<p>Depuis un controleur vous pouvez appeler les méthodes suivantes.</p>
+<p><strong>__contruct</strong></p>
+
+<p>Si vous ajoutez votre méthode __contruct au controleur alors il faudra faire référence au contructeur parent :</p>
+
+<pre><code>class IndexController extends Sally_Controller
+{
+  public function __construct()
+  {
+    parent::__construct();
+  }
+}
+</code></pre>
 
 <p><strong>Charger un model</strong></p>
 
-<pre><code>$this-&gt;model('/user'); // return Class Object
+<pre><code>$this-&gt;model('/user'); // return class object
 </code></pre>
 
 <p><strong>Transmettre des variables dans la vue principale</strong></p>
@@ -150,52 +222,87 @@ $this-&gt;view-&gt;setData(array(
 <pre><code>$this-&gt;redirect('http://google.fr');
 </code></pre>
 
-<p><strong>__contruct</strong></p>
+<p><strong>Rediriger vers une autre action dans la même requête</strong></p>
 
-<p>Si vous ajoutez votre méthode __contruct au controleur alors il faudra faire référence au contructeur parent :</p>
+<pre><code>$this-&gt;forward($action, $controleur, $module);
+</code></pre>
+
+<p>Il est nécessaire de préciser au moins l'action (controleur et module seront ceux en cours). Exemple :</p>
 
 <pre><code>class IndexController extends Sally_Controller
 {
-  public function __construct()
+  public function index()
   {
-    parent::__construct();
+    $this-&gt;forward('maintenance', 'erreur');
   }
 }
 </code></pre>
 
+<p>En accédant à l'index il y aura une redirection transparente vers l'action "maintenance" du controleur "erreur".</p>
+
 <h2>Sally_Model</h2>
 
-<p>Depuis un model vous pouvez appeler les méthodes suivantes.</p>
+<p><strong>Charger un model depuis un model</strong></p>
 
-<p><strong>Charger un model dans un model</strong></p>
-
-<pre><code>$this-&gt;load('/other_model'); // return Class Object
+<pre><code>$this-&gt;load('/other_model'); // return class object
 </code></pre>
 
-<h2>Sally</h2>
+<h2>Sally_View</h2>
 
 <p><strong>Récupérer l'instance</strong></p>
 
-<pre><code>$sally = Sally::getInstance();
+<pre><code>$view = Sally_View::getInstance();
 </code></pre>
 
-<p><strong>Récupérer la réponse</strong></p>
+<p><strong>Désactiver l'appel automatique d'une vue pour l'action du controleur</strong></p>
 
-<p>Par exemple il peut être utile de récupérer la réponse pour la modifier dans un <em>trafficker</em>.</p>
-
-<pre><code>$sally-&gt;getOut();
+<pre><code>$view-&gt;disableControllerView();
 </code></pre>
 
-<p><strong>Écraser la réponse</strong></p>
+<p><strong>Vérifier si l'appel automatique d'une vue n'a pas été désactivé</strong></p>
 
-<pre><code>$sally-&gt;setOut('404 Not Found');
+<pre><code>$view-&gt;controllerViewIsEnabled(); // Boolean
 </code></pre>
 
-<p><strong>Récupérer un retour de controleur</strong></p>
+<h2>Sally_Layout</h2>
 
-<p>Avec Sally les controleurs ont la possibilité de retourner des valeurs. Vous pourriez récupérer ces valeurs dans un <em>trafficker</em> pour les modifier (ajouter un token...).</p>
+<p><strong>Récupérer l'instance</strong></p>
 
-<pre><code>$sally-&gt;getDataBack();
+<pre><code>$layout = Sally_Layout::getInstance();
+</code></pre>
+
+<p><strong>Définir un layout</strong></p>
+
+<pre><code>$layout-&gt;set('/home');
+</code></pre>
+
+<p><strong>Désactiver le layout</strong></p>
+
+<pre><code>$layout-&gt;disableLayout();
+</code></pre>
+
+<p><strong>Vérifier si le layout n'a pas été désactivé</strong></p>
+
+<pre><code>$layout-&gt;isEnabled(); // Boolean
+</code></pre>
+
+<p><strong>Vérifier si un layout est définit</strong></p>
+
+<pre><code>$layout-&gt;isDefined(); // Boolean
+</code></pre>
+
+<p><strong>Transmettre des variables dans le layout</strong></p>
+
+<pre><code>$&gt;layout-&gt;setData('name1', 'value1');
+
+// or
+
+$layout-&gt;setData(array(
+  'name1' =&gt; 'value1',
+  'name2' =&gt; 'value2'
+));
+
+// in view file : echo $name1; // display value1
 </code></pre>
 
 <h2>Sally_Acl</h2>
@@ -246,7 +353,7 @@ $acl-&gt;allow('user', 'account');
 <p><strong>SGBD pris en charges</strong></p>
 
 <ul>
-<li>Mysql (avec les API suivantes : PDO)</li>
+<li>Mysql (avec PDO)</li>
 </ul><p><strong>Ajouter une connexion à une base de données</strong></p>
 
 <pre><code>$db-&gt;add(array(
@@ -295,11 +402,11 @@ $db-&gt;add(array(
 
 <p><strong>Exemple de requête avec PDO</strong></p>
 
-<pre><code>public function getEmail()
+<pre><code>public function getEmail($user)
 {
   $db = Sally_Db::getConnection();
   $stmt = $db-&gt;prepare('SELECT email FROM users WHERE id = :id LIMIT 1');
-  $stmt-&gt;execute(array('id' =&gt; 1));
+  $stmt-&gt;execute(array('id' =&gt; $user));
   $result = $stmt-&gt;fetch();
   return $result['email'];
 }
@@ -363,67 +470,46 @@ $db-&gt;add(array(
 <pre><code>$request-&gt;getAction();
 </code></pre>
 
-<h2>Sally_Layout</h2>
-
-<p><strong>Récupérer l'instance</strong></p>
-
-<pre><code>$layout = Sally_Layout::getInstance();
-</code></pre>
-
-<p><strong>Définir un layout</strong></p>
-
-<pre><code>$layout-&gt;set('/home');
-</code></pre>
-
-<p><strong>Désactiver le layout</strong></p>
-
-<pre><code>$layout-&gt;disableLayout();
-</code></pre>
-
-<p><strong>Vérifier si le layout n'a pas été désactivé</strong></p>
-
-<pre><code>$layout-&gt;isEnabled(); // Boolean
-</code></pre>
-
-<p><strong>Vérifier si un layout est définit</strong></p>
-
-<pre><code>$layout-&gt;isDefined(); // Boolean
-</code></pre>
-
-<p><strong>Transmettre des variables dans le layout</strong></p>
-
-<pre><code>$&gt;layout-&gt;setData('name1', 'value1');
-
-// or
-
-$layout-&gt;setData(array(
-  'name1' =&gt; 'value1',
-  'name2' =&gt; 'value2'
-));
-
-// in view file : echo $name1; // display value1
-</code></pre>
-
-<h2>Sally_View</h2>
-
-<p><strong>Récupérer l'instance</strong></p>
-
-<pre><code>$view = Sally_View::getInstance();
-</code></pre>
-
-<p><strong>Désactiver l'appel automatique d'une vue pour l'action du controleur</strong></p>
-
-<pre><code>$view-&gt;disableControllerView();
-</code></pre>
-
-<p><strong>Vérifier si l'appel automatique d'une vue n'a pas été désactivé</strong></p>
-
-<pre><code>$view-&gt;controllerViewIsEnabled(); // Boolean
-</code></pre>
-
 <h2>Sally_Session</h2>
 
-<p>Sally_Session est assez specifique à votre projet, vous pouvez jetter un oeil a ce qui a été fait.</p>
+<p>Sally créer un cookie dont la valeur est cryptée avec l'algo Rijndael en 128b (MCRYPT_RIJNDAEL_128). La valeur correspond à un tableau sérialisé contenant vos informations.</p>
+
+<p><strong>Récupérer l'instance</strong></p>
+
+<pre><code>$session = Sally_Session::getInstance();
+</code></pre>
+
+<p><strong>Savoir si l'utilisateur avait déjà le cookie</strong></p>
+
+<pre><code>$session-&gt;hasCookie(); // Boolean
+</code></pre>
+
+<p><strong>Définir une valeur dans le cookie</strong></p>
+
+<pre><code>$session-&gt;set('logged', 1);
+</code></pre>
+
+<p><strong>Récupérer une valeur du cookie</strong></p>
+
+<pre><code>$session-&gt;get('logged');
+</code></pre>
+
+<p><strong>Récupérer le tableau contenant toutes les valeurs du cookie</strong></p>
+
+<pre><code>$session-&gt;getContent();
+</code></pre>
+
+<p><strong>Écraser tous le contenu du cookie</strong></p>
+
+<pre><code>$session-&gt;setContent();
+
+// ou
+
+$session-&gt;setContent(array(
+  'logged' =&gt; 1,
+  'username' =&gt; 'Pingoo'
+));
+</code></pre>
 
 <h2>Sally_Helper</h2>
 
@@ -538,6 +624,51 @@ function toStrong($text)
 
 <pre><code>$rijndael-&gt;decrypt('dataCrypted');
 </code></pre>
+
+<h2>Sally_PHPMailer</h2>
+
+<p>Pour d'avantage de documentation rendez-vous sur <a href="https://github.com/Synchro/PHPMailer">https://github.com/Synchro/PHPMailer</a></p>
+
+<p><strong>Récupérer l'instance</strong></p>
+
+<pre><code>$PHPMailer = Sally_PHPMailer::getInstance();
+</code></pre>
+
+<p><strong>Configuration</strong></p>
+
+<pre><code>$PHPMailer-&gt;IsSMTP();
+$PHPMailer-&gt;Host = 'in.mailjet.com';
+$PHPMailer-&gt;Port = 587;
+$PHPMailer-&gt;SMTPAuth = true;
+$PHPMailer-&gt;Username = 'username';
+$PHPMailer-&gt;Password = 'password';
+$PHPMailer-&gt;SMTPSecure = 'tls';
+</code></pre>
+
+<p><strong>Envoyer un e-mail</strong></p>
+
+<pre><code>$PHPMailer-&gt;From = 'from@example.com';
+$PHPMailer-&gt;AddAddress('ellen@example.com');
+$PHPMailer-&gt;IsHTML(true);
+$PHPMailer-&gt;Subject = 'Here is the subject';
+$PHPMailer-&gt;Body    = 'This is the HTML message body &lt;b&gt;in bold!&lt;/b&gt;';
+$PHPMailer-&gt;AltBody = 'This is the body in plain text for non-HTML mail clients';
+$PHPMailer-&gt;Send(); // Boolean
+</code></pre>
+
+<h2>License</h2>
+
+<p><strong>New BSD License</strong></p>
+
+<p>Copyright (c) 2013, Jonathan Amsellem.</p>
+
+<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
+
+<p>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+Neither the name of Jonathan Amsellem nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.</p>
+
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
       </section>
 
       <footer>
