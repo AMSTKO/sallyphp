@@ -23,7 +23,6 @@ Sommaire
 - [Structure](#structure)
 - [Inventaire](#inventaire)
 - [Notes](#notes)
-
 - [Sally](#sally)
 - [Sally_Controller](#sally_controller)
 - [Sally_Model](#sally_model)
@@ -37,7 +36,6 @@ Sommaire
 - [Sally_Trafficker](#sally_trafficker)
 - [Sally_Rijndael](#sally_rijndael)
 - [Sally_PHPMailer](#sally_phpmailer)
-
 - [License](#license)
 
 Structure
