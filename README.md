@@ -417,7 +417,7 @@ Sally créer un cookie dont la valeur est cryptée avec l'algo Rijndael en 128b 
 
     $session->get('logged');
 
-**Récupérer le tableau content toutes les valeurs du cookie**
+**Récupérer le tableau contenant toutes les valeurs du cookie**
 
     $session->getContent();
 
