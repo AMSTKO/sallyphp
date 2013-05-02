@@ -399,7 +399,7 @@ Les requêtes peuvent être faites sous différentes formes :
 Sally_Session
 -------------
 
-Sally créer un cookie dont la valeur est cryptée avec l'ago Rijndael en 128b (MCRYPT_RIJNDAEL_128). La valeur correspond à un tableau sérialisé contenant vos informations.
+Sally créer un cookie dont la valeur est cryptée avec l'algo Rijndael en 128b (MCRYPT_RIJNDAEL_128). La valeur correspond à un tableau sérialisé contenant vos informations.
 
 **Récupérer l'instance**
 
