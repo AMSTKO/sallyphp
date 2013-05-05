@@ -26,7 +26,7 @@ Sommaire
 - [Sally](#sally)
 - [Controller](#controller)
 - [View](#view)
-- [Layout](#layouts 
+- [Layout](#layouts)
 - [Acl](#acl)
 - [Db](#db)
 - [Request](#request)
