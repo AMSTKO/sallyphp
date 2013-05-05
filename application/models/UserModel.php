@@ -1,9 +1,9 @@
 <?php
-class UserModel extends Sally_Model
+class UserModel extends Model
 {
   public function getEmail()
   {
-    $db = Sally_Db::getConnection();
+    $db = Db::getConnection();
     $stmt = $db->prepare('SELECT email FROM users WHERE id = :id LIMIT 1');
     $stmt->execute(array('id' => 1));
     $result = $stmt->fetch();

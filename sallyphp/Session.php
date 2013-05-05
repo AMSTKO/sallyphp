@@ -7,7 +7,7 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
-class Sally_Session
+class Session
 {
   private $_hasCookie = false;
   private $_content = array();
@@ -16,7 +16,7 @@ class Sally_Session
 
   public function __construct()
   {
-    $this->rijndael = Sally_Rijndael::getInstance();
+    $this->rijndael = Rijndael::getInstance();
     if ($this->getCookie()) {
       $this->_hasCookie = true;
     } else {
@@ -52,6 +52,7 @@ class Sally_Session
   public function setContent($content = array())
   {
     $this->_content = $content;
+    $this->_isSet = true;
   }
 
   public function set($name, $value)
@@ -84,7 +85,7 @@ class Sally_Session
       }
 
       if (!isset($this->_content['checksum']) || $this->_content['checksum'] != $checksum) {
-        $this->signout();
+        $this->setContent();
         return false;
       }
 

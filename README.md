@@ -24,18 +24,17 @@ Sommaire
 - [Inventaire](#inventaire)
 - [Notes](#notes)
 - [Sally](#sally)
-- [Sally_Controller](#sally_controller)
-- [Sally_Model](#sally_model)
-- [Sally_View](#sally_view)
-- [Sally_Layout](#sally_layout)
-- [Sally_Acl](#sally_acl)
-- [Sally_Db](#sally_db)
-- [Sally_Request](#sally_request)
-- [Sally_Helper](#sally_helper)
-- [Sally_Session](#sally_session)
-- [Sally_Trafficker](#sally_trafficker)
-- [Sally_Rijndael](#sally_rijndael)
-- [Sally_PHPMailer](#sally_phpmailer)
+- [Controller](#controller)
+- [View](#view)
+- [Layout](#layouts 
+- [Acl](#acl)
+- [Db](#db)
+- [Request](#request)
+- [Helper](#helper)
+- [Session](#session)
+- [Trafficker](#trafficker)
+- [Rijndael](#rijndael)
+- [PHPMailer](#phpmailer)
 - [License](#license)
 
 Structure
@@ -66,25 +65,25 @@ Inventaire
 Liste des class auxquelles vous pourrez avoir besoin au cours de votre développement.
 
     $sally = Sally::getInstance();
-    $acl = Sally_Acl::getInstance();
-    $db = Sally_Db::getInstance();
-    $request = Sally_Request::getInstance();
-    $layout = Sally_Layout::getInstance();
-    $helper = Sally_Helper::getInstance();
-    $session = Sally_Session::getInstance();
-    $trafficker = Sally_Trafficker::getInstance();
+    $acl = Acl::getInstance();
+    $db = Db::getInstance();
+    $request = Request::getInstance();
+    $layout = Layout::getInstance();
+    $helper = Helper::getInstance();
+    $session = Session::getInstance();
+    $trafficker = Trafficker::getInstance();
 
 **Divers**
 
-    $rijndael = Sally_Rijndael::getInstance();
-    $PHPMailer = Sally_PHPMailer::getInstance();
+    $rijndael = Rijndael::getInstance();
+    $PHPMailer = PHPMailer::getInstance();
 
 Notes
 -----
 
 **slash devant éléments à charger**
 
-En ajoutant un slash devant le nom d'un élément à charger (helper, view, model, layout ou trafficker) celui ci sera cherché dans son répertoire à la racine de l'application. Sinon il sera cherché dans son répertoire depus le module demandé par la requête.
+En ajoutant un slash devant le nom d'un élément à charger (helper, view ou layout) celui ci sera cherché dans son répertoire à la racine de l'application. Sinon il sera cherché dans son répertoire depus le module demandé par la requête.
 
 
 Sally
@@ -106,7 +105,7 @@ Sally
 
 Exemple d'utilisation : Dans un *trafficker*, avant de délivrer le contenu au navigateur, vous pourriez retirer tous les espaces d'indendations pour économiser de la bande passante.
 
-    class MyTrafficker extends Sally_Trafficker_Abstract
+    class MyTrafficker extends TraffickerAbstract
     {
       function preDelivery()
       {
@@ -121,24 +120,20 @@ Les controleurs ont la possibilité de retourner des valeurs. Vous pourriez réc
     $sally->getDataBack();
 
 
-Sally_Controller
-----------------
+Controller
+----------
 
 **__contruct**
 
 Si vous ajoutez votre méthode __contruct au controleur alors il faudra faire référence au contructeur parent :
 
-    class IndexController extends Sally_Controller
+    class IndexController extends Controller
     {
       public function __construct()
       {
         parent::__construct();
       }
     }
-
-**Charger un model**
-
-    $this->model('/user'); // return class object
 
 **Transmettre des variables dans la vue principale**
 
@@ -175,7 +170,7 @@ Si vous ajoutez votre méthode __contruct au controleur alors il faudra faire r�
 
 Il est nécessaire de préciser au moins l'action (controleur et module seront ceux en cours). Exemple :
 
-    class IndexController extends Sally_Controller
+    class IndexController extends Controller
     {
       public function index()
       {
@@ -186,20 +181,12 @@ Il est nécessaire de préciser au moins l'action (controleur et module seront c
 En accédant à l'index il y aura une redirection transparente vers l'action "maintenance" du controleur "erreur".
 
 
-Sally_Model
------------
-
-**Charger un model depuis un model**
-
-    $this->load('/other_model'); // return class object
-
-
-Sally_View
-----------
+View
+----
 
 **Récupérer l'instance**
 
-    $view = Sally_View::getInstance();
+    $view = View::getInstance();
 
 **Désactiver l'appel automatique d'une vue pour l'action du controleur**
 
@@ -210,12 +197,12 @@ Sally_View
     $view->controllerViewIsEnabled(); // Boolean
 
 
-Sally_Layout
-------------
+Layout
+------
 
 **Récupérer l'instance**
 
-    $layout = Sally_Layout::getInstance();
+    $layout = Layout::getInstance();
 
 **Définir un layout**
 
@@ -247,12 +234,12 @@ Sally_Layout
     // in view file : echo $name1; // display value1
 
 
-Sally_Acl
----------
+Acl
+---
 
 **Récupérer l'instance**
 
-    $acl = Sally_Acl::getInstance();
+    $acl = Acl::getInstance();
 
 **Ajouter des rôles**
 
@@ -281,12 +268,12 @@ Sally_Acl
     }
 
 
-Sally_Db
---------
+Db
+--
 
 **Récupérer l'instance**
 
-    $db = Sally_Db::getInstance();
+    $db = Db::getInstance();
 
 **SGBD pris en charges**
 
@@ -304,7 +291,7 @@ Sally_Db
 
 **Ajouter d'autres bases de données**
 
-Sally_Db gère les multi-connexions avec PDO. Il suffit d'ajouter le nom de la connexion lors de l'ajout. Par defaut le nom de la connexion est *default*
+DbSally gère les multi-connexions avec PDO. Il suffit d'ajouter le nom de la connexion lors de l'ajout. Par defaut le nom de la connexion est *default*
 
     $db->add(array(
       'name' => 'principal'
@@ -328,17 +315,17 @@ Sally_Db gère les multi-connexions avec PDO. Il suffit d'ajouter le nom de la c
 
 Sans argument il vous sera renvoyé la première connexion, *default*.
 
-    $db = Sally_Db::getConnection();
+    $db = Db::getConnection();
 
 Sinon il suffit de préciser le nom de la connexion.
 
-    $db = Sally_Db::getConnection('other');
+    $db = Db::getConnection('other');
 
 **Exemple de requête avec PDO**
 
     public function getEmail($user)
     {
-      $db = Sally_Db::getConnection();
+      $db = Db::getConnection();
       $stmt = $db->prepare('SELECT email FROM users WHERE id = :id LIMIT 1');
       $stmt->execute(array('id' => $user));
       $result = $stmt->fetch();
@@ -346,8 +333,8 @@ Sinon il suffit de préciser le nom de la connexion.
     }
 
 
-Sally_Request
--------------
+Request
+-------
 
 Les requêtes peuvent être faites sous différentes formes :
 
@@ -357,15 +344,15 @@ Les requêtes peuvent être faites sous différentes formes :
 
 **Récupérer l'instance**
 
-    $request = Sally_Request::getInstance();
+    $request = Request::getInstance();
 
 **Récupérer les valeurs des données passées dans la requête**
 
-    $request->getRequest('dataName1'); // False si inexistante
+    $request->getSegment('dataName1'); // False si inexistante
 
 **Écraser des valeurs passées dans la requête**
 
-    $request->setRequest('dataName1', 'dataValue1');
+    $request->setSegment('dataName1', 'dataValue1');
 
 **Récupérer des données $_POST**
 
@@ -396,14 +383,14 @@ Les requêtes peuvent être faites sous différentes formes :
     $request->getAction();
 
 
-Sally_Session
--------------
+Session
+-------
 
 Sally créer un cookie dont la valeur est cryptée avec l'algo Rijndael en 128b (MCRYPT_RIJNDAEL_128). La valeur correspond à un tableau sérialisé contenant vos informations.
 
 **Récupérer l'instance**
 
-    $session = Sally_Session::getInstance();
+    $session = Session::getInstance();
 
 **Savoir si l'utilisateur avait déjà le cookie**
 
@@ -433,14 +420,14 @@ Sally créer un cookie dont la valeur est cryptée avec l'algo Rijndael en 128b 
     ));
 
 
-Sally_Helper
-------------
+Helper
+------
 
 Les helpers sont de basiques fonctions PHP appelable n'importe ou.
 
 **Récupérer l'instance**
 
-    $helper = Sally_Helper::getInstance();
+    $helper = Helper::getInstance();
 
 **Charger un helper**
 
@@ -455,8 +442,8 @@ Les helpers sont de basiques fonctions PHP appelable n'importe ou.
     }
 
 
-Sally_Trafficker
-----------------
+Trafficker
+----------
 
 Le trafiquant permet d'agir à 2 endroits :
 
@@ -483,7 +470,7 @@ Trafiquer le retour de la requête au dernier moment.
 
 **Récupérer l'instance**
 
-    $trafficker = Sally_Trafficker::getInstance();
+    $trafficker = Trafficker::getInstance();
 
 **Charger un trafiquant**
 
@@ -493,13 +480,13 @@ Trafiquer le retour de la requête au dernier moment.
 
 Je vais avoir beaucoup de requêtes ajax sur mon projet. Alors je décide que chaque controleur aura une action nommée "request" qui permettra de traiter ces requêtes. Dans un premier temps (preDeal) on désactive le layout et la vue par defaut pour l'action "request". Une fois la requête prête à être renvoyée (preDelivery) on ajoute des valeurs (ici un token).
 
-    class MyTrafficker extends Sally_Trafficker_Abstract
+    class MyTrafficker extends TraffickerAbstract
     {
       function __construct()
       {
-        $this->layout = Sally_Layout::getInstance();
-        $this->view = Sally_View::getInstance();
-        $this->request = Sally_Request::getInstance();
+        $this->layout = Layout::getInstance();
+        $this->view = View::getInstance();
+        $this->request = Request::getInstance();
       }
 
       function preDeal()
@@ -523,12 +510,12 @@ Je vais avoir beaucoup de requêtes ajax sur mon projet. Alors je décide que ch
     }
 
 
-Sally_Rijndael
---------------
+Rijndael
+--------
 
 **Récupérer l'instance**
 
-    $rijndael = Sally_Rijndael::getInstance();
+    $rijndael = Rijndael::getInstance();
 
 **Définir une clef de cryptage**
 
@@ -543,14 +530,14 @@ Sally_Rijndael
     $rijndael->decrypt('dataCrypted');
 
 
-Sally_PHPMailer
---------------
+PHPMailer
+---------
 
 Pour d'avantage de documentation rendez-vous sur https://github.com/Synchro/PHPMailer
 
 **Récupérer l'instance**
 
-    $PHPMailer = Sally_PHPMailer::getInstance();
+    $PHPMailer = PHPMailer::getInstance();
 
 **Configuration**
 

@@ -7,9 +7,9 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
-class Sally_Rijndael
+class Rijndael
 {
-  protected $_key = false;
+  private $_key = false;
   protected static $_instance = false;
 
   public static function getInstance()

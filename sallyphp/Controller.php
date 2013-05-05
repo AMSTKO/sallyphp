@@ -7,25 +7,19 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
-class Sally_Controller
+class Controller
 {
   public $view;
 
   public function __construct()
   {
-    $this->view = Sally_View::getInstance();
-    $this->request = Sally_Request::getInstance();
-  }
-
-  public function model($name)
-  {
-    $model = Sally_Model::getInstance();
-    return $model->load($name);
+    $this->view = View::getInstance();
+    $this->request = Request::getInstance();
   }
 
   public function helper($name)
   {
-    $helper = Sally_Helper::getInstance();
+    $helper = Helper::getInstance();
     return $helper->load($name);
   }
 

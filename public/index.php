@@ -1,8 +1,8 @@
 <?php
-include '../sallyphp/initializer.php';
+include '../sallyphp/Sally.php';
 
 $sally = Sally::getInstance();
-$trafficker = Sally_Trafficker::getInstance();
+$trafficker = Trafficker::getInstance();
 
 Sally::set('application', __DIR__ . '/../application');
 Sally::set('module.default', 'site');

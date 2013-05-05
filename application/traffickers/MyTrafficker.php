@@ -1,12 +1,12 @@
 <?php
 
-class MyTrafficker extends Sally_Trafficker_Abstract
+class MyTrafficker extends TraffickerAbstract
 {
   function __construct()
   {
-    $this->layout = Sally_Layout::getInstance();
-    $this->view = Sally_View::getInstance();
-    $this->request = Sally_Request::getInstance();
+    $this->layout = Layout::getInstance();
+    $this->view = View::getInstance();
+    $this->request = Request::getInstance();
   }
 
   function preDeal()

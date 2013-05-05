@@ -7,7 +7,7 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
-class Sally_Layout
+class Layout
 {
   private $_layout = false;
   private $_enable = true;

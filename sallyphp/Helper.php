@@ -7,10 +7,8 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
-class Sally_Helper
+class Helper
 {
-
-  protected $sally;
   protected static $_instance = false;
 
   public function __construct()

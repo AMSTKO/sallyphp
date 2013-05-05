@@ -7,7 +7,7 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
-class Sally_Acl
+class Acl
 {
   private $_role = array();
   private $_ressource = array();

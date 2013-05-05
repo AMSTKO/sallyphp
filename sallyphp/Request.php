@@ -7,13 +7,12 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
-class Sally_Request {
-
+class Request
+{
   private $_module = false;
   private $_controller = false;
   private $_action = false;
   private $_data = array();
-
   protected static $_instance = false;
 
   public function __construct()
@@ -29,12 +28,12 @@ class Sally_Request {
     return self::$_instance;
   }
 
-  public function setRequest($name, $value)
+  public function setSegment($name, $value)
   {
     $this->_data[$name] = $value;
   }
 
-  public function getRequest($name)
+  public function getSegment($name)
   {
     if (array_key_exists($name, $this->_data)) {
       return $this->_data[$name];

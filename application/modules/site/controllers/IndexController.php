@@ -1,5 +1,5 @@
 <?php
-class IndexController extends Sally_Controller
+class IndexController extends Controller
 {
   public function index()
   {

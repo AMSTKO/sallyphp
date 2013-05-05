@@ -7,7 +7,7 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
-abstract class Sally_Trafficker_Abstract
+abstract class TraffickerAbstract
 {
   function preDeal() {}
   function preDelivery() {}

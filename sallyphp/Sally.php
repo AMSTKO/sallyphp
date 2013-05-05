@@ -10,7 +10,7 @@
 class Sally
 {
   const name = 'SallyPHP MVC Framework';
-  const version = '1.130402.1';
+  const version = '1.130405.1';
   const site = 'sallyphp.com';
   const path = __DIR__;
   private $_out = null;
@@ -24,8 +24,9 @@ class Sally
   {
     header('Content-Type: text/html; charset=utf-8');
     set_exception_handler(array($this, 'exception'));
+    spl_autoload_register(array($this, 'loader'));
 
-    $this->request = Sally_Request::getInstance();
+    $this->request = Request::getInstance();
 
     $this->_cfg['application'] = $_SERVER['DOCUMENT_ROOT'] . '/application';
     $this->_cfg['path'] = '/';
@@ -67,7 +68,7 @@ class Sally
         if ($requestIndex >= $logicDataIndex) {
           $value = $pre_request[($key + 1)];
           if (!empty($value)) {
-            $this->request->setRequest($row, $value);
+            $this->request->setSegment($row, $value);
             $passe = true;
           }
         } else {
@@ -116,6 +117,37 @@ class Sally
     return $this->call();
   }
 
+  public function loader($class)
+  {
+    $segments = preg_split('/(?=[A-Z_])/', $class, 0, PREG_SPLIT_NO_EMPTY);
+    $what = end($segments);
+    $segmentsNb = count($segments);
+
+    if ($what == 'Model' && $segmentsNb > 1) {
+      if (isset($segments[1]) && $segments[1] == '_') {
+        $path = Sally::get('application') . '/modules/' . strtolower($segments[0]) . '/models/' . $class . '.php';
+      } else {
+        $path = Sally::get('application') . '/models/' . $class . '.php';
+      }
+    } elseif ($what == 'Controller' && $segmentsNb > 1) {
+      if ($module = $this->request->getModule()) {
+        $path = Sally::get('application') . '/modules/' . $module . '/controllers/' . $class . '.php';
+      } else {
+        $path = Sally::get('application') . '/controllers/' . $class . '.php';
+      }
+    } elseif ($what == 'Trafficker' && $segmentsNb > 1) {
+      $path = Sally::get('application') . '/traffickers/' . $class . '.php';
+    } else {
+      $path = Sally::path . '/' . $class . '.php';
+    }
+
+    if (!file_exists($path)) {
+      throw new Exception('Le fichier "' . $path . '" n\'existe pas.');
+    }
+
+    include $path;
+  }
+
   public function getFile($value, $type)
   {
     $module = '';
@@ -123,7 +155,6 @@ class Sally
     if (preg_match('/\//', $value)) {
       $pre_file = strtolower(substr($value, strrpos($value, '/') + 1));
       $path = substr($value, 0, strrpos($value, '/') + 1);
-
       if ($path == '/') {
         $path = '';
       }
@@ -142,21 +173,11 @@ class Sally
     } elseif ($type == 'layout') {
       $directory = 'layouts';
       $file = $pre_file . 'Layout';
-    } elseif ($type == 'controller') {
-      $directory = 'controllers';
-      $file = ucfirst($pre_file) . 'Controller';
-    } elseif ($type == 'model') {
-      $directory = 'models';
-      $file = ucfirst($pre_file) . 'Model';
-    } elseif ($type == 'trafficker') {
-      $directory = 'traffickers';
-      $file = ucfirst($pre_file) . 'Trafficker';
-      $module = '';
     } elseif ($type == 'view') {
       $directory = 'views';
       $file = $pre_file . 'View';
     } else {
-      throw new Exception('getFile type error');
+      throw new Exception('getFile type error, ' . $type);
     }
 
     $path = Sally::get('application') . '/' . $module . $directory . '/' . $path . $file . '.php';
@@ -170,16 +191,15 @@ class Sally
 
   private function call()
   {
-    $trafficker = Sally_Trafficker::getInstance();
+    $trafficker = Trafficker::getInstance();
 
     if (!$trafficker->preDealIsExec()) {
       $trafficker->preDeal();
     }
 
-    list($controller_file, $controller_class_name) = $this->getFile($this->request->getController(), 'controller');
+    $controller_class_name = ucfirst($this->request->getController()) . 'Controller';
 
     ob_start();
-    require_once $controller_file;
     $controller = new $controller_class_name();
 
     if (!method_exists($controller, $this->request->getAction())) {
@@ -193,7 +213,7 @@ class Sally
       return $this->call();
     }
 
-    $view = Sally_View::getInstance();
+    $view = View::getInstance();
     if ($view->controllerViewIsEnabled()) {
       echo $view->load($this->request->getController() . '/' . $this->request->getAction(), null, true);
     }
@@ -201,7 +221,7 @@ class Sally
     $this->_out = ob_get_contents();
     ob_end_clean();
 
-    $layout = Sally_Layout::getInstance();
+    $layout = Layout::getInstance();
     if ($layout->isDefined() && $layout->isEnabled()) {
       $this->_out = $layout->integrate($this->_out);
     }

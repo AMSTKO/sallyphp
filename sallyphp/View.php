@@ -7,7 +7,7 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
-class Sally_View
+class View
 {
   private $_controllerView = true;
   private $_data = array();

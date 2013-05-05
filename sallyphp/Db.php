@@ -7,9 +7,9 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
-class Sally_Db {
-
-  public $_connection = array();
+class Db
+{
+  private $_connection = array();
   protected static $_instance = false;
 
   public static function getInstance()
@@ -45,6 +45,7 @@ class Sally_Db {
             $name = 'default';
           }
           $this->_connection[$name] = new PDO('mysql:host=' . $cfg['host'] . ';dbname=' . $cfg['dbname'], $cfg['user'], $cfg['passwd']);
+          $this->_connection[$name]->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);  
           $this->_connection[$name]->exec('set names utf8');
         } else {
           throw new Exception('Configuration mysql invalide');
