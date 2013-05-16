@@ -159,7 +159,7 @@ Si vous ajoutez votre méthode __contruct au controleur alors il faudra faire r�
 **Charger un helper**
 
     $this->helper('/tostrong');
-
+    
 **Redirection**
 
     $this->redirect('http://google.fr');
@@ -177,9 +177,6 @@ Il est nécessaire de préciser au moins l'action (controleur et module seront c
         $this->forward('maintenance', 'erreur');
       }
     }
-
-En accédant à l'index il y aura une redirection transparente vers l'action "maintenance" du controleur "erreur".
-
 
 View
 ----
@@ -382,6 +379,7 @@ Les requêtes peuvent être faites sous différentes formes :
 
     $request->getAction();
 
+En accédant à l'index il y aura une redirection transparente vers l'action "maintenance" du controleur "erreur".
 
 Session
 -------

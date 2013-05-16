@@ -24,7 +24,7 @@ class Session
     }
   }
 
-  public function __destruct()
+  public function sendHeaderCookie()
   {
     if ($this->_isSet) {
       $this->setCookie();

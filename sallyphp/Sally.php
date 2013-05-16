@@ -66,9 +66,8 @@ class Sally
       }
       if (!empty($row)) {
         if ($requestIndex >= $logicDataIndex) {
-          $value = $pre_request[($key + 1)];
-          if (!empty($value)) {
-            $this->request->setSegment($row, $value);
+          if (isset($pre_request[($key + 1)])) {
+            $this->request->setSegment($row, $pre_request[($key + 1)]);
             $passe = true;
           }
         } else {
@@ -198,7 +197,7 @@ class Sally
     }
 
     $controller_class_name = ucfirst($this->request->getController()) . 'Controller';
-
+    
     ob_start();
     $controller = new $controller_class_name();
 
@@ -207,7 +206,21 @@ class Sally
     }
 
     $this->_dataBack = $controller->{$this->request->getAction()}();
+
     if ($this->_forward) {
+      if ($this->_forward['module'] == null) {
+        $this->request->setModule($this->request->getModule());
+      } else {
+        $this->request->setModule($this->_forward['module']);
+      }
+
+      if ($this->_forward['controller'] == null) {
+        $this->request->setController($this->request->getController());
+      } else {
+        $this->request->setController($this->_forward['controller']);
+      }
+
+      $this->request->setAction($this->_forward['action']);
       ob_end_clean();
       $this->disableForward();
       return $this->call();
@@ -227,6 +240,11 @@ class Sally
     }
 
     $trafficker->preDelivery();
+
+    if (class_exists('Session')) {
+      Session::getInstance()->sendHeaderCookie();
+    }
+
     return $this->_out;
   }
 
@@ -273,9 +291,9 @@ class Sally
     return true;
   }
 
-  public function enableForward()
+  public function enableForward($data)
   {
-    $this->_forward = true;
+    $this->_forward = $data;
   }
 
   public function disableForward()
