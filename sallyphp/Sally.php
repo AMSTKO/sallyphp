@@ -47,7 +47,8 @@ class Sally
 
   public function init($request_string = '')
   {
-    $pre_request = explode('/', substr($request_string, strrpos(Sally::get('path'), '/')));
+    //$pre_request = explode('/', substr($request_string, strrpos(Sally::get('path'), '/')));
+    $pre_request = explode('/', $request_string);
     $hasModule = count($this->_module) > 0 ? true : false;
     $passe = false;
     $requestIndex = 0;
@@ -121,6 +122,7 @@ class Sally
     $segments = preg_split('/(?=[A-Z_])/', $class, 0, PREG_SPLIT_NO_EMPTY);
     $what = end($segments);
     $segmentsNb = count($segments);
+    $error = true;
 
     if ($what == 'Model' && $segmentsNb > 1) {
       if (isset($segments[1]) && $segments[1] == '_') {
@@ -138,10 +140,15 @@ class Sally
       $path = Sally::get('application') . '/traffickers/' . $class . '.php';
     } else {
       $path = Sally::path . '/' . $class . '.php';
+      $error = false;
     }
 
     if (!file_exists($path)) {
-      throw new Exception('Le fichier "' . $path . '" n\'existe pas.');
+      if ($error) {
+        throw new Exception('Le fichier "' . $path . '" n\'existe pas.');
+      } else {
+        return false;
+      }
     }
 
     include $path;
@@ -280,7 +287,7 @@ class Sally
     if (array_key_exists($name, $instance->_cfg)) {
       return $instance->_cfg[$name];
     } else {
-      return false;
+      return null;
     }
   }
 
@@ -299,6 +306,11 @@ class Sally
   public function disableForward()
   {
     $this->_forward = false;
+  }
+
+  public function getLibrary($path)
+  {
+    require_once Sally::get('application') . '/libs/' . $path;
   }
 
   public function exception($e)

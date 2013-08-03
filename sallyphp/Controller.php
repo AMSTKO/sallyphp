@@ -15,6 +15,7 @@ class Controller
   {
     $this->view = View::getInstance();
     $this->request = Request::getInstance();
+    $this->layout = Layout::getInstance();
   }
 
   public function helper($name)

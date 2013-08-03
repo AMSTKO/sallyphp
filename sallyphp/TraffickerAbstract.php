@@ -10,5 +10,7 @@
 abstract class TraffickerAbstract
 {
   function preDeal() {}
+  function preView() {}
+  function preLayout() {}
   function preDelivery() {}
 }

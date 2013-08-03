@@ -38,7 +38,7 @@ class Request
     if (array_key_exists($name, $this->_data)) {
       return $this->_data[$name];
     } else {
-      return false;
+      return null;
     }
   }
 
@@ -47,7 +47,7 @@ class Request
     if (array_key_exists($name, $_POST)) {
       return $_POST[$name];
     } else {
-      return false;
+      return null;
     }
   }
 

@@ -119,9 +119,16 @@ Les controleurs ont la possibilité de retourner des valeurs. Vous pourriez réc
 
     $sally->getDataBack();
 
+**Appeler une librairie**
+
+getLibrary(); s'occupe simplement de faire un "require_once" sur le fichier qui vous intéresse dans votre répertoire "libs".
+
+  $sally->getLibrary('Mustache/Autoloader.php');
 
 Controller
 ----------
+
+Dans un controleur vous pouvez accéder directement aux class request, view et layout simplement depuis $this->...
 
 **__contruct**
 
@@ -219,7 +226,7 @@ Layout
 
 **Transmettre des variables dans le layout**
 
-    $>layout->setData('name1', 'value1');
+    $layout->setData('name1', 'value1');
 
     // or
 
@@ -229,6 +236,10 @@ Layout
     ));
 
     // in view file : echo $name1; // display value1
+
+**Récupérer des variables transmises au layout**
+
+  $layout->getData('name1'); // return value1
 
 
 Acl
@@ -443,9 +454,11 @@ Les helpers sont de basiques fonctions PHP appelable n'importe ou.
 Trafficker
 ----------
 
-Le trafiquant permet d'agir à 2 endroits :
+Le trafiquant permet d'agir à 4 endroits :
 
 - avant l'appel d'un controleur;
+- avant l'intégration du layout;
+- avant l'intégration d'une vue;
 - avant de retourner le contenu de la requête;
 
 **avant l'appel d'un controleur : preDeal() {}**
@@ -457,6 +470,20 @@ Intercepter la requête au début du traitement.
 - définir un layout en fonction de l'utilisateur;
 - afficher une page d'erreur;
 - ...
+
+**avant l'appel du layout : preLayout() {}**
+
+Utiliser par exemple pour définir des variables au template du layout avec : $this->layout->setData();
+
+**avant l'appel d'une vue : preView() {}**
+
+Si vous avez un moteur de template à executer sur le contenu des vues.
+
+  function preView($out, $data) // $out: contenu de la vue, $data: array
+  {
+    $m = new Mustache_Engine;
+    return $m->render($out, $data);
+  }
 
 **avant de retourner le contenu de la requête : preDelivery() {}**
 

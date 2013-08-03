@@ -34,11 +34,29 @@ class Trafficker
     $this->_preDealExec = true;
   }
 
+  public function preLayout()
+  {
+    foreach ($this->traffickers as $object) {
+      $object->preLayout();
+    }
+  }
+
   public function preDelivery()
   {
     foreach ($this->traffickers as $object) {
       $object->preDelivery();
     }
+  }
+
+  public function preView($out, $data)
+  {
+    foreach ($this->traffickers as $object) {
+      $_out = $object->preView($out, $data);
+      if ($_out !== null) {
+        $out = $_out;
+      }
+    }
+    return $out;
   }
 
   public function add($name)

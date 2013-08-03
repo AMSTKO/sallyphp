@@ -45,8 +45,13 @@ class Db
             $name = 'default';
           }
           $this->_connection[$name] = new PDO('mysql:host=' . $cfg['host'] . ';dbname=' . $cfg['dbname'], $cfg['user'], $cfg['passwd']);
-          $this->_connection[$name]->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);  
-          $this->_connection[$name]->exec('set names utf8');
+          $this->_connection[$name]->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC); 
+          if (isset($cfg['timezone'])) {
+            $stmt = $this->_connection[$name]->prepare('set names utf8; set time_zone = :time_zone');
+            $stmt->execute(array('time_zone' => $cfg['timezone']));
+          } else {
+            $this->_connection[$name]->exec('set names utf8');
+          }
         } else {
           throw new Exception('Configuration mysql invalide');
         }

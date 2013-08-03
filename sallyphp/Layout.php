@@ -15,6 +15,11 @@ class Layout
   private $_data = array();
   protected static $_instance = false;
 
+  public function __construct()
+  {
+    $this->trafficker = Trafficker::getInstance();
+  }
+
   public static function getInstance()
   {
     if (!self::$_instance) {
@@ -44,6 +49,7 @@ class Layout
 
   public function integrate($_content)
   {
+    $this->trafficker->preLayout();
     $this->_content = $_content;
     return $this->load();
   }
@@ -80,6 +86,15 @@ class Layout
       $this->_data[$data] = $value;
     } elseif (is_array($data)) {
       $this->_data = array_merge($this->_data, $data);
+    }
+  }
+
+  public function getData($data)
+  {
+    if (array_key_exists($data, $this->_data)) {
+      return $this->_data[$data];
+    } else {
+      return false;
     }
   }
 }

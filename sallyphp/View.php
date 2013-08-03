@@ -13,6 +13,11 @@ class View
   private $_data = array();
   protected static $_instance = false;
 
+  public function __construct()
+  {
+    $this->trafficker = Trafficker::getInstance();
+  }
+
   public static function getInstance()
   {
     if (!self::$_instance) {
@@ -27,21 +32,24 @@ class View
     list($view_file, $view_fileName) = $sally->getFile($name, 'view');
     ob_start();
 
-    if (is_array($data)) {
-      foreach ($data as $key => $row) {
-        $$key = $row;
-      }
-    }
-
     if ($main) {
       foreach ($this->_data as $key => $row) {
         $$key = $row;
+      }
+    } else {
+      if (is_array($data)) {
+        foreach ($data as $key => $row) {
+          $$key = $row;
+        }
       }
     }
 
     require $view_file;
     $out = ob_get_contents();
     ob_end_clean();
+
+    $out = $this->trafficker->preView($out, $data);
+
     return $out;
   }
 
