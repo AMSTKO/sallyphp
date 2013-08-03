@@ -10,7 +10,7 @@
 class Sally
 {
   const name = 'SallyPHP MVC Framework';
-  const version = '1.130405.1';
+  const version = '1.130803.1';
   const site = 'sallyphp.com';
   const path = __DIR__;
   private $_out = null;
