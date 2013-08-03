@@ -123,7 +123,7 @@ Les controleurs ont la possibilité de retourner des valeurs. Vous pourriez réc
 
 getLibrary(); s'occupe simplement de faire un "require_once" sur le fichier qui vous intéresse dans votre répertoire "libs".
 
-  $sally->getLibrary('Mustache/Autoloader.php');
+    $sally->getLibrary('Mustache/Autoloader.php');
 
 Controller
 ----------
