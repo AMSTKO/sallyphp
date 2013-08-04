@@ -10,7 +10,7 @@
 class Sally
 {
   const name = 'SallyPHP MVC Framework';
-  const version = '1.130803.1';
+  const version = '1.130804.1';
   const site = 'sallyphp.com';
   const path = __DIR__;
   private $_out = null;
@@ -284,17 +284,40 @@ class Sally
   public static function get($name)
   {
     $instance = self::getInstance();
-    if (array_key_exists($name, $instance->_cfg)) {
-      return $instance->_cfg[$name];
+
+    if (func_num_args() === 2) {
+      $domain = func_get_arg(0);
+      $name = func_get_arg(1);
+      if (array_key_exists($name, $instance->_cfg[$domain])) {
+        return $instance->_cfg[$domain][$name];
+      }
     } else {
-      return null;
+      $name = func_get_arg(0);
+      if (array_key_exists($name, $instance->_cfg)) {
+        return $instance->_cfg[$name];
+      }
     }
+    return null;
   }
 
-  public static function set($name, $value)
+  public static function set($domain, $name, $value = null)
   {
     $instance = self::getInstance();
-    $instance->_cfg[$name] = $value;
+
+    if (func_num_args() === 3) {
+      $domain = func_get_arg(0);
+      $name = func_get_arg(1);
+      $value = func_get_arg(2);
+
+      if (!array_key_exists($domain, $instance->_cfg)) {
+        $instance->_cfg[$domain] = array();
+      }
+      $instance->_cfg[$domain][$name] = $value;
+    } else {
+      $name = func_get_arg(0);
+      $value = func_get_arg(1);
+      $instance->_cfg[$name] = $value;
+    }
     return true;
   }
 

@@ -89,6 +89,20 @@ En ajoutant un slash devant le nom d'un élément à charger (helper, view ou la
 Sally
 -----
 
+**Définir un paramètre global**
+
+    Sally::set('name', 'value');
+    // il est possible d'avoir des paramètres enfants
+    Sally::set('domain', 'name_b', 'value');
+
+**Récupérer un paramètre global**
+
+    Sally::get('name');
+    // or
+    Sally::get('domain'); // return array('name_b' => 'value');
+    // or
+    Sally::get('domain', 'name'); // return value
+
 **Récupérer l'instance**
 
     $sally = Sally::getInstance();
