@@ -281,7 +281,7 @@ class Sally
     $this->_out = $out;
   }
 
-  public static function get($name)
+  public static function get()
   {
     $instance = self::getInstance();
 
@@ -300,7 +300,7 @@ class Sally
     return null;
   }
 
-  public static function set($domain, $name, $value = null)
+  public static function set()
   {
     $instance = self::getInstance();
 
