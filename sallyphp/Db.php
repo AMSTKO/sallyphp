@@ -30,7 +30,7 @@ class Db
         throw new Exception('Connection introuvable.');
       }
     } else {
-      return $instance->_connection['default'];
+      return $instance->_connection['default-mysql_pdo'];
     }
   }
 
@@ -42,7 +42,7 @@ class Db
           if (isset($cfg['name'])) {
             $name = $cfg['name'];
           } else {
-            $name = 'default';
+            $name = 'default-mysql_pdo';
           }
           $this->_connection[$name] = new PDO('mysql:host=' . $cfg['host'] . ';dbname=' . $cfg['dbname'], $cfg['user'], $cfg['passwd']);
           $this->_connection[$name]->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC); 
@@ -54,6 +54,25 @@ class Db
           }
         } else {
           throw new Exception('Configuration mysql invalide');
+        }
+      } else if ($cfg['type'] == 'redis') {
+        if (isset($cfg['name'])) {
+          $name = $cfg['name'];
+        } else {
+          $name = 'default-redis';
+        }
+        
+        $sally = Sally::getInstance();
+        $sally->getLibrary('Predis/autoload.php');
+        $this->_connection[$name] = new Predis\Client();
+
+        try {
+          $this->_connection[$name]->connect(array(
+            'host' => isset($cfg['host']) ? $cfg['host'] : '127.0.0.1', 
+            'port' => isset($cfg['port']) ? $cfg['port'] : 6379
+          ));
+        } catch(Predis\CommunicationException $e) {
+          $this->_connection[$name] = false;
         }
       } else {
         throw new Exception('Type de db indisponible.');

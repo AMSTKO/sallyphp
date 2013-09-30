@@ -7,26 +7,30 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
+namespace sally;
+
+/**
+ * Sally Helper
+*/
 class Helper
 {
-  protected static $_instance = false;
+  /**
+   * @var object
+  */
+  private $engine;
 
-  public function __construct()
+  /**
+   * Helper constructor
+   * @param object
+  */
+  public function __construct($engine)
   {
-    $this->sally = Sally::getInstance();
+    $this->engine = $engine;
   }
 
-  public static function getInstance()
+  public function add($name)
   {
-    if (!self::$_instance) {
-      self::$_instance = new self();
-    }
-    return self::$_instance;
-  }
-
-  public function load($name)
-  {
-    list($helper_file, $helper_name) = $this->sally->getFile($name, 'helper');
+    list($helper_file, $helper_name) = $this->engine->getFilePath($name, 'helper');
     require_once $helper_file;
   }
 }

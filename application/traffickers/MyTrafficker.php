@@ -1,14 +1,7 @@
 <?php
 
-class MyTrafficker extends TraffickerAbstract
+class MyTrafficker extends sally\TraffickerAbstract
 {
-  function __construct()
-  {
-    $this->layout = Layout::getInstance();
-    $this->view = View::getInstance();
-    $this->request = Request::getInstance();
-  }
-
   function preDeal()
   {
     $this->layout->set('/home');

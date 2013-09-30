@@ -7,23 +7,21 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
+namespace sally;
+
+/**
+ * Sally
+*/
 class Trafficker
 {
   private $_preDealExec = false;
   private $traffickers = array();
   protected static $_instance = false;
 
-  public function __construct()
+  public function __construct($engine)
   {
-    $this->request = Request::getInstance();
-  }
-
-  public static function getInstance()
-  {
-    if (!self::$_instance) {
-      self::$_instance = new self();
-    }
-    return self::$_instance;
+    $this->engine = $engine;
+    $this->request = $engine->request;
   }
 
   public function preDeal()
@@ -61,9 +59,9 @@ class Trafficker
 
   public function add($name)
   {
-    $sally = Sally::getInstance();
+    $sally = \Sally::getInstance();
     $trafficker_name = ucfirst($name) . 'Trafficker';
-    $trafficker = new $trafficker_name();
+    $trafficker = new $trafficker_name($this->engine);
     array_push($this->traffickers, $trafficker);
   }
 

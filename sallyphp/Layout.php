@@ -7,25 +7,41 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
+namespace sally;
+
+/**
+ * Sally Layout
+*/
 class Layout
 {
+  /**
+   * @var object
+  */
+  private $engine;
+  private $request;
+  private $trafficker;
+
+  /**
+   * @var boolean
+  */
   private $_layout = false;
   private $_enable = true;
   private $_content = false;
+
+  /**
+   * @var array
+  */
   private $_data = array();
-  protected static $_instance = false;
 
-  public function __construct()
+  /**
+   * Layout constructor
+   * @param object
+  */
+  public function __construct($engine)
   {
-    $this->trafficker = Trafficker::getInstance();
-  }
-
-  public static function getInstance()
-  {
-    if (!self::$_instance) {
-      self::$_instance = new self();
-    }
-    return self::$_instance;
+    $this->engine = $engine;
+    $this->request = $engine->request;
+    $this->trafficker = $engine->trafficker;
   }
 
   public function getContent()
@@ -75,8 +91,8 @@ class Layout
 
   public function set($name)
   {
-    $sally = Sally::getInstance();
-    list($layout_file, $layout_name) = $sally->getFile($name, 'layout');
+    $sally = \Sally::getInstance();
+    list($layout_file, $layout_name) = $this->engine->getFilePath($name, 'layout');
     $this->_layout = $layout_file;
   }
 

@@ -7,29 +7,50 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
+namespace sally;
+
+/**
+ * Sally View
+*/
 class View
 {
+  /**
+   * @var object
+  */
+  private $engine;
+  private $request;
+  private $trafficker;
+
+  /**
+   * @var boolean
+  */
   private $_controllerView = true;
+
+  /**
+   * @var array
+  */
   private $_data = array();
-  protected static $_instance = false;
 
-  public function __construct()
+  /**
+   * View constructor
+   * @param object
+  */
+  public function __construct($engine)
   {
-    $this->trafficker = Trafficker::getInstance();
+    $this->engine = $engine;
+    $this->request = $engine->request;
+    $this->trafficker = $engine->trafficker;
   }
 
-  public static function getInstance()
-  {
-    if (!self::$_instance) {
-      self::$_instance = new self();
-    }
-    return self::$_instance;
-  }
-
+  /**
+   * Charge une vue
+   * @param mixed
+  */
   public function load($name, $data = null, $main = false)
   {
-    $sally = Sally::getInstance();
-    list($view_file, $view_fileName) = $sally->getFile($name, 'view');
+    list($view_file, $view_fileName) = $this->engine->getFilePath($name, 'view');
+
+    // tampon
     ob_start();
 
     if ($main) {

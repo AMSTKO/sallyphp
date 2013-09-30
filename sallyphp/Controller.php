@@ -7,32 +7,62 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
+namespace sally;
+
+/**
+ * Sally Controller
+*/
 class Controller
 {
+  /**
+   * @var object
+  */
+  public $engine;
+  public $request;
+  public $layout;
   public $view;
+  public $helper;
 
-  public function __construct()
+  /**
+   * Controller constructor
+   * @param object
+  */
+  public function __construct($engine)
   {
-    $this->view = View::getInstance();
-    $this->request = Request::getInstance();
-    $this->layout = Layout::getInstance();
+    $this->engine = $engine;
+    $this->request = $engine->request;
+    $this->layout = $engine->layout;
+    $this->view = $engine->view;
+    $this->helper = $engine->helper;
   }
 
+  /**
+   * Raccourci pour Charger un helper
+   * @param string
+  */
   public function helper($name)
   {
-    $helper = Helper::getInstance();
-    return $helper->load($name);
+    $this->helper->add($name);
   }
 
+  /**
+   * Raccourci pour définir une redirection client
+   * @param string
+  */
   public function redirect($url)
   {
-    header('Location: ' . $url);
-    exit;
+    $this->engine->setRedirect($url);
   }
 
+  /**
+   * Raccourci pour définir un forward (redirection interne)
+   * @param string action name
+   * @param string controller name
+   * @param string module name
+  */
   public function forward($action = 'index', $controller = null, $module = null)
   {
-    Sally::getInstance()->enableForward(array(
+    $this->engine->setForward(array(
       'module' => $module,
       'controller' => $controller,
       'action' => $action

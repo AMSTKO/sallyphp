@@ -6,6 +6,6 @@
     <link href="<?=Sally::get('static')?>css/template.css" rel="stylesheet">
   </head>
   <body>
-    <?=$this->getContent()?>
+    {tlp}<?=$this->getContent()?>{/tlp}
   </body>
 </html>

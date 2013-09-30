@@ -1,8 +1,9 @@
 <?php
-class IndexController extends Controller
+class IndexController extends sally\Controller
 {
   public function index()
   {
+    //throw new sally\Exception('lol.');
   }
 
   public function request()
