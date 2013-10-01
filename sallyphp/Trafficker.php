@@ -28,7 +28,8 @@ class Trafficker
   /**
    * @var array
   */
-  private $traffickers = array();
+  private $_traffickers = array();
+  private $_traffickers_modules = array();
 
   /**
    * Trafficker constructor
@@ -45,7 +46,7 @@ class Trafficker
   */
   public function preEngine()
   {
-    foreach ($this->traffickers as $object) {
+    foreach ($this->_traffickers as $object) {
       $object->preEngine();
     }
     $this->_preEngineExecute = true;
@@ -59,7 +60,7 @@ class Trafficker
   */
   public function viewDelivery($content, $data)
   {
-    foreach ($this->traffickers as $object) {
+    foreach ($this->_traffickers as $object) {
       $_content = $object->viewDelivery($content, $data);
       if ($_content !== null) {
         $content = $_content;
@@ -75,7 +76,7 @@ class Trafficker
   */
   public function preLayout($content)
   {
-    foreach ($this->traffickers as $object) {
+    foreach ($this->_traffickers as $object) {
       $_content = $object->preLayout($content);
       if ($_content !== null) {
         $content = $_content;
@@ -91,7 +92,7 @@ class Trafficker
   */
   public function layoutDelivery($content)
   {
-    foreach ($this->traffickers as $object) {
+    foreach ($this->_traffickers as $object) {
       $_content = $object->layoutDelivery($content);
       if ($_content !== null) {
         $content = $_content;
@@ -105,27 +106,29 @@ class Trafficker
    * @param string contenu
    * @return string contenu
   */
-  public function engineDelivery($content)
+  public function engineDelivery($content, $controller_result)
   {
-    foreach ($this->traffickers as $object) {
-      $_content = $object->engineDelivery($content);
-      if ($_content !== null) {
+    foreach ($this->_traffickers as $object) {
+      $_content = $object->engineDelivery($content, $controller_result);
+      if ($_content != null) {
         $content = $_content;
       }
-      return $content;
     }
+    return $content;
   }
 
   /**
    * Ajouter un traffiquant
    * @param string name
   */
-  public function add($name)
+  public function add($name, $modules = array())
   {
-    $sally = \Sally::getInstance();
-    $trafficker_name = ucfirst($name) . 'Trafficker';
-    $trafficker = new $trafficker_name($this->engine);
-    array_push($this->traffickers, $trafficker);
+    if (count($modules) == 0 || in_array($this->engine->request->getModule(), $modules)) {
+      $sally = \Sally::getInstance();
+      $trafficker_name = ucfirst($name) . 'Trafficker';
+      $trafficker = new $trafficker_name($this->engine);
+      array_push($this->_traffickers, $trafficker);
+    }
   }
 
   /**

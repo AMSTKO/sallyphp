@@ -44,12 +44,15 @@ class Engine
   */
   public function __construct($request_string)
   {
+    // first step
+    $this->request = new Request($this);
+    $this->request->path($request_string);
+
+    // next
     $this->trafficker = new Trafficker($this);
     $this->view = new View($this);
     $this->layout = new Layout($this);
     $this->helper = new Helper($this);
-    $this->request = new Request($this);
-    $this->request->path($request_string);
   }
 
   /**

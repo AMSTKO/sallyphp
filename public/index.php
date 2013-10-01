@@ -31,7 +31,7 @@ $sally->module->add('site');
 $engine = $sally->prepare($_SERVER['REQUEST_URI']);
 
 // add a traffickers and helpers for the request
-$engine->trafficker->add('my');
+$engine->trafficker->add('my', array('site'));
 $engine->helper->add('/toStrong');
 
 // execute the request
