@@ -28,6 +28,10 @@ class Helper
     $this->engine = $engine;
   }
 
+  /**
+   * charger un helper
+   * @param string
+  */
   public function add($name)
   {
     list($helper_file, $helper_name) = $this->engine->getFilePath($name, 'helper');

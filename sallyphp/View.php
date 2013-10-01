@@ -24,7 +24,7 @@ class View
   /**
    * @var boolean
   */
-  private $_controllerView = true;
+  private $_controllerViewIsEnabled = true;
 
   /**
    * @var array
@@ -44,7 +44,9 @@ class View
 
   /**
    * Charge une vue
-   * @param mixed
+   * @param string view name
+   * @param array data
+   * @param boolean is main view
   */
   public function load($name, $data = null, $main = false)
   {
@@ -68,12 +70,15 @@ class View
     require $view_file;
     $out = ob_get_contents();
     ob_end_clean();
-
     $out = $this->trafficker->preView($out, $data);
-
     return $out;
   }
 
+  /**
+   * Définit des données de la vue
+   * @param string value name
+   * @param mixed value
+  */
   public function setData($data, $value = null)
   {
     if (is_string($data)) {
@@ -83,13 +88,20 @@ class View
     }
   }
 
+  /**
+   * Désactive la vue par defaut du controleur
+  */
   public function disableControllerView()
   {
-    $this->_controllerView = false;
+    $this->_controllerViewIsEnabled = false;
   }
 
+  /**
+   * Savoir si la vue par defaut du controleur est activé
+   * @return boolean
+  */
   public function controllerViewIsEnabled()
   {
-    return $this->_controllerView;
+    return $this->_controllerViewIsEnabled;
   }
 }

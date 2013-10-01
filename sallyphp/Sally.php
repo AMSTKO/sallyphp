@@ -171,7 +171,7 @@ class Sally
   }
 
   /**
-   * Récupérer un paramètre global
+   * Définit un paramètre global
    * @param string ex: 'name1', 'value1'|'user', 'id', 12
   */
   public static function set()
