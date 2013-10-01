@@ -7,14 +7,34 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
+namespace sally;
+
+/**
+ * Sally Session
+*/
 class Session
 {
-  private $_hasCookie = false;
+  /**
+   * @var array
+  */
   private $_content = array();
+
+  /**
+   * @var boolean
+  */
+  private $_hasCookie = false;
   private $_isSet = false;
+
+  /**
+   * @var mixed
+  */
   protected static $_instance = false;
 
-  public function __construct()
+
+  /**
+   * Session constructor
+  */
+  private function __construct()
   {
     $this->rijndael = Rijndael::getInstance();
     if ($this->getCookie()) {
@@ -24,13 +44,10 @@ class Session
     }
   }
 
-  public function sendHeaderCookie()
-  {
-    if ($this->_isSet) {
-      $this->setCookie();
-    }
-  }
-
+  /**
+   * Session instance
+   * @return object
+  */
   public static function getInstance()
   {
     if (!self::$_instance) {
@@ -39,28 +56,60 @@ class Session
     return self::$_instance;
   }
 
+  /**
+   * Définit le cookie si il a été modifié
+  */
+  public function sendHeaderCookie()
+  {
+    if ($this->_isSet) {
+      $this->setCookie();
+    }
+  }
+
+  /**
+   * Présence du cookie ou non
+   * @return boolean
+  */
   public function hasCookie()
   {
     return $this->_hasCookie;
   }
 
+  /**
+   * Récupere le contenu du cookie
+   * @return array
+  */
   public function getContent()
   {
     return $this->_content;
   }
 
+  /**
+   * Définir entierrement le contenu du cookie
+   * @param array
+  */
   public function setContent($content = array())
   {
     $this->_content = $content;
     $this->_isSet = true;
   }
 
+  /**
+   * Définit une valeur du cookie
+   * @param string name
+   * @param string value
+  */
   public function set($name, $value)
   {
     $this->_content[$name] = $value;
     $this->_isSet = true;
   }
 
+  /**
+   * Récupère une valeur du cookie
+   * @param string name
+   * @return mixed
+  */
   public function get($name)
   {
     if (array_key_exists($name, $this->_content)) {
@@ -70,6 +119,10 @@ class Session
     }
   }
 
+  /**
+   * Récupère et décrypte le cookie
+   * @return boolean
+  */
   protected function getCookie()
   {
     if (isset($_COOKIE[Sally::get('cookie.name')])) {
@@ -95,6 +148,9 @@ class Session
     }
   }
 
+  /**
+   * Définit le cookie
+  */
   protected function setCookie()
   {
     $cookie = '';

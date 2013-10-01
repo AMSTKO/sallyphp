@@ -14,49 +14,112 @@ namespace sally;
 */
 class Trafficker
 {
-  private $_preDealExec = false;
-  private $traffickers = array();
-  protected static $_instance = false;
+  /**
+   * @var object
+  */
+  private $engine;
+  private $request;
 
+  /**
+   * @var boolean
+  */
+  private $_preEngineExecute = false;
+
+  /**
+   * @var array
+  */
+  private $traffickers = array();
+
+  /**
+   * Trafficker constructor
+   * @param object
+  */
   public function __construct($engine)
   {
     $this->engine = $engine;
     $this->request = $engine->request;
   }
 
-  public function preDeal()
+  /**
+   * Appelée au début de la requête
+  */
+  public function preEngine()
   {
     foreach ($this->traffickers as $object) {
-      $object->preDeal();
+      $object->preEngine();
     }
-    $this->_preDealExec = true;
+    $this->_preEngineExecute = true;
   }
 
-  public function preLayout()
-  {
-    foreach ($this->traffickers as $object) {
-      $object->preLayout();
-    }
-  }
 
-  public function preDelivery()
+  /**
+   * Appelée avant la livraison de la vue
+   * @param string contenu
+   * @return string contenu
+  */
+  public function viewDelivery($content)
   {
     foreach ($this->traffickers as $object) {
-      $object->preDelivery();
-    }
-  }
-
-  public function preView($out, $data)
-  {
-    foreach ($this->traffickers as $object) {
-      $_out = $object->preView($out, $data);
-      if ($_out !== null) {
-        $out = $_out;
+      $_content = $object->viewDelivery($content);
+      if ($_content !== null) {
+        $content = $_content;
       }
     }
-    return $out;
+    return $content;
   }
 
+  /**
+   * Appelée avant d'intégrer le contenu au layout
+   * @param string contenu
+   * @return string contenu
+  */
+  public function preLayout($content)
+  {
+    foreach ($this->traffickers as $object) {
+      $_content = $object->preLayout($content);
+      if ($_content !== null) {
+        $content = $_content;
+      }
+    }
+    return $content;
+  }
+
+  /**
+   * Appelée avant la livraison du layout
+   * @param string contenu
+   * @return string contenu
+  */
+  public function layoutDelivery($content)
+  {
+    foreach ($this->traffickers as $object) {
+      $_content = $object->layoutDelivery($content);
+      if ($_content !== null) {
+        $content = $_content;
+      }
+    }
+    return $content;
+  }
+
+  /**
+   * Appelée avant de retourner le contenu de la réponse au client
+   * @param string contenu
+   * @return string contenu
+  */
+  public function engineDelivery($content)
+  {
+    foreach ($this->traffickers as $object) {
+      $_content = $object->engineDelivery($content);
+      if ($_content !== null) {
+        $content = $_content;
+      }
+      return $content;
+    }
+  }
+
+  /**
+   * Ajouter un traffiquant
+   * @param string name
+  */
   public function add($name)
   {
     $sally = \Sally::getInstance();
@@ -65,8 +128,12 @@ class Trafficker
     array_push($this->traffickers, $trafficker);
   }
 
-  public function preDealIsExec()
+  /**
+   * L'action preEngine a t elle été executée
+   * @param string name
+  */
+  public function preEngineIsExecute()
   {
-    return $this->_preDealExec;
+    return $this->_preEngineExecute;
   }
 }

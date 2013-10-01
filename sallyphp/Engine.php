@@ -71,8 +71,8 @@ class Engine
   public function call()
   {
     // preDeal n'est pas de nouveau executé en cas de redirection interne 
-    if (!$this->trafficker->preDealIsExec()) {
-      $this->trafficker->preDeal();
+    if (!$this->trafficker->preEngineIsExecute()) {
+      $this->trafficker->preEngine();
     }
 
     $controller_class_name = ucfirst($this->request->getController()) . 'Controller';
@@ -133,7 +133,7 @@ class Engine
       }
 
       // Dernière action du traffiquant
-      $this->trafficker->preDelivery();
+      $this->_out = $this->trafficker->engineDelivery($this->_out);
     }
 
     // Écrire du cookie
@@ -199,24 +199,6 @@ class Engine
   public function getDataBack()
   {
     return $this->_dataBack;
-  }
-
-  /**
-   * Récupérer le contenu qui sera envoyé au client
-   * @return string
-  */
-  public function getOut()
-  {
-    return $this->_out;
-  }
-
-  /**
-   * Redéfinir le contenu qui sera envoyé au client
-   * @param string
-  */
-  public function setOut($out)
-  {
-    $this->_out = $out;
   }
 
   /**

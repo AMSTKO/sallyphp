@@ -7,11 +7,27 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
+namespace sally;
+
+/**
+ * Sally Db
+*/
 class Db
 {
+  /**
+   * @var array
+  */
   private $_connection = array();
+
+  /**
+   * @var mixed
+  */
   protected static $_instance = false;
 
+  /**
+   * Db instance
+   * @return object
+  */
   public static function getInstance()
   {
     if (!self::$_instance) {
@@ -20,6 +36,11 @@ class Db
     return self::$_instance;
   }
 
+  /**
+   * Récupérer une connexion
+   * @param string connection name
+   * @return object
+  */
   public static function getConnection($name = null)
   {
     $instance = self::getInstance();
@@ -34,6 +55,10 @@ class Db
     }
   }
 
+  /**
+   * Ajouter une connexion
+   * @param array configuration
+  */
   public function add($cfg)
   {
     if (isset($cfg['type'])) {

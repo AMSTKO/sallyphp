@@ -7,15 +7,9 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
-class Model
-{
-  protected static $_instance = false;
+namespace sally;
 
-  public static function getInstance()
-  {
-    if (!self::$_instance) {
-      self::$_instance = new self();
-    }
-    return self::$_instance;
-  }
-}
+/**
+ * Sally Model
+*/
+class Model{}

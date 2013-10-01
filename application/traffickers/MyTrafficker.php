@@ -2,7 +2,7 @@
 
 class MyTrafficker extends sally\TraffickerAbstract
 {
-  function preDeal()
+  function preEngine()
   {
     $this->layout->set('/home');
     $this->layout->data_json = json_encode(array(

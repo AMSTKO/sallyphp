@@ -17,7 +17,7 @@ class Sally
    * @var string
   */
   const name = 'SallyPHP';
-  const version = '1.130930.1';
+  const version = '1.131001.1';
   const path = __DIR__;
 
   /**
@@ -65,6 +65,9 @@ class Sally
   /**
    * Chargement d'une requête
    * @param string 'MyTrafficker', 'UserModel', 'Site_UserModel' 'sally\Request'
+   * @param array traffickers
+   * @param array helpers
+   * @return string response content
   */
   public function load($request_string = '', $traffickers = array(), $helpers = array())
   {
@@ -111,7 +114,7 @@ class Sally
 
     // pas concerné
     else {
-      return false;
+      return;
     }
 
     try {
@@ -127,7 +130,7 @@ class Sally
 
   /**
    * Ajouter un module utilisalbe pour l'application
-   * @param string ex: 'site', 'api', 'admin'
+   * @param string 'site', 'api', 'admin'
   */
   public function addModule($name)
   {
@@ -148,7 +151,7 @@ class Sally
 
   /**
    * Récupérer un paramètre global
-   * @param string ex: 'application' 'user'[, 'id']
+   * @param string 'application' 'user'[, 'id']
    * @return mixed
   */
   public static function get()
@@ -172,7 +175,7 @@ class Sally
 
   /**
    * Définit un paramètre global
-   * @param string ex: 'name1', 'value1'|'user', 'id', 12
+   * @param string 'name1', 'value1'|'user', 'id', 12
   */
   public static function set()
   {

@@ -7,13 +7,29 @@
  * @license   https://github.com/MrPing/sallyphp#license
  */
 
+namespace sally;
+
+/**
+ * Sally Acl
+*/
 class Acl
 {
+  /**
+   * @var array
+  */
   private $_role = array();
   private $_ressource = array();
   private $_privilage = array();
+
+  /**
+   * @var mixed
+  */
   protected static $_instance = false;
 
+  /**
+   * Acl instance
+   * @return object
+  */
   public static function getInstance()
   {
     if (!self::$_instance) {
@@ -22,6 +38,13 @@ class Acl
     return self::$_instance;
   }
 
+  /**
+   * Vérifie un privilège
+   * @param string role name
+   * @param string ressource name
+   * @param string action name
+   * @return array
+  */
   private function checkPrivilage($role_name, $ressource_name, $action_name)
   {
     foreach ($this->_privilage as $row) {
@@ -41,6 +64,13 @@ class Acl
     return array(false, false);
   }
 
+  /**
+   * Remonte les parents d'une ressource
+   * @param array role parents
+   * @param array ressource parents
+   * @param string action name
+   * @return boolean
+  */
   private function goParents($role_parents, $ressource_parents, $action_name)
   {
     foreach ($ressource_parents as $ressource_parent_name) {
@@ -54,6 +84,13 @@ class Acl
     return false;
   }
 
+  /**
+   * Détermine si un role à le droit d'accéder à une ressource et une action
+   * @param string role name
+   * @param string ressource name
+   * @param string action name
+   * @return boolean
+  */
   public function isAllowed($role_name, $ressource_name, $action_name)
   {
     if (!array_key_exists($role_name, $this->_role)) {
@@ -64,10 +101,12 @@ class Acl
       throw new Exception('La ressource "' . $ressource_name . '" n\'existe pas.');
     }
 
+    // tableau des role parents
     $role_parents = $this->_role[$role_name]['parents'];
     array_push($role_parents, $role_name);
     $role_parents = array_reverse($role_parents);
 
+    // tableau des ressource parents
     $ressource_parents = $this->_ressource[$ressource_name]['parents'];
     array_push($ressource_parents, $ressource_name);
     $ressource_parents = array_reverse($ressource_parents);
@@ -75,6 +114,11 @@ class Acl
     return $this->goParents($role_parents, $ressource_parents, $action_name);
   }
 
+  /**
+   * Ajouter un role
+   * @param string role name
+   * @param string parent name
+  */
   public function addRole($name, $parent = null)
   {
     $parents = array();
@@ -86,6 +130,11 @@ class Acl
     );
   }
 
+  /**
+   * Ajouter une ressource
+   * @param string role name
+   * @param string parent name
+  */
   public function addRessource($name, $parent = null)
   {
     $parents = array();
@@ -97,6 +146,12 @@ class Acl
     );
   }
 
+  /**
+   * Interdire un role sur une ressource et une action
+   * @param string role name
+   * @param string ressource name
+   * @param array action
+  */
   public function deny($role_name, $ressource_name, $action = array())
   {
     array_push($this->_privilage, array(
@@ -107,6 +162,12 @@ class Acl
     ));
   }
 
+  /**
+   * Autoriser un role sur une ressource et une action
+   * @param string role name
+   * @param string parent name
+   * @param array action
+  */
   public function allow($role_name, $ressource_name, $action = array())
   {
     array_push($this->_privilage, array(

@@ -59,19 +59,25 @@ class Layout
   */
   private function load()
   {
-    // tampon de sortie
+    // tampon
     ob_start();
 
-    // liste les données et créer une variable à chaque fois
+    // données pour le layout
     foreach ($this->_data as $key => $row) {
       $$key = $row;
     }
 
     require $this->_layout;
 
-    $out = ob_get_contents();
+    // fin du tampon
+    $content = ob_get_contents();
     ob_end_clean();
-    return $out;
+
+    // modification possible du contenu du layout
+    $content = $this->trafficker->layoutDelivery($content);
+
+    // livraison
+    return $content;
   }
 
   /**
@@ -79,10 +85,10 @@ class Layout
    * @param string content
    * @return string content in layout
   */
-  public function integrate($_content)
+  public function integrate($content)
   {
-    $this->trafficker->preLayout();
-    $this->_content = $_content;
+    $content = $this->trafficker->preLayout($content);
+    $this->_content = $content;
     return $this->load();
   }
 

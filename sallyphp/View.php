@@ -29,7 +29,7 @@ class View
   /**
    * @var array
   */
-  private $_data = array();
+  private $_mainViewData = array();
 
   /**
    * View constructor
@@ -55,8 +55,9 @@ class View
     // tampon
     ob_start();
 
+    // données pour la vue
     if ($main) {
-      foreach ($this->_data as $key => $row) {
+      foreach ($this->_mainViewData as $key => $row) {
         $$key = $row;
       }
     } else {
@@ -68,23 +69,29 @@ class View
     }
 
     require $view_file;
-    $out = ob_get_contents();
+
+    // fin du tampon
+    $content = ob_get_contents();
     ob_end_clean();
-    $out = $this->trafficker->preView($out, $data);
-    return $out;
+
+    // modification possible du contenu de la vue
+    $content = $this->trafficker->viewDelivery($content);
+
+    // livraison
+    return $content;
   }
 
   /**
    * Définit des données de la vue
-   * @param string value name
+   * @param string, array value name or values array
    * @param mixed value
   */
   public function setData($data, $value = null)
   {
     if (is_string($data)) {
-      $this->_data[$data] = $value;
+      $this->_mainViewData[$data] = $value;
     } elseif (is_array($data)) {
-      $this->_data = array_merge($this->_data, $data);
+      $this->_mainViewData = array_merge($this->_mainViewData, $data);
     }
   }
 
