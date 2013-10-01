@@ -96,14 +96,14 @@ class Engine
     // instanciation du controleur
     $controller = new $controller_class_name($this);
 
-    // check si l'action existe
-    if (!method_exists($controller, $this->request->getAction())) {
-      throw new sally\Exception('L\'action "' . $this->request->getAction() . '" n\'existe pas dans le controller "' . $this->request->getController() . '".');
-    }
-
     // forward demandé dans le __construct du controleur
     if ($this->_forward) {
       return $this->launchForward();
+    }
+
+    // check si l'action existe
+    if (!method_exists($controller, $this->request->getAction())) {
+      throw new sally\Exception('L\'action "' . $this->request->getAction() . '" n\'existe pas dans le controller "' . $this->request->getController() . '".');
     }
 
     // appel de l'action du controleur

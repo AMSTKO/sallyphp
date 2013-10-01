@@ -66,10 +66,10 @@ class Sally
    * Chargement d'une requête
    * @param string 'MyTrafficker', 'UserModel', 'Site_UserModel' 'sally\Request'
   */
-  public function load($request_string = '', $traffickers = array())
+  public function load($request_string = '', $traffickers = array(), $helpers = array())
   {
     try {
-      $engine = new sally\Engine($request_string, $traffickers);
+      $engine = new sally\Engine($request_string, $traffickers, $helpers = array();
       return $engine->call();
     } catch (sally\Exception $e) {
       
