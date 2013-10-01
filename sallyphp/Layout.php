@@ -45,6 +45,15 @@ class Layout
   }
 
   /**
+   * Récupérer le contenu à placer dans le layout
+   * @return string
+  */
+  public function getContent()
+  {
+    return $this->_content;
+  }
+
+  /**
    * Charge le layout et rend disponible les données définies
    * @return string
   */
