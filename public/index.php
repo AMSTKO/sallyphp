@@ -1,15 +1,38 @@
 <?php
+/**
+ * SallyPHP
+ * Hello world!
+*/
 
-include '../sallyphp/Sally.php';
+require '../sallyphp/Sally.php';
 
-$sally = Sally::getInstance();
-
+// set configuration variables
 Sally::set('application', __DIR__ . '/../application');
 Sally::set('module.default', 'site');
 
-$sally->module->add('site');
-$sally->module->add('admin');
+// add a database connection
+/*$db = sally\Db::getInstance();
+$db->add(array(
+  'type' => 'mysql-pdo',
+  'name' => 'default',
+  'host' => '127.0.0.1',
+  'dbname' => 'xyz',
+  'user' => 'yxz',
+  'passwd' => '***'
+));*/
 
+// get Sally instance
+$sally = Sally::getInstance();
+
+// add modules to application
+$sally->module->add('site');
+
+// prepare the request and get "Sally Engine object"
 $engine = $sally->prepare($_SERVER['REQUEST_URI']);
+
+// add a traffickers and helpers for the request
 $engine->trafficker->add('my');
+$engine->helper->add('/toStrong');
+
+// execute the request
 echo $engine->execute();

@@ -17,7 +17,7 @@ class Sally
    * @var string
   */
   const name = 'SallyPHP';
-  const version = '1.131001.1';
+  const version = '1.131002.1';
   const path = __DIR__;
 
   /**
@@ -71,17 +71,11 @@ class Sally
   /**
    * Chargement d'une requête
    * @param string 'MyTrafficker', 'UserModel', 'Site_UserModel' 'sally\Request'
-   * @param array traffickers
-   * @param array helpers
    * @return string response content
   */
   public function prepare($request_string = '')
   {
-    try {
-      return new sally\Engine($request_string);
-    } catch (sally\Exception $e) {
-      
-    }
+    return new sally\Engine($request_string);
   }
 
   /**
@@ -127,7 +121,7 @@ class Sally
         throw new sally\Exception('Le fichier ' . $class . ' "' . $path . '" n\'existe pas.');
       }
     } catch (sally\Exception $e) {
-
+      exit;
     }
 
     require_once $path;
@@ -185,17 +179,17 @@ class Sally
    * Chargement d'une librairie
    * @param string
   */
-  public function getLibrary($file)
+  public function library($file)
   {
     try {
       $path = Sally::get('application') . '/libs/' . $file;
       if (file_exists($path)) {
         require_once $path;
       } else {
-        throw new sally\Exception('Le fichier ' . $path . '" n\'existe pas.');
+        throw new sally\Exception('Problème lors du chargement d\'une librairie. Le fichier "' . $path . '" n\'existe pas.');
       }
     } catch (sally\Exception $e) {
-
+      exit;
     }
   }
 }

@@ -34,7 +34,7 @@ class Module
         array_push($this->_modules, $module_name);
       }
     } catch (Exception $e) {
-
+      exit;
     }
   }
 

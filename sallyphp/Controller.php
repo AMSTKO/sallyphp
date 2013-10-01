@@ -17,7 +17,7 @@ class Controller
   /**
    * @var object
   */
-  public $engine;
+  private $engine;
   public $request;
   public $layout;
   public $view;
@@ -34,15 +34,6 @@ class Controller
     $this->layout = $engine->layout;
     $this->view = $engine->view;
     $this->helper = $engine->helper;
-  }
-
-  /**
-   * Raccourci pour Charger un helper
-   * @param string
-  */
-  public function helper($name)
-  {
-    $this->helper->add($name);
   }
 
   /**

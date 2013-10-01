@@ -48,7 +48,7 @@ class View
    * @param array data
    * @param boolean is main view
   */
-  public function load($name, $data = null, $main = false)
+  public function load($name, $data = array(), $main = false)
   {
     list($view_file, $view_fileName) = $this->engine->getFilePath($name, 'view');
 
@@ -57,6 +57,7 @@ class View
 
     // données pour la vue
     if ($main) {
+      $data = $this->_mainViewData;
       foreach ($this->_mainViewData as $key => $row) {
         $$key = $row;
       }
@@ -75,7 +76,7 @@ class View
     ob_end_clean();
 
     // modification possible du contenu de la vue
-    $content = $this->trafficker->viewDelivery($content);
+    $content = $this->trafficker->viewDelivery($content, $data);
 
     // livraison
     return $content;

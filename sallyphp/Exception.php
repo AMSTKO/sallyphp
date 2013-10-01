@@ -24,10 +24,6 @@ class Exception extends \Exception
         $tmp.= '<b>' . $message . '</b><br>'; 
         $tmp.= '<i>at line </i><b>' . $this->getLine() . '</b>';
         $tmp.= '<i> in file </i><b>' . $this->getFile() . '</b><br><br>';
-        foreach ($this->getTrace() as $id => $trace) {
-          $tmp.= '<b>' . $id . '</b> ' . $trace['file'] . ' line ' . $trace['line'] . '<br>';
-        }
-        $tmp.= '<br>';
         $tmp.= '<small>' . \Sally::name . ' ' . \Sally::version . '</small>';
       $tmp.= '<p>';
     $tmp.= '</div>';

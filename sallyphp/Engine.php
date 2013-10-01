@@ -17,7 +17,7 @@ class Engine
   /**
    * @var string
   */
-  private $_out = null;
+  private $_content = null;
 
   /**
    * @var mixed
@@ -49,7 +49,6 @@ class Engine
     $this->layout = new Layout($this);
     $this->helper = new Helper($this);
     $this->request = new Request($this);
-
     $this->request->path($request_string);
   }
 
@@ -62,84 +61,88 @@ class Engine
   */
   public function execute()
   {
-    // preDeal n'est pas de nouveau executé en cas de redirection interne 
-    if (!$this->trafficker->preEngineIsExecute()) {
-      $this->trafficker->preEngine();
-    }
+    try {
+      // preDeal n'est pas de nouveau executé en cas de redirection interne 
+      if (!$this->trafficker->preEngineIsExecute()) {
+        $this->trafficker->preEngine();
+      }
 
-    $controller_class_name = ucfirst($this->request->getController()) . 'Controller';
+      $controller_class_name = ucfirst($this->request->getController()) . 'Controller';
 
-    // chemin du controleur
-    if ($module = $this->request->getModule()) {
-      $controller_path = \Sally::get('application') . '/modules/' . $module . '/controllers/' . $controller_class_name . '.php';
-    } else {
-      $controller_path = \Sally::get('application') . '/controllers/' . $controller_class_name . '.php';
-    }
+      // chemin du controleur
+      if ($module = $this->request->getModule()) {
+        $controller_path = \Sally::get('application') . '/modules/' . $module . '/controllers/' . $controller_class_name . '.php';
+      } else {
+        $controller_path = \Sally::get('application') . '/controllers/' . $controller_class_name . '.php';
+      }
 
-    if (!file_exists($controller_path)) {
-      throw new Exception('Le controleur "' . $this->request->getController() . '" n\'est pas accessible.');
-    }
+      if (!file_exists($controller_path)) {
+        throw new Exception('Le controleur "' . $this->request->getController() . '" n\'est pas accessible.');
+      }
 
-    require_once $controller_path;
-    
-    // demarrage du tampon de sortie
-    ob_start();
+      require_once $controller_path;
+      
+      // demarrage du tampon de sortie
+      ob_start();
 
-    // instanciation du controleur
-    $controller = new $controller_class_name($this);
+      // instanciation du controleur
+      $controller = new $controller_class_name($this);
 
-    // forward demandé dans le __construct du controleur
-    if ($this->_forward) {
-      return $this->launchForward();
-    }
-
-    // check si l'action existe
-    if (!method_exists($controller, $this->request->getAction())) {
-      throw new Exception('L\'action "' . $this->request->getAction() . '" n\'existe pas dans le controller "' . $this->request->getController() . '".');
-    }
-
-    // appel de l'action du controleur
-    $this->_dataBack = $controller->{$this->request->getAction()}();
-
-    // en cas de redirection client
-    if ($this->_redirect) {
-      ob_end_clean();
-    } else {
-      // forward demandé dans l'action du controleur
+      // forward demandé dans le __construct du controleur
       if ($this->_forward) {
         return $this->launchForward();
       }
 
-      // Vue par defaut
-      if ($this->view->controllerViewIsEnabled()) {
-        echo $this->view->load($this->request->getController() . '/' . $this->request->getAction(), null, true);
+      // check si l'action existe
+      if (!method_exists($controller, $this->request->getAction())) {
+        throw new Exception('L\'action "' . $this->request->getAction() . '" n\'existe pas dans le controller "' . $this->request->getController() . '".');
       }
 
-      // Fin et récupération du tampon de sortie
-      $this->_out = ob_get_contents();
-      ob_end_clean();
+      // appel de l'action du controleur
+      $this->_controller_result = $controller->{$this->request->getAction()}();
 
-      // Place le tampon de sortie dans un layout si possible
-      if ($this->layout->isDefined() && $this->layout->isEnabled()) {
-        $this->_out = $this->layout->integrate($this->_out);
+      // en cas de redirection client
+      if ($this->_redirect) {
+        ob_end_clean();
+      } else {
+        // forward demandé dans l'action du controleur
+        if ($this->_forward) {
+          return $this->launchForward();
+        }
+
+        // Vue par defaut
+        if ($this->view->controllerViewIsEnabled()) {
+          echo $this->view->load($this->request->getController() . '/' . $this->request->getAction(), null, true);
+        }
+
+        // Fin et récupération du tampon de sortie
+        $this->_content = ob_get_contents();
+        ob_end_clean();
+
+        // Place le tampon de sortie dans un layout si possible
+        if ($this->layout->isDefined() && $this->layout->isEnabled()) {
+          $this->_content = $this->layout->integrate($this->_content);
+        }
+
+        // Dernière action du traffiquant
+        $this->_content = $this->trafficker->engineDelivery($this->_content, $this->_controller_result);
       }
 
-      // Dernière action du traffiquant
-      $this->_out = $this->trafficker->engineDelivery($this->_out);
-    }
+      // Écrire du cookie
+      if (class_exists('Session')) {
+        Session::getInstance()->sendHeaderCookie();
+      }
 
-    // Écrire du cookie
-    if (class_exists('Session')) {
-      Session::getInstance()->sendHeaderCookie();
-    }
+      // Redirection client
+      if ($this->_redirect) {
+        header('Location: ' . $this->_redirect);
+        exit;
+      }
 
-    // Redirection client
-    if ($this->_redirect) {
-      header('Location: ' . $this->_redirect);
+      return $this->_content;
+    } catch (Exception $e) {
       exit;
     }
-
-    return $this->_out;
   }
 
   /**
@@ -179,18 +182,9 @@ class Engine
   /**
    * Désactive le forward
   */
-  public function disableForward()
+  private function disableForward()
   {
     $this->_forward = false;
-  }
-
-  /**
-   * Récupérer les données retournée par une action
-   * @return mixed
-  */
-  public function getDataBack()
-  {
-    return $this->_dataBack;
   }
 
   /**
@@ -208,52 +202,56 @@ class Engine
   */
   public function getFilePath($name, $type)
   {
-    $module_path = '';
+    try {
+      $module_path = '';
 
-    if (preg_match('/\//', $name)) {
-      $pre_file = strtolower(substr($name, strrpos($name, '/') + 1));
-      $path = substr($name, 0, strrpos($name, '/') + 1);
-      if ($path == '/') {
+      if (preg_match('/\//', $name)) {
+        $pre_file = substr($name, strrpos($name, '/') + 1);
+        $path = substr($name, 0, strrpos($name, '/') + 1);
+        if ($path == '/') {
+          $path = '';
+        }
+      } else {
+        $pre_file = $name;
         $path = '';
       }
-    } else {
-      $pre_file = $name;
-      $path = '';
+
+      if ($this->request->getModule() && $name[0] != '/') {
+        $module_path = 'modules/' . $this->request->getModule() . '/';
+      }
+
+      // helper
+      if ($type == 'helper') {
+        $directory = 'helpers';
+        $file = $pre_file . 'Helper';
+      } 
+
+      // layout
+      elseif ($type == 'layout') {
+        $directory = 'layouts';
+        $file = $pre_file . 'Layout';
+      }
+
+      // view
+      elseif ($type == 'view') {
+        $directory = 'views';
+        $file = $pre_file . 'View';
+      }
+
+      // pas pris en charge
+      else {
+        throw new Exception('Le fichier "' . $name . '" ayant pour type "' . $type . '" n\'est pas pris en charge');
+      }
+
+      $path = \Sally::get('application') . '/' . $module_path . $directory . '/' . $path . $file . '.php';
+
+      if (!file_exists($path)) {
+        throw new Exception('Le fichier "' . $path . '" n\'existe pas.');
+      }
+
+      return array($path, $file);
+    } catch (Exception $e) {
+      exit;
     }
-
-    if ($this->request->getModule() && $name[0] != '/') {
-      $module_path = 'modules/' . $this->request->getModule() . '/';
-    }
-
-    // helper
-    if ($type == 'helper') {
-      $directory = 'helpers';
-      $file = $pre_file . 'Helper';
-    } 
-
-    // layout
-    elseif ($type == 'layout') {
-      $directory = 'layouts';
-      $file = $pre_file . 'Layout';
-    }
-
-    // view
-    elseif ($type == 'view') {
-      $directory = 'views';
-      $file = $pre_file . 'View';
-    }
-
-    // pas pris en charge
-    else {
-      throw new Exception('Le fichier "' . $name . '" ayant pour type "' . $type . '" n\'est pas pris en charge');
-    }
-
-    $path = \Sally::get('application') . '/' . $module_path . $directory . '/' . $path . $file . '.php';
-
-    if (!file_exists($path)) {
-      throw new Exception('Le fichier "' . $path . '" n\'existe pas.');
-    }
-
-    return array($path, $file);
   }
 }

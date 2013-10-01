@@ -57,10 +57,10 @@ class Trafficker
    * @param string contenu
    * @return string contenu
   */
-  public function viewDelivery($content)
+  public function viewDelivery($content, $data)
   {
     foreach ($this->traffickers as $object) {
-      $_content = $object->viewDelivery($content);
+      $_content = $object->viewDelivery($content, $data);
       if ($_content !== null) {
         $content = $_content;
       }

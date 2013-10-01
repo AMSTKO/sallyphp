@@ -17,7 +17,7 @@ abstract class TraffickerAbstract
   /**
    * @var object
   */
-  public $engine;
+  private $engine;
   public $request;
   public $layout;
   public $view;
@@ -45,7 +45,7 @@ abstract class TraffickerAbstract
    * @param string contenu de la vue
    * @return mixed Si vous ne retournez pas de valeur la vue ne sera pas écrasée.
   */
-  function viewDelivery($content) {}
+  function viewDelivery($content, $data) {}
 
   /**
    * Appelée avant d'intégrer le contenu au layout

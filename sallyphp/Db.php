@@ -17,7 +17,7 @@ class Db
   /**
    * @var array
   */
-  private $_connection = array();
+  private $_connections = array();
 
   /**
    * @var mixed
@@ -43,15 +43,19 @@ class Db
   */
   public static function getConnection($name = null)
   {
-    $instance = self::getInstance();
-    if (isset($name)) {
-      if (array_key_exists($name, $instance->_connection)) {
-        return $instance->_connection[$name];
+    try {
+      $instance = self::getInstance();
+      if ($name) {
+        if (array_key_exists($name, $instance->_connections)) {
+          return $instance->_connections[$name];
+        } else {
+          throw new Exception('Connection introuvable.');
+        }
       } else {
-        throw new Exception('Connection introuvable.');
+        return $instance->_connections['default'];
       }
-    } else {
-      return $instance->_connection['default-mysql_pdo'];
+    } catch (Exception $e) {
+      exit;
     }
   }
 
@@ -59,51 +63,74 @@ class Db
    * Ajouter une connexion
    * @param array configuration
   */
-  public function add($cfg)
+  public function add($db)
   {
-    if (isset($cfg['type'])) {
-      if ($cfg['type'] == 'mysql_pdo') {
-        if (isset($cfg['host']) && isset($cfg['dbname']) && isset($cfg['user']) && isset($cfg['passwd'])) {
-          if (isset($cfg['name'])) {
-            $name = $cfg['name'];
-          } else {
-            $name = 'default-mysql_pdo';
-          }
-          $this->_connection[$name] = new PDO('mysql:host=' . $cfg['host'] . ';dbname=' . $cfg['dbname'], $cfg['user'], $cfg['passwd']);
-          $this->_connection[$name]->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC); 
-          if (isset($cfg['timezone'])) {
-            $stmt = $this->_connection[$name]->prepare('set names utf8; set time_zone = :time_zone');
-            $stmt->execute(array('time_zone' => $cfg['timezone']));
-          } else {
-            $this->_connection[$name]->exec('set names utf8');
-          }
-        } else {
-          throw new Exception('Configuration mysql invalide');
-        }
-      } else if ($cfg['type'] == 'redis') {
-        if (isset($cfg['name'])) {
-          $name = $cfg['name'];
-        } else {
-          $name = 'default-redis';
-        }
-        
-        $sally = Sally::getInstance();
-        $sally->getLibrary('Predis/autoload.php');
-        $this->_connection[$name] = new Predis\Client();
-
-        try {
-          $this->_connection[$name]->connect(array(
-            'host' => isset($cfg['host']) ? $cfg['host'] : '127.0.0.1', 
-            'port' => isset($cfg['port']) ? $cfg['port'] : 6379
-          ));
-        } catch(Predis\CommunicationException $e) {
-          $this->_connection[$name] = false;
-        }
-      } else {
-        throw new Exception('Type de db indisponible.');
+    try {
+      if (!isset($db['type'])) {
+        throw new Exception('Type de base de données non précisé.');
       }
-    } else {
-      throw new Exception('Type de db non précisé.');
+
+      if (!isset($db['name'])) {
+        throw new Exception('Veuillez préciser un nom pour cette connexion, par exemple "default".');
+      }
+
+      if (array_key_exists($db['name'], $this->_connections)) {
+        throw new Exception('Ce nom de connexion est déjà utilisé.');
+      }
+
+      // mysql pdo
+      if ($db['type'] == 'mysql-pdo') {
+
+        // check
+        if (isset($db['host']) && isset($db['dbname']) && isset($db['user']) && isset($db['passwd'])) {
+
+          // connection
+          $this->_connections[$db['name']] = new \PDO('mysql:host=' . $db['host'] . ';dbname=' . $db['dbname'], $db['user'], $db['passwd']);
+          $this->_connections[$db['name']]->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC); 
+
+          if (isset($db['timezone'])) {
+            $stmt = $this->_connections[$db['name']]->prepare('set names utf8; set time_zone = :time_zone');
+            $stmt->execute(array('time_zone' => $db['timezone']));
+          } else {
+            $this->_connections[$db['name']]->exec('set names utf8');
+          }
+        } else {
+          throw new Exception('Configuration mysql-pdo invalide');
+        }
+      } 
+
+      // redis
+      else if ($db['type'] == 'redis') {
+
+        // check
+         if (isset($db['host']) && isset($db['port'])) {
+
+          // get Predis library      
+          $sally = \Sally::getInstance();
+          $sally->library('Predis/autoload.php');
+
+          // connection
+          $this->_connections[$db['name']] = new \Predis\Client();
+
+          try {
+            $this->_connections[$db['name']]->connect(array(
+              'host' => $db['host'], 
+              'port' => $db['port'] // default 6379
+            ));
+          } catch(\Predis\CommunicationException $e) {
+            $this->_connections[$db['name']] = false;
+          }
+        } else {
+          throw new Exception('Configuration redis invalide');
+        }
+      } 
+
+      // other
+      else {
+        throw new Exception('Type de base de données indisponible.');
+      }
+    } catch (Exception $e) {
+      exit;
     }
   }
 }

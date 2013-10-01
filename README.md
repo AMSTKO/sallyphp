@@ -3,25 +3,10 @@ SallyPHP
 
 SallyPHP est un framework permettant de développer des applications web sur les modèles MVC et HMVC (hierarchical model–view–controller). Il fournit des outils simples, légés et rapides à prendre en main afin de créer des applications riches et structurées.
 
-## Hello world!
-
-Caractéristes de l'exemple fournit avec les sources :
-
-- Structure HMVC (répertoire modules, contenant plusieurs sous structures MVC)
-- Près à être utilisé en local (http://127.0.0.1/sallyphp/index.php/index)
-
-Configuration Apache :
-
-    Alias /sallyphp "/var/www/sallyphp/public"
-    <Directory "/var/www/sallyphp/public">
-        SetEnv environnement local
-    </Directory>
-
 Sommaire
 --------
 
 - [Structure](#structure)
-- [Inventaire](#inventaire)
 - [Notes](#notes)
 - [Sally](#sally)
 - [Controller](#controller)
@@ -37,53 +22,51 @@ Sommaire
 - [PHPMailer](#phpmailer)
 - [License](#license)
 
-Structure
----------
+Structure principales
+---------------------
 
     application/
       helpers/
-      layouts/ (templates)
+      layouts/
+      libs/
       models/
       modules/
-        admin/
-          controllers/
-          view/
-        cli/
+        api/
           controllers/
         site/
           controllers/
           view/
       traffickers/
     public/
-      static/ (img, js, css...)
-    sallyphp/ (class of Sally)
+      static/
+    sallyphp/
 
 
 Inventaire
 ----------
 
-Liste des class auxquelles vous pourrez avoir besoin au cours de votre développement.
+Depuis un traffiquant et un controleur vous pouvez accéder aux objets suivants de la requête :
+
+    $this->request;
+    $this->layout;
+    $this->view;
+    $this->helper;
+
+Ainsi qu'aux classes suivantes :
 
     $sally = Sally::getInstance();
     $acl = Acl::getInstance();
     $db = Db::getInstance();
-    $request = Request::getInstance();
-    $layout = Layout::getInstance();
-    $helper = Helper::getInstance();
     $session = Session::getInstance();
-    $trafficker = Trafficker::getInstance();
-
-**Divers**
-
     $rijndael = Rijndael::getInstance();
-    $PHPMailer = PHPMailer::getInstance();
+
 
 Notes
 -----
 
 **slash devant éléments à charger**
 
-En ajoutant un slash devant le nom d'un élément à charger (helper, view ou layout) celui ci sera cherché dans son répertoire à la racine de l'application. Sinon il sera cherché dans son répertoire depus le module demandé par la requête.
+En ajoutant un slash devant le nom d'un élément à charger (helper, view ou layout) celui ci sera cherché dans son répertoire à la racine de l'application. Sinon il sera cherché dans son répertoire depuis le module demandé par la requête.
 
 
 Sally
@@ -107,54 +90,52 @@ Sally
 
     $sally = Sally::getInstance();
 
-**Récupérer et écraser la réponse de la requête**
-
-*Retourner le contenu qui sera envoyé au navigateur :*
-
-    $sally->getOut();
-
-*Écraser ce contenu pour renvoyer autre chose :*
-
-    $sally->setOut('your content...');
-
-Exemple d'utilisation : Dans un *trafficker*, avant de délivrer le contenu au navigateur, vous pourriez retirer tous les espaces d'indendations pour économiser de la bande passante.
-
-    class MyTrafficker extends TraffickerAbstract
-    {
-      function preDelivery()
-      {
-        $sally->setOut(preg_replace('/\s\s+/', ' ', $sally->getOut());
-      }
-    }
-
-**Récupérer un retour de controleur**
-
-Les controleurs ont la possibilité de retourner des valeurs. Vous pourriez récupérer ces valeurs dans un *trafficker* pour les modifier (ajouter un token... exemple disponible sur la documentation du trafficker).
-
-    $sally->getDataBack();
-
 **Appeler une librairie**
 
-getLibrary(); s'occupe simplement de faire un "require_once" sur le fichier qui vous intéresse dans votre répertoire "libs".
+getLibrary(); s'occupe simplement de faire un "require_once" sur le fichier qui vous intéresse dans votre répertoire "libs", par exemple :
 
-    $sally->getLibrary('Mustache/Autoloader.php');
+    $sally->library('Mustache/Autoloader.php');
+    $sally->library('Predis/autoload.php');
 
 Controller
 ----------
 
-Dans un controleur vous pouvez accéder directement aux class request, view et layout simplement depuis $this->...
-
 **__contruct**
 
-Si vous ajoutez votre méthode __contruct au controleur alors il faudra faire référence au contructeur parent :
+Si vous ajoutez votre méthode __contruct au controleur il faudra faire appel manuellement au contructeur parent, sans oublier de transmettre l'objet $engine :
 
-    class IndexController extends Controller
+    class IndexController extends sally\Controller
     {
-      public function __construct()
+      public function __construct($engine)
       {
-        parent::__construct();
+        parent::__construct($engine);
       }
     }
+
+**Charger un helper**
+
+    $this->helper->add('/toStrong');
+    
+**Redirection**
+
+    $this->redirect('http://google.fr');
+
+**Rediriger vers une autre action et/ou un autre controleur et/ou un autre model dans la même requête**
+
+    $this->forward($action, $controleur, $module);
+
+Il est nécessaire de préciser au moins l'action (controleur et module seront ceux en cours). Exemple :
+
+    class IndexController extends sally\Controller
+    {
+      public function index()
+      {
+        $this->forward('maintenance', 'erreur');
+      }
+    }
+
+View
+----
 
 **Transmettre des variables dans la vue principale**
 
@@ -177,70 +158,37 @@ Si vous ajoutez votre méthode __contruct au controleur alors il faudra faire r�
 
     // in view file : echo $login; // display Mr.Ping
 
-**Charger un helper**
+**Désactiver la vue par defaut d'une action de controleur**
 
-    $this->helper('/tostrong');
-    
-**Redirection**
+    $this->view->disableControllerView();
 
-    $this->redirect('http://google.fr');
+**Savoir si la vue par defaut été désactivé**
 
-**Rediriger vers une autre action dans la même requête**
-
-    $this->forward($action, $controleur, $module);
-
-Il est nécessaire de préciser au moins l'action (controleur et module seront ceux en cours). Exemple :
-
-    class IndexController extends Controller
-    {
-      public function index()
-      {
-        $this->forward('maintenance', 'erreur');
-      }
-    }
-
-View
-----
-
-**Récupérer l'instance**
-
-    $view = View::getInstance();
-
-**Désactiver l'appel automatique d'une vue pour l'action du controleur**
-
-    $view->disableControllerView();
-
-**Vérifier si l'appel automatique d'une vue n'a pas été désactivé**
-
-    $view->controllerViewIsEnabled(); // Boolean
+    $this->view->controllerViewIsEnabled(); // Boolean
 
 
 Layout
 ------
 
-**Récupérer l'instance**
-
-    $layout = Layout::getInstance();
-
 **Définir un layout**
 
-    $layout->set('/home');
+    $this->layout->set('/home');
 
 **Désactiver le layout**
 
-    $layout->disableLayout();
+    $this->layout->disableLayout();
 
 **Vérifier si le layout n'a pas été désactivé**
 
-    $layout->isEnabled(); // Boolean
+    $this->layout->isEnabled(); // Boolean
 
 **Vérifier si un layout est définit**
 
-    $layout->isDefined(); // Boolean
+    $this->layout->isDefined(); // Boolean
 
 **Transmettre des variables dans le layout**
 
-    $layout->setData('name1', 'value1');
+    $this->layout->setData('name1', 'value1');
 
     // or
 
@@ -261,7 +209,7 @@ Acl
 
 **Récupérer l'instance**
 
-    $acl = Acl::getInstance();
+    $acl = sally\Acl::getInstance();
 
 **Ajouter des rôles**
 
@@ -295,39 +243,20 @@ Db
 
 **Récupérer l'instance**
 
-    $db = Db::getInstance();
+    $db = sally\Db::getInstance();
 
 **SGBD pris en charges**
 
-- Mysql (avec PDO)
+- Mysql (avec PDO), type=mysql-pdo
 
 **Ajouter une connexion à une base de données**
 
+Vous pouvez en ajouter plusieurs, seul le nom doit changer. Pour ne pas avoir besoin de préciser le nom à chaque fois, utilisez le nom "default" pour la connection principale.
+
     $db->add(array(
-      'type' => 'mysql_pdo',
+      'type' => 'mysql-pdo',
+      'name' => 'default',
       'host' => '127.0.0.1',
-      'dbname' => 'db_name',
-      'user' => 'db_user',
-      'passwd' => 'db_pasword'
-    ));
-
-**Ajouter d'autres bases de données**
-
-DbSally gère les multi-connexions avec PDO. Il suffit d'ajouter le nom de la connexion lors de l'ajout. Par defaut le nom de la connexion est *default*
-
-    $db->add(array(
-      'name' => 'principal'
-      'type' => 'mysql_pdo',
-      'host' => '127.0.0.1',
-      'dbname' => 'db_name',
-      'user' => 'db_user',
-      'passwd' => 'db_pasword'
-    ));
-
-    $db->add(array(
-      'name' => 'other'
-      'type' => 'mysql_pdo',
-      'host' => '192.168.1.12',
       'dbname' => 'db_name',
       'user' => 'db_user',
       'passwd' => 'db_pasword'
@@ -337,17 +266,17 @@ DbSally gère les multi-connexions avec PDO. Il suffit d'ajouter le nom de la co
 
 Sans argument il vous sera renvoyé la première connexion, *default*.
 
-    $db = Db::getConnection();
+    $db = sally\Db::getConnection();
 
 Sinon il suffit de préciser le nom de la connexion.
 
-    $db = Db::getConnection('other');
+    $db = sally\Db::getConnection('other');
 
-**Exemple de requête avec PDO**
+**Exemple de requête avec PDO dans un model**
 
     public function getEmail($user)
     {
-      $db = Db::getConnection();
+      $db = sally\Db::getConnection();
       $stmt = $db->prepare('SELECT email FROM users WHERE id = :id LIMIT 1');
       $stmt->execute(array('id' => $user));
       $result = $stmt->fetch();
@@ -364,47 +293,42 @@ Les requêtes peuvent être faites sous différentes formes :
 - /controller/action (en définissant le module par defaut dans la conf)
 - /controller/action/dataName1/dataValue1/dataName2/dataValue2
 
-**Récupérer l'instance**
-
-    $request = Request::getInstance();
-
 **Récupérer les valeurs des données passées dans la requête**
 
-    $request->getSegment('dataName1'); // False si inexistante
+    $this->request->getSegment('dataName1'); // False si inexistante
 
 **Écraser des valeurs passées dans la requête**
 
-    $request->setSegment('dataName1', 'dataValue1');
+    $this->request->setSegment('dataName1', 'dataValue1');
 
 **Récupérer des données $_POST**
 
-    $request->getPost('name'); // value or false
+    $this->request->getPost('name'); // value or false
 
 **Redéfinir le module**
 
-    $request->setModule('module_name');
+    $this->request->setModule('module_name');
 
 **Redéfinir le controleur**
 
-    $request->setController('controller_name');
+    $this->request->setController('controller_name');
 
 **Redéfinir l'action**
 
-    $request->setAction('action_name');
+    $this->request->setAction('action_name');
 
 **Récupérer le nom du module en cours**
 
-    $request->getModule();
+    $this->request->getModule();
 
 **Récupérer le nom du controleur en cours**
 
-    $request->getController();
+    $this->request->getController();
 
 **Récupérer le nom de l'action en cours**
 
-    $request->getAction();
+    $this->request->getAction();
 
-En accédant à l'index il y aura une redirection transparente vers l'action "maintenance" du controleur "erreur".
 
 Session
 -------
@@ -413,7 +337,7 @@ Sally créer un cookie dont la valeur est cryptée avec l'algo Rijndael en 128b 
 
 **Récupérer l'instance**
 
-    $session = Session::getInstance();
+    $session = sally\Session::getInstance();
 
 **Savoir si l'utilisateur avait déjà le cookie**
 
@@ -446,15 +370,11 @@ Sally créer un cookie dont la valeur est cryptée avec l'algo Rijndael en 128b 
 Helper
 ------
 
-Les helpers sont de basiques fonctions PHP appelable n'importe ou.
-
-**Récupérer l'instance**
-
-    $helper = Helper::getInstance();
+Les helpers sont de basiques fonctions PHP (ou ce que vous voullez) appelable n'importe ou.
 
 **Charger un helper**
 
-    $helper->load('helper_name');
+    $this->helper->add('toStrong'); // helper name
 
 **Exemple de helper : toStrongHelper.php**
     
@@ -468,14 +388,15 @@ Les helpers sont de basiques fonctions PHP appelable n'importe ou.
 Trafficker
 ----------
 
-Le trafiquant permet d'agir à 4 endroits :
+Le trafiquant permet d'agir à 5 endroits :
 
-- avant l'appel d'un controleur;
-- avant l'intégration du layout;
-- avant l'intégration d'une vue;
-- avant de retourner le contenu de la requête;
+- preEngine : Appelée au début de la requête;
+- viewDelivery : Appelée avant la livraison de la vue;
+- preLayout : Appelée avant d'intégrer le contenu au layout;
+- layoutDelivery : Appelée avant la livraison du layout;
+- engineDelivery : Appelée avant de retourner le contenu de la réponse au client;
 
-**avant l'appel d'un controleur : preDeal() {}**
+**preEngine**
 
 Intercepter la requête au début du traitement.
 
@@ -485,21 +406,25 @@ Intercepter la requête au début du traitement.
 - afficher une page d'erreur;
 - ...
 
-**avant l'appel du layout : preLayout() {}**
-
-Utiliser par exemple pour définir des variables au template du layout avec : $this->layout->setData();
-
-**avant l'appel d'une vue : preView() {}**
+**viewDelivery**
 
 Si vous avez un moteur de template à executer sur le contenu des vues.
 
-  function preView($out, $data) // $out: contenu de la vue, $data: array
+  function viewDelivery($content, $data)
   {
     $m = new Mustache_Engine;
-    return $m->render($out, $data);
+    return $m->render($content, $data);
   }
 
-**avant de retourner le contenu de la requête : preDelivery() {}**
+**preLayout**
+
+Utiliser par exemple pour définir des variables au template du layout avec : $this->layout->setData();
+
+**layoutDelivery**
+
+Avant de livrer le layout vous pourriez faire des modifications sur son contenu.
+
+**engineDelivery**
 
 Trafiquer le retour de la requête au dernier moment.
 
@@ -507,46 +432,9 @@ Trafiquer le retour de la requête au dernier moment.
 - ajouter une information (temps de traitement...);
 - ...
 
-**Récupérer l'instance**
-
-    $trafficker = Trafficker::getInstance();
-
 **Charger un trafiquant**
 
-    $trafficker->add('my');
-
-**Exemple de trafiquant : MyTrafficker.php**
-
-Je vais avoir beaucoup de requêtes ajax sur mon projet. Alors je décide que chaque controleur aura une action nommée "request" qui permettra de traiter ces requêtes. Dans un premier temps (preDeal) on désactive le layout et la vue par defaut pour l'action "request". Une fois la requête prête à être renvoyée (preDelivery) on ajoute des valeurs (ici un token).
-
-    class MyTrafficker extends TraffickerAbstract
-    {
-      function __construct()
-      {
-        $this->layout = Layout::getInstance();
-        $this->view = View::getInstance();
-        $this->request = Request::getInstance();
-      }
-
-      function preDeal()
-      {
-        $this->layout->set('/home');
-        if ($this->request->getAction() == 'request') {
-          $this->layout->disableLayout();
-          $this->view->disableControllerView();
-        }
-      }
-
-      function preDelivery()
-      {
-        if ($this->request->getAction() == 'request') {
-          $sally = Sally::getInstance();
-          $sally->setOut(json_encode(array_merge(array(
-            'token' => 12456
-          ), $sally->getDataBack())));
-        }
-      }
-    }
+    $engine->trafficker->add('my');
 
 
 Rijndael
@@ -554,7 +442,7 @@ Rijndael
 
 **Récupérer l'instance**
 
-    $rijndael = Rijndael::getInstance();
+    $rijndael = sally\Rijndael::getInstance();
 
 **Définir une clef de cryptage**
 
@@ -574,9 +462,10 @@ PHPMailer
 
 Pour d'avantage de documentation rendez-vous sur https://github.com/Synchro/PHPMailer
 
-**Récupérer l'instance**
+**Charger la librairie**
 
-    $PHPMailer = PHPMailer::getInstance();
+    $sally->library('PHPMailer/PHPMailer.php');
+    $PHPMailer = new PHPMailer();
 
 **Configuration**
 
