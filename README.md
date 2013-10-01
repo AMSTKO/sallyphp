@@ -55,10 +55,10 @@ Depuis un traffiquant et un controleur vous pouvez accéder aux objets suivants 
 Ainsi qu'aux classes suivantes :
 
     $sally = Sally::getInstance();
-    $acl = Acl::getInstance();
-    $db = Db::getInstance();
-    $session = Session::getInstance();
-    $rijndael = Rijndael::getInstance();
+    $acl = sally\Acl::getInstance();
+    $db = sally\Db::getInstance();
+    $session = sally\Session::getInstance();
+    $rijndael = sally\Rijndael::getInstance();
 
 
 Notes
