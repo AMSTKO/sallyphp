@@ -11,4 +11,4 @@ $sally->addModule('site');
 $sally->addModule('admin');
 
 echo $sally->load($_SERVER['REQUEST_URI'], array('my'));
-//echo $sally->init('/index/request');
+echo $sally->load('site/index/request', array('my'));

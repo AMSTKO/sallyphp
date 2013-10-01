@@ -53,17 +53,17 @@ class Request
     // analyse des éléments
     foreach ($request_explode as $key => $element) {
       $element = strtolower($element);
-
+      
       // Sauter un element lors de la définition des données puisque: 1 donnée = 2 éléments.
       if ($passe) {
         $passe = false;
         continue;
       }
 
-      if (!empty($element)) {
+      if (empty($element)) {
         continue;
       }
-
+      
       if ($request_index >= $logic_data_index) {
         if (isset($request_explode[($key + 1)])) {
           // définition des données

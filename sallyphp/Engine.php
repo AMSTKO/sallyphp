@@ -85,7 +85,7 @@ class Engine
     }
 
     if (!file_exists($controller_path)) {
-      throw new sally\Exception('Le controleur "' . $this->request->getController() . '" n\'est pas accessible.');
+      throw new Exception('Le controleur "' . $this->request->getController() . '" n\'est pas accessible.');
     }
 
     require_once $controller_path;
@@ -103,7 +103,7 @@ class Engine
 
     // check si l'action existe
     if (!method_exists($controller, $this->request->getAction())) {
-      throw new sally\Exception('L\'action "' . $this->request->getAction() . '" n\'existe pas dans le controller "' . $this->request->getController() . '".');
+      throw new Exception('L\'action "' . $this->request->getAction() . '" n\'existe pas dans le controller "' . $this->request->getController() . '".');
     }
 
     // appel de l'action du controleur
@@ -271,13 +271,13 @@ class Engine
 
     // pas pris en charge
     else {
-      throw new sally\Exception('Le fichier "' . $name . '" ayant pour type "' . $type . '" n\'est pas pris en charge');
+      throw new Exception('Le fichier "' . $name . '" ayant pour type "' . $type . '" n\'est pas pris en charge');
     }
 
     $path = \Sally::get('application') . '/' . $module_path . $directory . '/' . $path . $file . '.php';
 
     if (!file_exists($path)) {
-      throw new sally\Exception('Le fichier "' . $path . '" n\'existe pas.');
+      throw new Exception('Le fichier "' . $path . '" n\'existe pas.');
     }
 
     return array($path, $file);

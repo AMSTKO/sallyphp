@@ -69,7 +69,7 @@ class Sally
   public function load($request_string = '', $traffickers = array(), $helpers = array())
   {
     try {
-      $engine = new sally\Engine($request_string, $traffickers, $helpers = array();
+      $engine = new sally\Engine($request_string, $traffickers, $helpers);
       return $engine->call();
     } catch (sally\Exception $e) {
       
