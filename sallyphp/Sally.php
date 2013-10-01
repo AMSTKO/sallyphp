@@ -5,7 +5,7 @@
  * @link      https://github.com/MrPing/sallyphp
  * @copyright Copyright (c) 2013, Jonathan Amsellem.
  * @license   https://github.com/MrPing/sallyphp#license
- */
+*/
 
 /**
  * Sally
@@ -25,6 +25,11 @@ class Sally
    * @var array
   */
   private $_cfg = array();
+
+  /**
+   * @var object
+  */
+  public $module;
   
   /**
    * Instance
@@ -47,7 +52,8 @@ class Sally
     $this->_cfg['rijndael.key'] = 'define a key';
     $this->_cfg['cookie.domain'] = null;
     $this->_cfg['cookie.name'] = 'sally';
-    $this->_cfg['modules'] = array();
+
+    $this->module = new sally\Module();
   }
 
   /**
@@ -69,11 +75,10 @@ class Sally
    * @param array helpers
    * @return string response content
   */
-  public function load($request_string = '', $traffickers = array(), $helpers = array())
+  public function prepare($request_string = '')
   {
     try {
-      $engine = new sally\Engine($request_string, $traffickers, $helpers);
-      return $engine->call();
+      return new sally\Engine($request_string);
     } catch (sally\Exception $e) {
       
     }
@@ -129,27 +134,6 @@ class Sally
   }
 
   /**
-   * Ajouter un module utilisalbe pour l'application
-   * @param string 'site', 'api', 'admin'
-  */
-  public function addModule($name)
-  {
-    $modules = Sally::get('modules');
-    $module_name = strtolower($name);
-    try {
-      if (!in_array($module_name, $modules)) {
-        if (!is_dir(Sally::get('application') . '/modules/' . $module_name)) {
-          throw new sally\Exception('Le module "' . Sally::get('application') . '/modules/' . $module_name .'" n\'existe pas.');
-        }
-        array_push($modules, $module_name);
-      }
-    } catch (sally\Exception $e) {
-
-    }
-    Sally::set('modules', $modules);
-  }
-
-  /**
    * Récupérer un paramètre global
    * @param string 'application' 'user'[, 'id']
    * @return mixed
@@ -201,8 +185,17 @@ class Sally
    * Chargement d'une librairie
    * @param string
   */
-  public function getLibrary($path)
+  public function getLibrary($file)
   {
-    require_once Sally::get('application') . '/libs/' . $path;
+    try {
+      $path = Sally::get('application') . '/libs/' . $file;
+      if (file_exists($path)) {
+        require_once $path;
+      } else {
+        throw new sally\Exception('Le fichier ' . $path . '" n\'existe pas.');
+      }
+    } catch (sally\Exception $e) {
+
+    }
   }
 }

@@ -5,7 +5,7 @@
  * @link      https://github.com/MrPing/sallyphp
  * @copyright Copyright (c) 2013, Jonathan Amsellem.
  * @license   https://github.com/MrPing/sallyphp#license
- */
+*/
 
 namespace sally;
 
@@ -42,21 +42,13 @@ class Engine
   /**
    * @param string, array
   */
-  public function __construct($request_string, $traffickers = array(), $helpers = array())
+  public function __construct($request_string)
   {
     $this->trafficker = new Trafficker($this);
     $this->view = new View($this);
     $this->layout = new Layout($this);
     $this->helper = new Helper($this);
     $this->request = new Request($this);
-
-    foreach ($traffickers as $name) {
-      $this->trafficker->add($name);
-    }
-
-    foreach ($helpers as $name) {
-      $this->helper->add($name);
-    }
 
     $this->request->path($request_string);
   }
@@ -68,7 +60,7 @@ class Engine
    * écrire cookie;
    * @return string
   */
-  public function call()
+  public function execute()
   {
     // preDeal n'est pas de nouveau executé en cas de redirection interne 
     if (!$this->trafficker->preEngineIsExecute()) {
@@ -152,7 +144,7 @@ class Engine
 
   /**
    * Lance le forward (redirection interne);
-   * Execute de nouveau $this->call();
+   * Execute de nouveau $this->execute();
    * @return string
   */
   private function launchForward()
@@ -172,7 +164,7 @@ class Engine
     $this->request->setAction($this->_forward['action']);
     ob_end_clean();
     $this->disableForward();
-    return $this->call();
+    return $this->execute();
   }
 
   /**

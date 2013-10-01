@@ -5,7 +5,7 @@
  * @link      https://github.com/MrPing/sallyphp
  * @copyright Copyright (c) 2013, Jonathan Amsellem.
  * @license   https://github.com/MrPing/sallyphp#license
- */
+*/
 
 namespace sally;
 
@@ -33,7 +33,9 @@ class Request
   public function path($request_string)
   {
     // modules dispnibles
-    $modules = \Sally::get('modules');
+    $sally = \Sally::getInstance();
+    $modules = $sally->module->get();
+
     $has_module = count($modules) > 0 ? true : false;
 
     $request_explode = explode('/', $request_string);
