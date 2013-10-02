@@ -50,7 +50,7 @@ Du MVC hiérarchisé permet d'avoir plusieurs structures MVC, séparées en modu
 
 **Clef en main**
 
-Sally est simple et plutôt cool, vous devriez faire beaucoup de chose sans prise de tête. Je vous invite d'ailleurs à regarder les sources et voir comment ça se passe. Vous pouvez facilement modifier le framework pour répondre à vos besoins (nottament pour la classe Db).
+Sally est simple et plutôt cool, vous devriez faire beaucoup de chose sans prise de tête. Je vous invite d'ailleurs à regarder les sources et voir comment ça se passe. Vous pouvez facilement modifier le framework pour répondre à des besoins spécifiques.
 
 
 Sommaire
