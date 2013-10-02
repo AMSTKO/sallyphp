@@ -72,8 +72,8 @@ Sommaire
 - [PHPMailer](#phpmailer)
 - [License](#license)
 
-Structure principales
----------------------
+Structure principale
+--------------------
 
     application/
       helpers/
