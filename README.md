@@ -48,6 +48,10 @@ Cas d'utilisation :
 
 Du MVC hiérarchisé permet d'avoir plusieurs structures MVC, séparées en modules, au sein du même projet. Imaginez un module pour le site, un autre pour la version mobile et encore un pour l'api... se partageants les mêmes ressources.
 
+**Clef en main**
+
+Sally est simple et plutôt cool, vous devriez faire beaucoup de chose sans prise de tête. Je vous invite d'ailleurs à regarder les sources et voir comment ça se passe. Vous pouvez facilement modifier le framework pour répondre à vos besoins (nottament pour la classe Db).
+
 
 Sommaire
 --------
