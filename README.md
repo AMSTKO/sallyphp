@@ -95,7 +95,7 @@ Structure principale
 Inventaire
 ----------
 
-Depuis un traffiquant et un controleur vous pouvez accéder aux objets suivants de la requête :
+Depuis un trafiquant et un controleur vous pouvez accéder aux objets suivants de la requête :
 
     $this->request;
     $this->layout;
