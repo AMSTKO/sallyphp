@@ -3,6 +3,52 @@ SallyPHP
 
 SallyPHP est un framework permettant de développer des applications web sur les modèles MVC et HMVC (hierarchical model–view–controller). Il fournit des outils simples, légés et rapides à prendre en main afin de créer des applications riches et structurées.
 
+Points forts
+------------
+
+**Les requêtes préparées**
+
+Lorsque vous demandez une page à Sally, la requête est préparée, placée dans un contexte, puis executée. Ce fonctionnement permet de simuler très simplement d'autres requêtes au coeur de l'application.
+
+    // si j'ai 2 modules, "site" et "api", je veux faire un appel à l'api depuis le site:
+    // public/index.php, traitement de la requête principale,
+    $sally = Sally::getInstance();
+    $engine = $sally->prepare($_SERVER['REQUEST_URI']);
+    echo $engine->execute();
+
+    // dans mon controleur IndexController.php je veux appeler l'api,
+    $sally = Sally::getInstance();
+    $engine = $sally->prepare('api/user/profile', array('token' => '146446013'));
+    $json = $engine->execute();
+
+    // on pourrait très bien faire de ce bout de code un helper ou un model.
+
+
+**Les trafiquants**
+
+Vous pouvez trafiquer les données qui rentrent et sortent à plusieurs points d'une requête.
+
+- preEngine : Appelée au début de la requête;
+- viewDelivery : Appelée avant la livraison de la vue;
+- preLayout : Appelée avant d'intégrer le contenu au layout;
+- layoutDelivery : Appelée avant la livraison du layout;
+- engineDelivery : Appelée avant de retourner le contenu de la réponse au client;
+
+Cas d'utilisation :
+
+- Vérifier un rôle ACL avant de poursuivre;
+- Définir un layout;
+- Si requête AJAX bloquer la vue par defaut de le layout;
+- Supprimer l'indentation du code envoyé au client;
+- Rediriger vers une page de maintenance;
+- Ajouter des informations globales au retour client (token, temps d'exécution);
+- ...
+
+**HMVC**
+
+Du MVC hiérarchisé permet d'avoir plusieurs structures MVC, séparées en modules, au sein du même projet. Imaginez un module pour le site, un autre pour la version mobile et encore un pour l'api... se partageants les mêmes ressources.
+
+
 Sommaire
 --------
 
