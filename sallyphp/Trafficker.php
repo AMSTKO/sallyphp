@@ -106,10 +106,10 @@ class Trafficker
    * @param string contenu
    * @return string contenu
   */
-  public function engineDelivery($content, $controller_result)
+  public function engineDelivery($content, $databack)
   {
     foreach ($this->_traffickers as $object) {
-      $_content = $object->engineDelivery($content, $controller_result);
+      $_content = $object->engineDelivery($content, $databack);
       if ($_content != null) {
         $content = $_content;
       }

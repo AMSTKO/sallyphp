@@ -119,7 +119,7 @@ class Acl
    * @param string role name
    * @param string parent name
   */
-  public function addRole($name, $parent = null)
+  public function role($name, $parent = null)
   {
     $parents = array();
     if ($parent != null) {
@@ -135,7 +135,7 @@ class Acl
    * @param string role name
    * @param string parent name
   */
-  public function addRessource($name, $parent = null)
+  public function ressource($name, $parent = null)
   {
     $parents = array();
     if ($parent != null) {

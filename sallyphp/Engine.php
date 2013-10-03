@@ -22,7 +22,7 @@ class Engine
   /**
    * @var mixed
   */
-  private $_dataBack = null;
+  private $_databack = null;
 
   /**
    * @var boolean
@@ -70,12 +70,12 @@ class Engine
         $this->trafficker->preEngine();
       }
 
-      $controller_class_name = ucfirst($this->request->getController()) . 'Controller';
-
       // chemin du controleur
       if ($module = $this->request->getModule()) {
+        $controller_class_name = ucfirst($module) . '_' . ucfirst($this->request->getController()) . 'Controller';
         $controller_path = \Sally::get('application') . '/modules/' . $module . '/controllers/' . $controller_class_name . '.php';
       } else {
+        $controller_class_name = ucfirst($this->request->getController()) . 'Controller';
         $controller_path = \Sally::get('application') . '/controllers/' . $controller_class_name . '.php';
       }
 
@@ -102,7 +102,7 @@ class Engine
       }
 
       // appel de l'action du controleur
-      $this->_controller_result = $controller->{$this->request->getAction()}();
+      $this->_databack = $controller->{$this->request->getAction()}();
 
       // en cas de redirection client
       if ($this->_redirect) {
@@ -128,11 +128,11 @@ class Engine
         }
 
         // Dernière action du traffiquant
-        $this->_content = $this->trafficker->engineDelivery($this->_content, $this->_controller_result);
+        $this->_content = $this->trafficker->engineDelivery($this->_content, $this->_databack);
       }
 
       // Écrire du cookie
-      if (class_exists('Session')) {
+      if (class_exists('sally\Session')) {
         Session::getInstance()->sendHeaderCookie();
       }
 

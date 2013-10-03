@@ -17,7 +17,7 @@ class Sally
    * @var string
   */
   const name = 'SallyPHP';
-  const version = '1.131002.1';
+  const version = '1.131003.1';
   const path = __DIR__;
 
   /**
@@ -91,7 +91,7 @@ class Sally
     $error = true;
 
     // Model
-    if ($last == 'Model' && $segmentsNb > 1) {
+    if ($class !== 'sally\Model' && $last == 'Model' && $segmentsNb > 1) {
       if (isset($segments[1]) && $segments[1] == '_') {
         $path = Sally::get('application') . '/modules/' . strtolower($segments[0]) . '/models/' . $class . '.php';
       } else {

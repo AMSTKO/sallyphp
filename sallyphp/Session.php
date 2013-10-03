@@ -125,9 +125,9 @@ class Session
   */
   protected function getCookie()
   {
-    if (isset($_COOKIE[Sally::get('cookie.name')])) {
-      $content = $this->rijndael->decrypt($_COOKIE[Sally::get('cookie.name')]);
-      $checksum = crc32(Sally::get('cookie.iv') . substr($content, 0, strrpos($content, '¤') + 2));
+    if (isset($_COOKIE[\Sally::get('cookie.name')])) {
+      $content = $this->rijndael->decrypt($_COOKIE[\Sally::get('cookie.name')]);
+      $checksum = crc32(\Sally::get('cookie.iv') . substr($content, 0, strrpos($content, '¤') + 2));
 
       $tmp = explode('¤', $content);
       foreach ($tmp as $row) {
@@ -157,10 +157,10 @@ class Session
     foreach ($this->_content as $key => $row) {
       $cookie.= $key.'|'.$row.'¤';
     }
-    $cookie.= 'checksum|' . crc32(Sally::get('cookie.iv') . $cookie);
+    $cookie.= 'checksum|' . crc32(\Sally::get('cookie.iv') . $cookie);
     $content = $this->rijndael->encrypt($cookie);
     $expire = time()+60*60*24*7;
 
-    setcookie(Sally::get('cookie.name'), $content, $expire, '/', Sally::get('cookie.domain'), 0, true);
+    setcookie(\Sally::get('cookie.name'), $content, $expire, '/', \Sally::get('cookie.domain'), 0, true);
   }
 }

@@ -64,5 +64,5 @@ abstract class TraffickerAbstract
    * @param string contenu de la réponse
    * @return mixed Si vous ne retournez pas de valeur la réponse ne sera pas écrasée.
   */
-  function engineDelivery($content, $controller_result) {}
+  function engineDelivery($content, $databack) {}
 }
