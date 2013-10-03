@@ -14,14 +14,19 @@ namespace sally;
 */
 class Request
 {
+  private $_method = false;
   private $_module = false;
   private $_controller = false;
   private $_action = false;
   private $_data = array();
 
-  public function __construct()
+  public function __construct($method = null)
   {
-    
+    if ($method) {
+      $this->_method = $method;
+    } else {
+      $this->_method = $_SERVER['REQUEST_METHOD'];
+    }
   }
 
   /**
@@ -119,6 +124,16 @@ class Request
     }
 
     return true;
+  }
+
+  public function setMethod($value)
+  {
+    $this->_method = $value;
+  }
+
+  public function getMethod()
+  {
+    return $this->_method;
   }
 
   public function setSegment($name, $value)

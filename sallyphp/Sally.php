@@ -73,9 +73,9 @@ class Sally
    * @param string 'MyTrafficker', 'UserModel', 'Site_UserModel' 'sally\Request'
    * @return string response content
   */
-  public function prepare($request_string = '')
+  public function prepare($request_string = '', $method = null)
   {
-    return new sally\Engine($request_string);
+    return new sally\Engine($request_string, $method);
   }
 
   /**

@@ -42,10 +42,10 @@ class Engine
   /**
    * @param string, array
   */
-  public function __construct($request_string)
+  public function __construct($request_string = '', $method = null)
   {
     // first step
-    $this->request = new Request($this);
+    $this->request = new Request($method);
     $this->request->path($request_string);
 
     // next
