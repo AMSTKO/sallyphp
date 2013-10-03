@@ -32,10 +32,13 @@ class Request
    * Request constructor
    * @param string method POST, GET, DELETE, PUT...
   */
-  public function __construct($method = null)
+  public function __construct($method = null, $data = array())
   {
     if ($method) {
       $this->setMethod($method);
+      if ($method == 'POST') {
+        $this->_data = $data;
+      }
     } else {
       $this->setMethod($_SERVER['REQUEST_METHOD']);
       $this->_data = $_POST;
@@ -85,11 +88,14 @@ class Request
       }
       
       if ($request_index >= $logic_data_index) {
-        if (isset($request_explode[($key + 1)])) {
+        $name = strstr($element, '=', true);
+        $value = substr(strstr($element, '='), 1);
+        $this->setSegment($name, $value);
+        /*if (isset($request_explode[($key + 1)])) {
           // définition des données
           $this->setSegment($element, $request_explode[($key + 1)]);
           $passe = true;
-        }
+        }*/
       } else {
         // définition du module
         if ($has_module) {

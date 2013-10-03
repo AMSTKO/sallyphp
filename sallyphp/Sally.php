@@ -17,7 +17,7 @@ class Sally
    * @var string
   */
   const name = 'SallyPHP';
-  const version = '1.131003.1';
+  const version = '1.131003.2';
   const path = __DIR__;
 
   /**
@@ -73,9 +73,9 @@ class Sally
    * @param string 'MyTrafficker', 'UserModel', 'Site_UserModel' 'sally\Request'
    * @return string response content
   */
-  public function prepare($request_string = '', $method = null)
+  public function prepare($request_string = '', $method = null, $data = array())
   {
-    return new sally\Engine($request_string, $method);
+    return new sally\Engine($request_string, $method, $data);
   }
 
   /**
@@ -139,7 +139,7 @@ class Sally
     if (func_num_args() === 2) {
       $domain = func_get_arg(0);
       $name = func_get_arg(1);
-      if (array_key_exists($name, $instance->_cfg[$domain])) {
+      if (array_key_exists($domain, $instance->_cfg) && array_key_exists($name, $instance->_cfg[$domain])) {
         return $instance->_cfg[$domain][$name];
       }
     } else {

@@ -42,10 +42,10 @@ class Engine
   /**
    * @param string, array
   */
-  public function __construct($request_string = '', $method = null)
+  public function __construct($request_string = '', $method = null, $data = array())
   {
     // first step
-    $this->request = new Request($method);
+    $this->request = new Request($method, $data);
     $this->request->path($request_string);
 
     // next
@@ -142,7 +142,16 @@ class Engine
         exit;
       }
 
+      unset(
+        $this->trafficker, 
+        $this->view, 
+        $this->layout, 
+        $this->helper, 
+        $this->request
+      );
+
       return $this->_content;
+      
     } catch (Exception $e) {
       exit;
     }
