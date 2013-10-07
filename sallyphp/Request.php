@@ -51,7 +51,7 @@ class Request
    * @param string '/site/index/signin'
    * @return boolean
   */
-  public function path($request_string)
+  public function path($request_string = '')
   {
     // modules dispnibles
     $sally = \Sally::getInstance();
@@ -59,9 +59,14 @@ class Request
 
     $has_module = count($modules) > 0 ? true : false;
 
-    $request_explode = explode('/', $request_string);
-    $request_index = 0;
-    $passe = false;
+    $request_explode = explode('?', $request_string);
+
+    // path and datas
+    $path = $request_explode[0];
+    $datas = null;
+    if (isset($request_explode[1])) {
+      $datas = $request_explode[1];
+    }
 
     // nom des principaux éléments
     $module_name = null;
@@ -73,52 +78,58 @@ class Request
     $logic_action_index = 1;
     $logic_data_index = 2;
 
-    // analyse des éléments
-    foreach ($request_explode as $key => $element) {
+    // analyse des éléments "path"
+    $path_explode = explode('/', $path);
+    $path_index = 0;
+
+    foreach ($path_explode as $key => $element) {
       $element = strtolower($element);
       
-      // Sauter un element lors de la définition des données puisque: 1 donnée = 2 éléments.
-      if ($passe) {
-        $passe = false;
-        continue;
-      }
-
       if (empty($element)) {
         continue;
       }
       
-      if ($request_index >= $logic_data_index) {
-        $name = strstr($element, '=', true);
-        $value = substr(strstr($element, '='), 1);
-        $this->setSegment($name, $value);
-        /*if (isset($request_explode[($key + 1)])) {
-          // définition des données
-          $this->setSegment($element, $request_explode[($key + 1)]);
-          $passe = true;
-        }*/
-      } else {
-        // définition du module
-        if ($has_module) {
-          if ($request_index === 0 && in_array($element, $modules)) {
-            $module_name = $element;
-            $logic_controller_index++;
-            $logic_action_index++;
-            $logic_data_index++;
-          }
-        }
-
-        // définition du controleur
-        if ($request_index == $logic_controller_index) {
-          $controller_name = $element;
-        }
-
-        // définition de l'action
-        if ($request_index == $logic_action_index) {
-          $action_name = $element;
+      // définition du module
+      if ($has_module) {
+        if ($path_index === 0 && in_array($element, $modules)) {
+          $module_name = $element;
+          $logic_controller_index++;
+          $logic_action_index++;
+          $logic_data_index++;
         }
       }
 
-      $request_index++;
+      // définition du controleur
+      if ($path_index == $logic_controller_index) {
+        $controller_name = $element;
+      }
+
+      // définition de l'action
+      if ($path_index == $logic_action_index) {
+        $action_name = $element;
+      }
+
+      $path_index++;
+    }
+
+    // analyse des éléments "data"
+    if ($datas) {
+      $datas_explode = explode('&', $datas);
+      $datas_index = 0;
+      
+      foreach ($datas_explode as $key => $element) {
+        $element = strtolower($element);
+        
+        if (empty($element)) {
+          continue;
+        }
+
+        $element_explode = explode('=', $element);
+
+        if (!empty($element_explode[0]) && isset($element_explode[1])) {
+          $this->setSegment($element_explode[0], $element_explode[1]);
+        }
+      }
     }
 
     if ($has_module) {
@@ -133,7 +144,6 @@ class Request
       $this->setController($controller_name);
     } else {
       $this->setController(strtolower(\Sally::get('controller.default')));
-
     }
 
     if ($action_name != null) {

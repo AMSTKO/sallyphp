@@ -17,7 +17,7 @@ class Sally
    * @var string
   */
   const name = 'SallyPHP';
-  const version = '1.131003.2';
+  const version = '1.131003.1';
   const path = __DIR__;
 
   /**

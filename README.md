@@ -8,20 +8,7 @@ Points forts
 
 **Les requêtes préparées**
 
-Lorsque vous demandez une page à Sally, la requête est préparée, placée dans un contexte, puis executée. Ce fonctionnement permet de simuler très simplement d'autres requêtes au coeur de l'application.
-
-    // si j'ai 2 modules, "site" et "api", je veux faire un appel à l'api depuis le site:
-    // public/index.php, traitement de la requête principale,
-    $sally = Sally::getInstance();
-    $engine = $sally->prepare($_SERVER['REQUEST_URI']);
-    echo $engine->execute();
-
-    // dans mon controleur IndexController.php je veux appeler l'api,
-    $sally = Sally::getInstance();
-    $engine = $sally->prepare('api/user/profile', array('token' => '146446013'));
-    $json = $engine->execute();
-
-    // on pourrait très bien faire de ce bout de code un helper ou un model.
+Lorsque vous demandez une page à Sally, la requête est préparée, placée dans un contexte, puis executée. Ce type fonctionnement permet de simuler très simplement d'autres requêtes au coeur de l'application.
 
 
 **Les trafiquants**
