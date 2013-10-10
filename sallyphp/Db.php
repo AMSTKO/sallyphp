@@ -100,7 +100,7 @@ class Db
       } 
 
       // redis
-      else if ($db['type'] == 'redis') {
+      else if ($db['type'] == 'redis-predis') {
 
         // check
          if (isset($db['host']) && isset($db['port'])) {
@@ -121,7 +121,7 @@ class Db
             $this->_connections[$db['name']] = false;
           }
         } else {
-          throw new Exception('Configuration redis invalide');
+          throw new Exception('Configuration predis invalide');
         }
       } 
 

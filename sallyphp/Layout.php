@@ -73,9 +73,6 @@ class Layout
     $content = ob_get_contents();
     ob_end_clean();
 
-    // modification possible du contenu du layout
-    $content = $this->trafficker->layoutDelivery($content);
-
     // livraison
     return $content;
   }

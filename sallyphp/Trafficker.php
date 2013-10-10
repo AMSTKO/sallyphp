@@ -86,22 +86,6 @@ class Trafficker
   }
 
   /**
-   * Appelée avant la livraison du layout
-   * @param string contenu
-   * @return string contenu
-  */
-  public function layoutDelivery($content)
-  {
-    foreach ($this->_traffickers as $object) {
-      $_content = $object->layoutDelivery($content);
-      if ($_content !== null) {
-        $content = $_content;
-      }
-    }
-    return $content;
-  }
-
-  /**
    * Appelée avant de retourner le contenu de la réponse au client
    * @param string contenu
    * @return string contenu

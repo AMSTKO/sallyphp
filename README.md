@@ -13,23 +13,15 @@ Lorsque vous demandez une page à Sally, la requête est préparée, placée dan
 
 **Les trafiquants**
 
-Vous pouvez trafiquer les données qui rentrent et sortent à plusieurs points d'une requête.
+Vous pouvez trafiquer (modifier) une requête à plusieurs niveaux :
 
-- preEngine : Appelée au début de la requête;
-- viewDelivery : Appelée avant la livraison de la vue;
-- preLayout : Appelée avant d'intégrer le contenu au layout;
-- layoutDelivery : Appelée avant la livraison du layout;
-- engineDelivery : Appelée avant de retourner le contenu de la réponse au client;
+- 1. Au début de la requête (vérifier un token, cookie, définir un layout, contrôle ACL, rediriger...);
+- 2. Avant la livraison des vues (les envoyer dans un moteur de template...);
+- 3. Avant de livrer les actions d'un contrôleur (intégrer le contenu dans un template spécifique au contrôleur...);
+- 4. Avant d'intégrer le layout (préparer les variables du layout, charger une vue de menu...);
+- 5. Avant de retourner la réponse au client (minifier, ajouter une entête...);
 
-Cas d'utilisation :
-
-- Vérifier un rôle ACL avant de poursuivre;
-- Définir un layout;
-- Si requête AJAX bloquer la vue par defaut de le layout;
-- Supprimer l'indentation du code envoyé au client;
-- Rediriger vers une page de maintenance;
-- Ajouter des informations globales au retour client (token, temps d'exécution);
-- ...
+Les cas d'utilisations sont variés.
 
 **HMVC**
 
@@ -37,30 +29,38 @@ Du MVC hiérarchisé permet d'avoir plusieurs structures MVC, séparées en modu
 
 **Clef en main**
 
-Sally est simple et plutôt cool, vous devriez faire beaucoup de chose sans prise de tête. Je vous invite d'ailleurs à regarder les sources et voir comment ça se passe. Vous pouvez facilement modifier le framework pour répondre à des besoins spécifiques.
+Sally est plutôt cool, vous devriez faire beaucoup de chose sans prise de tête. Je vous invite d'ailleurs à regarder les sources et voir comment ça se passe. Vous pouvez facilement modifier le framework pour répondre à des besoins spécifiques.
 
 
 Sommaire
 --------
 
 - [Structure](#structure)
+- [Inventaire](#Inventaire)
 - [Notes](#notes)
+
 - [Sally](#sally)
-- [Controller](#controller)
-- [View](#view)
-- [Layout](#layouts)
-- [Acl](#acl)
-- [Db](#db)
+- [Engine](#engile)
 - [Request](#request)
+
+- [Model](#model)
+- [View](#view)
+- [Controller](#controller)
+
+- [Layout](#layouts)
 - [Helper](#helper)
+- [Db](#db)
+- [Acl](#acl)
 - [Session](#session)
 - [Trafficker](#trafficker)
+
 - [Rijndael](#rijndael)
 - [PHPMailer](#phpmailer)
+
 - [License](#license)
 
-Structure principale
---------------------
+Structure
+---------
 
     application/
       helpers/
@@ -82,14 +82,12 @@ Structure principale
 Inventaire
 ----------
 
-Depuis un trafiquant et un controleur vous pouvez accéder aux objets suivants de la requête :
+Depuis un contrôleur et un trafiquant vous pouvez accéder aux classes et objets suivants :
 
     $this->request;
     $this->layout;
     $this->view;
     $this->helper;
-
-Ainsi qu'aux classes suivantes :
 
     $sally = Sally::getInstance();
     $acl = sally\Acl::getInstance();
@@ -103,73 +101,104 @@ Notes
 
 **slash devant éléments à charger**
 
-En ajoutant un slash devant le nom d'un élément à charger (helper, view ou layout) celui ci sera cherché dans son répertoire à la racine de l'application. Sinon il sera cherché dans son répertoire depuis le module demandé par la requête.
+    // par exemple :
+    echo $this->view->load('/ma-vue');
+    // ou
+    $engine->helper->add('/translate');
+
+
+En ajoutant un slash devant le chemin d'un élément à charger (helper, view ou layout) celui ci sera cherché dans son répertoire à la racine de l'application. Sinon il sera cherché dans son répertoire depuis le module demandé par la requête.
 
 
 Sally
 -----
 
-**Définir un paramètre global**
-
-    Sally::set('name', 'value');
-    // il est possible d'avoir des paramètres enfants
-    Sally::set('domain', 'name_b', 'value');
-
-**Récupérer un paramètre global**
-
-    Sally::get('name');
-    // or
-    Sally::get('domain'); // return array('name_b' => 'value');
-    // or
-    Sally::get('domain', 'name'); // return value
+La classe Sally s'occupe des requêtes, de la configuration, du chargement des fichiers et autres classes.
 
 **Récupérer l'instance**
 
     $sally = Sally::getInstance();
 
-**Appeler une librairie**
+**Faire une requête**
 
-getLibrary(); s'occupe simplement de faire un "require_once" sur le fichier qui vous intéresse dans votre répertoire "libs", par exemple :
+    // il faut d'abord préparer la requête, cette méthode retourne 
+    // un objet "singleton" de sally\Engine();, content d'autres 
+    // objets spécifiques à la requête :
+    $engine = $sally->prepare($_SERVER['REQUEST_URI']);
+
+    // vous pouvez ensuite activer des trafiquants :
+    $engine->trafficker->add('site', array('site'));
+    $engine->trafficker->add('api', array('api'));
+
+    // charger des helpers :
+    $engine->helper->add('/translate');
+    $engine->helper->add('/beautifulDate');
+
+    // faire évoluer la configuration en fonction de la requête :
+    if ($engine->request->getModule() == 'site') {
+      $engine->helper->add('mustache');
+      $engine->helper->add('escape');
+      $engine->helper->add('api');
+    }
+
+    // et finir par executer puis afficher le résultat :
+    echo $engine->execute();
+
+**Définir un paramètre global**
+
+Vous pouvez définir des valeurs qui seront accessibles depuis n'importe ou (vue, layout, trafiquant, helper...).
+
+    Sally::set('name', 'Pingu');
+    // il est possible d'avoir des paramètres enfants
+    Sally::set('user', 'id', 6);
+
+**Récupérer un paramètre global**
+
+    Sally::get('name'); // Pingu
+    // or
+    Sally::get('user'); // array('id' => 6);
+    // or
+    Sally::get('user', 'id'); // (int)6
+
+**Charger une librairie**
+
+Pour l'instant il s'agit d'un simple "require_once" sur le fichier qui vous intéresse dans votre répertoire "libs", par exemple :
 
     $sally->library('Mustache/Autoloader.php');
     $sally->library('Predis/autoload.php');
 
-Controller
-----------
 
-**__contruct**
+Engine
+------
 
-Si vous ajoutez votre méthode __contruct au controleur il faudra faire appel manuellement au contructeur parent, sans oublier de transmettre l'objet $engine :
+La classe Engine est instanciée à chaque nouvelle requête, elle va donner un "singleton" qui contiendra les différents éléments dédiés à une requête.
 
-    class IndexController extends sally\Controller
+    // depuis un trafiquant et un contrôleur vous pourriez accédez à ses objets de cette manière,
+    $this->engine->request;
+    $this->engine->layout;
+    $this->engine->view;
+    $this->engine->helper;
+
+    // mais ils ont leur version raccourci,
+    $this->request;
+    $this->layout;
+    $this->view;
+    $this->helper;
+
+
+Model
+-----
+
+En structure MVC ou si en HMVC votre model se trouve dans son repertoire à la racine de l'application son nom ressemblera à : "UserModel". En HMVC avec un model présent dans son repertoire au niveau du module il faudrai ajouter le nom du module devant : "Site_UserModel".
+
+    class UserModel extends sally\Model
     {
-      public function __construct($engine)
+      public function signin()
       {
-        parent::__construct($engine);
+        // ...
       }
     }
 
-**Charger un helper**
-
-    $this->helper->add('/toStrong');
-    
-**Redirection**
-
-    $this->redirect('http://google.fr');
-
-**Rediriger vers une autre action et/ou un autre controleur et/ou un autre model dans la même requête**
-
-    $this->forward($action, $controleur, $module);
-
-Il est nécessaire de préciser au moins l'action (controleur et module seront ceux en cours). Exemple :
-
-    class IndexController extends sally\Controller
-    {
-      public function index()
-      {
-        $this->forward('maintenance', 'erreur');
-      }
-    }
 
 View
 ----
@@ -195,13 +224,55 @@ View
 
     // in view file : echo $login; // display Mr.Ping
 
-**Désactiver la vue par defaut d'une action de controleur**
+**Désactiver la vue par defaut d'une action de contrôleur**
 
     $this->view->disableControllerView();
 
 **Savoir si la vue par defaut été désactivé**
 
-    $this->view->controllerViewIsEnabled(); // Boolean
+    $this->view->controllerViewIsEnabled(); // boolean
+
+
+Controller
+----------
+
+En structure MVC le nom du contrôleur est sous cette forme : "IndexController". En HMVC il faudra ajouter le nom du module devant : "Site_IndexController"
+
+**__contruct**
+
+Si vous ajoutez votre méthode __contruct au contrôleur il faudra faire appel manuellement au constructeur parent, sans oublier de transmettre l'objet $engine :
+
+    class Site_IndexController extends sally\Controller
+    {
+      public function __construct($e)
+      {
+        parent::__construct($e);
+      }
+    }
+
+**Charger un helper**
+
+    $this->helper->add('/toStrong');
+    
+**Redirection client**
+
+    $this->redirect('http://google.fr');
+
+**Redirection interne**
+
+Rediriger vers une autre action et/ou un autre controleur et/ou un autre model dans la même requête
+
+    $this->forward($action, $controleur, $module);
+
+Il est nécessaire de préciser au moins l'action (le contrôleur et le module seront ceux en cours). Exemple :
+
+    class Site_IndexController extends sally\Controller
+    {
+      public function index()
+      {
+        $this->forward('maintenance', 'index');
+      }
+    }
 
 
 Layout
@@ -250,13 +321,13 @@ Acl
 
 **Ajouter des rôles**
 
-    $acl->addRole('guest');
-    $acl->addRole('user', 'guest');
+    $acl->role('guest');
+    $acl->role('user', 'guest');
 
 **Ajouter des ressources**
 
-    $acl->AddRessource('public');
-    $acl->AddRessource('account');
+    $acl->ressource('public');
+    $acl->ressource('account');
 
 **Ajouter des autorisations**
 
@@ -285,10 +356,11 @@ Db
 **SGBD pris en charges**
 
 - Mysql (avec PDO), type=mysql-pdo
+- Redis (avec la librairie Predis), type=redis-predis
 
 **Ajouter une connexion à une base de données**
 
-Vous pouvez en ajouter plusieurs, seul le nom doit changer. Pour ne pas avoir besoin de préciser le nom à chaque fois, utilisez le nom "default" pour la connection principale.
+Pour ne pas avoir besoin de préciser le nom à chaque fois avec getConnection('nom'); vous pouvez indiqur le nom de connexion "default".
 
     $db->add(array(
       'type' => 'mysql-pdo',
@@ -314,7 +386,7 @@ Sinon il suffit de préciser le nom de la connexion.
     public function getEmail($user)
     {
       $db = sally\Db::getConnection();
-      $stmt = $db->prepare('SELECT email FROM users WHERE id = :id LIMIT 1');
+      $stmt = $db->prepare('SELECT email FROM users WHERE id =:id LIMIT 1');
       $stmt->execute(array('id' => $user));
       $result = $stmt->fetch();
       return $result['email'];
@@ -324,11 +396,12 @@ Sinon il suffit de préciser le nom de la connexion.
 Request
 -------
 
-Les requêtes peuvent être faites sous différentes formes :
+Une requête se compose de 2 parties :
 
-- /module/controller/action
-- /controller/action (en définissant le module par defaut dans la conf)
-- /controller/action/dataName1/dataValue1/dataName2/dataValue2
+- 1. Le chemin : /module/controller/action
+- 2. Les données : ?user_name=pingu&page=2
+
+Par exemple : domain.com/api/user/name?id=6
 
 **Récupérer les valeurs des données passées dans la requête**
 
@@ -340,7 +413,7 @@ Les requêtes peuvent être faites sous différentes formes :
 
 **Récupérer des données $_POST**
 
-    $this->request->getPost('name'); // value or false
+    $this->request->getData('name'); // value or false
 
 **Redéfinir le module**
 
@@ -370,7 +443,7 @@ Les requêtes peuvent être faites sous différentes formes :
 Session
 -------
 
-Sally créer un cookie dont la valeur est cryptée avec l'algo Rijndael en 128b (MCRYPT_RIJNDAEL_128). La valeur correspond à un tableau sérialisé contenant vos informations.
+Sally créer un cookie dont la valeur est cryptée avec l'algo Rijndael en 128b (MCRYPT_RIJNDAEL_128). La valeur du cookie correspond à un tableau sérialisé contenant vos données.
 
 **Récupérer l'instance**
 
@@ -378,7 +451,7 @@ Sally créer un cookie dont la valeur est cryptée avec l'algo Rijndael en 128b 
 
 **Savoir si l'utilisateur avait déjà le cookie**
 
-    $session->hasCookie(); // Boolean
+    $session->hasCookie(); // boolean
 
 **Définir une valeur dans le cookie**
 
@@ -407,7 +480,7 @@ Sally créer un cookie dont la valeur est cryptée avec l'algo Rijndael en 128b 
 Helper
 ------
 
-Les helpers sont de basiques fonctions PHP (ou ce que vous voullez) appelable n'importe ou.
+Les helpers sont des fichiers contenants une ou plusieurs fonctions PHP (ou ce que vous voullez) appelable n'importe ou.
 
 **Charger un helper**
 
@@ -430,7 +503,6 @@ Le trafiquant permet d'agir à 5 endroits :
 - preEngine : Appelée au début de la requête;
 - viewDelivery : Appelée avant la livraison de la vue;
 - preLayout : Appelée avant d'intégrer le contenu au layout;
-- layoutDelivery : Appelée avant la livraison du layout;
 - engineDelivery : Appelée avant de retourner le contenu de la réponse au client;
 
 **preEngine**
@@ -456,10 +528,6 @@ Si vous avez un moteur de template à executer sur le contenu des vues.
 **preLayout**
 
 Utiliser par exemple pour définir des variables au template du layout avec : $this->layout->setData();
-
-**layoutDelivery**
-
-Avant de livrer le layout vous pourriez faire des modifications sur son contenu.
 
 **engineDelivery**
 

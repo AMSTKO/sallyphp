@@ -122,6 +122,13 @@ class Engine
         $this->_content = ob_get_contents();
         ob_end_clean();
 
+        // contentDelivery action controller
+        if (method_exists($controller, '_delivery')) {
+          if ($content = $controller->_delivery($this->_content)) {
+            $this->_content = $content;
+          }
+        }
+
         // Place le tampon de sortie dans un layout si possible
         if ($this->layout->isDefined() && $this->layout->isEnabled()) {
           $this->_content = $this->layout->integrate($this->_content);

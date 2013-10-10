@@ -146,7 +146,7 @@ class Request
       $this->setController(strtolower(\Sally::get('controller.default')));
     }
 
-    if ($action_name != null) {
+    if ($action_name != null && substr($action_name, 0, 1) != '_') {
       $this->setAction($action_name);
     } else {
       $this->setAction('index');

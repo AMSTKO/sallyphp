@@ -53,13 +53,6 @@ abstract class TraffickerAbstract
   function preLayout() {}
 
   /**
-   * Appelée avant la livraison du layout
-   * @param string le layout et son contenu
-   * @return mixed Si vous ne retournez pas de valeur le layout ne sera pas écrasée.
-  */
-  function layoutDelivery($content) {}
-
-  /**
    * Appelée avant de retourner le contenu de la réponse au client
    * @param string contenu de la réponse
    * @return mixed Si vous ne retournez pas de valeur la réponse ne sera pas écrasée.
