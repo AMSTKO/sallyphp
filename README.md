@@ -158,6 +158,9 @@ En ayant un module pour le site et un module pour l'api vous devrez appeller l'a
     $result = api('users?id=' . Sally::get('user', 'id'));
     // array('id' => 6, 'user' => 'pingu');
 
+Et s'arranger avec le trafiquant de l'api pour retourner du json,
+
+    {"id" : 6, "user" : "pingu"}
 
 **Définir un paramètre global**
 
