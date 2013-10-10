@@ -558,11 +558,11 @@ Intercepter la requête au début du traitement.
 
 Si vous avez un moteur de template à executer sur le contenu des vues.
 
-  function viewDelivery($content, $data)
-  {
-    $m = new Mustache_Engine;
-    return $m->render($content, $data);
-  }
+    function viewDelivery($content, $data)
+    {
+      $m = new Mustache_Engine;
+      return $m->render($content, $data);
+    }
 
 **preLayout**
 
