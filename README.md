@@ -207,9 +207,9 @@ La classe Engine est instanciée à chaque nouvelle requête, elle va donner un 
 Model
 -----
 
-En structure MVC ou si en HMVC votre model se trouve dans son repertoire à la racine de l'application son nom ressemblera à : "UserModel". En HMVC avec un model présent dans son repertoire au niveau du module il faudrai ajouter le nom du module devant : "Site_UserModel".
+En structure MVC, ou si en HMVC votre model se trouve dans son repertoire à la racine de l'application, son nom ressemblera à : "UserModel". En HMVC, avec un model présent dans son repertoire au niveau du module, il faudrai ajouter le nom du module devant : "Site_UserModel".
 
-    class UserModel extends sally\Model
+    class Site_UserModel extends sally\Model
     {
       public function signin()
       {
@@ -254,7 +254,7 @@ View
 Controller
 ----------
 
-En structure MVC le nom du contrôleur est sous cette forme : "IndexController". En HMVC il faudra ajouter le nom du module devant : "Site_IndexController"
+En MVC le nom du contrôleur est par exemple : "IndexController". En HMVC il faudra ajouter le nom du module devant : "Site_IndexController"
 
 **__contruct**
 
@@ -292,6 +292,27 @@ Il est nécessaire de préciser au moins l'action (le contrôleur et le module s
       }
     }
 
+**Intégrer les données de chaques action d'un contrôleur**
+
+Vous êtes dans votre contrôleur "user" et souhaitez intégrer un template commun à ses actions. Si la méthode _delivery() est présente dans le contrôler, le contenu de l'action demandée (des "echo", la vue par defaut...) sera présent dans le paramètre $content : 
+  
+    class Site_IndexController extends sally\Controller
+    {
+      public function index()
+      {
+        $this->forward('maintenance', 'index');
+      }
+
+      public function _delivery($content)
+      {
+        return $this->view->load('user/include/template', array(
+          'user' => $this->user,
+          'content' => $content
+        ));
+      }
+    }
+
+Si _delivery() ne retourne rien, le contenu de l'action sera inchangé, sinon il sera remplacé par le nouveau contenu.
 
 Layout
 ------
