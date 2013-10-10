@@ -300,7 +300,7 @@ Vous êtes dans votre contrôleur "user" et souhaitez intégrer un template comm
     {
       public function index()
       {
-        $this->forward('maintenance', 'index');
+        echo 'hi :)';
       }
 
       public function _delivery($content)
