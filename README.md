@@ -556,7 +556,7 @@ Intercepter la requête au début du traitement.
 
 **viewDelivery**
 
-Si vous avez un moteur de template à executer sur le contenu des vues.
+Si vous avez un moteur de template à executer sur le contenu de toutes les vues.
 
     function viewDelivery($content, $data)
     {
