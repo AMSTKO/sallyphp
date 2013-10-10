@@ -636,4 +636,8 @@ Pour d'avantage de documentation rendez-vous sur https://github.com/Synchro/PHPM
 License
 -------
 
-**Released under the MIT license.**
+Released under the MIT license.
+
+**authors**
+
+Jonathan Amsellem
