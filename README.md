@@ -140,6 +140,22 @@ La classe Sally s'occupe des requêtes, de la configuration, du chargement des f
     // et finir par executer puis afficher le résultat :
     echo $engine->execute();
 
+**Pourquoi faire des sous-requêtes ?**
+
+En ayant un module pour le site et un module pour l'api vous devrez appeller l'api via le site sans effectuer de nouvelle requête HTTP. Il suffira de faire un helper "api" dont le rôle serait d'effectuer cette sous requête :
+
+    function api($uri, $method = 'GET', $data = array()) {
+      $sally = Sally::getInstance();
+      $engine = $sally->prepare('api/' . $uri, $method, $data);
+      $engine->trafficker->add('api', array('api'));
+      return json_decode($engine->execute(), true);
+    }
+
+    // et dans mon site je pourrai faire :
+    $result = api('users?id=' . Sally::get('user', 'id'));
+    // array('id' => 6, 'user' => 'pingu');
+
+
 **Définir un paramètre global**
 
 Vous pouvez définir des valeurs qui seront accessibles depuis n'importe ou (vue, layout, trafiquant, helper...).
