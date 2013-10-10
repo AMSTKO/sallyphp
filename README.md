@@ -36,7 +36,7 @@ Sommaire
 --------
 
 - [Structure](#structure)
-- [Inventaire](#Inventaire)
+- [Inventaire](#inventaire)
 - [Notes](#notes)
 
 
