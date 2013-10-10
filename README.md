@@ -21,7 +21,7 @@ Vous pouvez trafiquer (modifier) une requête à plusieurs niveaux :
 - 4. Avant d'intégrer le layout (préparer les variables du layout, charger une vue de menu...);
 - 5. Avant de retourner la réponse au client (minifier, ajouter une entête...);
 
-Les cas d'utilisations sont variés.
+Les cas d'utilisations sont très variés.
 
 **HMVC**
 
