@@ -124,6 +124,7 @@ La classe Sally s'occupe des requêtes, de la configuration, du chargement des f
     // vous pouvez ensuite activer des trafiquants :
     $engine->trafficker->add('site', array('site'));
     $engine->trafficker->add('api', array('api'));
+    // (le deuxième paramètre permet de limiter un trafiquant aux models spécifiés)
 
     // charger des helpers :
     $engine->helper->add('/translate');
