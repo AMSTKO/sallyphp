@@ -111,7 +111,7 @@ En ajoutant un slash devant le chemin d'un élément à charger (helper, view ou
 Sally
 -----
 
-La classe Sally s'occupe des requêtes, de la configuration, du chargement des fichiers et autres classes.
+La classe Sally s'occupe des requêtes, de la configuration, du chargement des fichiers et des autres classes.
 
 **Récupérer l'instance**
 
