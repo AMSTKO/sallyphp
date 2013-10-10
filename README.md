@@ -5,6 +5,29 @@ SallyPHP
 
 SallyPHP est un framework permettant de développer des applications web sur les modèles MVC et HMVC (hierarchical model–view–controller). Il fournit des outils simples, légés et rapides à prendre en main afin de créer des applications riches et structurées.
 
+Sommaire
+--------
+
+- [Points forts](#points-forts)
+- [Structure](#structure)
+- [Inventaire](#inventaire)
+- [Notes](#notes)
+- [Sally](#sally)
+- [Engine](#engile)
+- [Request](#request)
+- [Model](#model)
+- [View](#view)
+- [Controller](#controller)
+- [Layout](#layouts)
+- [Helper](#helper)
+- [Db](#db)
+- [Acl](#acl)
+- [Session](#session)
+- [Trafficker](#trafficker)
+- [Rijndael](#rijndael)
+- [PHPMailer](#phpmailer)
+- [License](#license)
+
 Points forts
 ------------
 
@@ -33,28 +56,6 @@ Du MVC hiérarchisé permet d'avoir plusieurs structures MVC, séparées en modu
 
 Sally est plutôt cool, vous devriez faire beaucoup de chose sans prise de tête. Je vous invite d'ailleurs à regarder les sources et voir comment ça se passe. Vous pouvez facilement modifier le framework pour répondre à des besoins spécifiques.
 
-
-Sommaire
---------
-
-- [Structure](#structure)
-- [Inventaire](#inventaire)
-- [Notes](#notes)
-- [Sally](#sally)
-- [Engine](#engile)
-- [Request](#request)
-- [Model](#model)
-- [View](#view)
-- [Controller](#controller)
-- [Layout](#layouts)
-- [Helper](#helper)
-- [Db](#db)
-- [Acl](#acl)
-- [Session](#session)
-- [Trafficker](#trafficker)
-- [Rijndael](#rijndael)
-- [PHPMailer](#phpmailer)
-- [License](#license)
 
 Structure
 ---------
