@@ -560,6 +560,7 @@ Si vous avez un moteur de template à executer sur le contenu de toutes les vues
 
     function viewDelivery($content, $data)
     {
+      $sally->library('Mustache/Autoloader.php');
       $m = new Mustache_Engine;
       return $m->render($content, $data);
     }
