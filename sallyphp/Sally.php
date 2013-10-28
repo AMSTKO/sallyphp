@@ -29,7 +29,7 @@ class Sally
    * @var object
   */
   public $module;
-  public $prepare;
+  public $query;
   
   /**
    * Instance
@@ -54,7 +54,7 @@ class Sally
     $this->_cfg['cookie.name'] = 'sally';
 
     $this->module = new sally\Module();
-    $this->prepare = new sally\Prepare();
+    $this->query = new sally\Query();
   }
 
   /**
@@ -67,16 +67,6 @@ class Sally
       self::$_instance = new self();
     }
     return self::$_instance;
-  }
-
-  /**
-   * Chargement d'une requête
-   * @param string 'MyTrafficker', 'UserModel', 'Site_UserModel' 'sally\Request'
-   * @return string response content
-  */
-  public function prepare($request = '', $method = null, $data = array())
-  {
-    return new sally\Engine($request, $method, $data);
   }
 
   /**

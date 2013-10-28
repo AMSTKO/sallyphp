@@ -21,6 +21,7 @@ abstract class TraffickerAbstract
   public $layout;
   public $view;
   public $helper;
+  public $query;
 
   /**
    * TraffickerAbstrart constructor
@@ -32,6 +33,7 @@ abstract class TraffickerAbstract
     $this->layout = $engine->layout;
     $this->view = $engine->view;
     $this->helper = $engine->helper;
+    $this->query = $engine->query;
   }
 
   /**

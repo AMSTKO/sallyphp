@@ -30,11 +30,6 @@ class Request
   private $modules = array();
 
   /**
-   * @var object
-  */
-  public $prepare;
-
-  /**
    * Request constructor
    * @param string method POST, GET, DELETE, PUT...
   */
@@ -55,19 +50,6 @@ class Request
     $sally = \Sally::getInstance();
     $this->modules = $sally->module->get();
     $this->has_module = count($this->modules) > 0 ? true : false;
-
-    // propriété prepare accessible
-    $this->prepare = new Prepare();
-  }
-
-  /**
-   * Chargement d'une requête
-   * @param string 'MyTrafficker', 'UserModel', 'Site_UserModel' 'sally\Request'
-   * @return string response content
-  */
-  public function prepare($request = '', $method = null, $data = array())
-  {
-    return new Engine($request, $method, $data);
   }
 
   /**

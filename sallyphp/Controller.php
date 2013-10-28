@@ -33,6 +33,7 @@ class Controller
     $this->layout = $engine->layout;
     $this->view = $engine->view;
     $this->helper = $engine->helper;
+    $this->query = $engine->query;
   }
 
   /**

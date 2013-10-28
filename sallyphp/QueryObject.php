@@ -9,9 +9,9 @@
 namespace sally;
 
 /**
- * Sally Prepare
+ * Sally QueryObject
 */
-class Prepare
+class QueryObject
 {
   /**
    * @var array
@@ -19,14 +19,20 @@ class Prepare
   private $path = array();
 
   /**
-   * Prepare constructor
+   * @var boolean
+  */
+  private $execute = false;
+
+  /**
+   * QueryObject constructor
    * @param mixed cumule les valeurs du chemin
   */
-  public function __construct($path = false)
+  public function __construct($path = false, $execute = false)
   {
     if ($path) {
       $this->path = $path;
     }
+    $this->execute = $execute;
   }
 
   /**
@@ -36,7 +42,7 @@ class Prepare
   public function __get($name)
   {
     array_push($this->path, $name);
-    return new Prepare($this->path);
+    return new QueryObject($this->path, $this->execute);
   }
 
   /**
@@ -66,7 +72,12 @@ class Prepare
     // ajouter le nom de l'action au chemin
     array_push($this->path, $name);
 
-    $sally = \Sally::getInstance();
-    return $sally->prepare($this->path, $method, $data);
+    $engine = new Engine($this->path, $method, $data);
+
+    if ($this->execute) {
+      return $engine->execute();
+    } else {
+      return $engine;
+    }
   }
 }

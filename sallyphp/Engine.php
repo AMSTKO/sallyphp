@@ -37,6 +37,7 @@ class Engine
   public $layout;
   public $helper;
   public $request;
+  public $query;
 
   /**
    * @param string, array
@@ -54,8 +55,9 @@ class Engine
     $this->view = new View($this);
     $this->layout = new Layout($this);
     $this->helper = new Helper($this);
+    $this->query = new Query();
 
-    // trafiquants chargé automatiquement
+    // trafiquants chargé automatiquement en fonction du module
     $traffickers = $sally->module->getTraffickersForModule($this->request->getModule());
     foreach ($traffickers as $trafficker) {
       $this->trafficker->add($trafficker);
