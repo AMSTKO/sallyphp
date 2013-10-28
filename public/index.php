@@ -28,7 +28,7 @@ $sally = Sally::getInstance();
 $sally->module->add('site');
 
 // prepare the request and get "Sally Engine object"
-$engine = $sally->prepare($_SERVER['REQUEST_URI']);
+$engine = $sally->query->prepare($_SERVER['REQUEST_URI']);
 
 // add a traffickers and helpers for the request
 $engine->trafficker->add('my', array('site'));
