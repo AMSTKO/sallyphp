@@ -69,9 +69,4 @@ class Prepare
     $sally = \Sally::getInstance();
     return $sally->prepare($this->path, $method, $data);
   }
-
-  public function __invoke()
-  {
-    echo 'okkkkkkkkk';
-  }
 }
