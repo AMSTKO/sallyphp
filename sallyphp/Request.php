@@ -20,12 +20,19 @@ class Request
   private $_module = false;
   private $_controller = false;
   private $_action = false;
+  private $has_module = false;
 
   /**
    * @var array
   */
   private $_segment = array();
   private $_data = array();
+  private $modules = array();
+
+  /**
+   * @var object
+  */
+  public $prepare;
 
   /**
    * Request constructor
@@ -33,15 +40,34 @@ class Request
   */
   public function __construct($method = null, $data = array())
   {
+    // method
     if ($method) {
       $this->setMethod($method);
-      if ($method == 'POST') {
+      if ($method == 'POST' || $method == 'PUT' || $method == 'DELETE') {
         $this->_data = $data;
       }
     } else {
       $this->setMethod($_SERVER['REQUEST_METHOD']);
       $this->_data = $_POST;
     }
+
+    // sally modules
+    $sally = \Sally::getInstance();
+    $this->modules = $sally->module->get();
+    $this->has_module = count($this->modules) > 0 ? true : false;
+
+    // propriété prepare accessible
+    $this->prepare = new Prepare();
+  }
+
+  /**
+   * Chargement d'une requête
+   * @param string 'MyTrafficker', 'UserModel', 'Site_UserModel' 'sally\Request'
+   * @return string response content
+  */
+  public function prepare($request = '', $method = null, $data = array())
+  {
+    return new Engine($request, $method, $data);
   }
 
   /**
@@ -50,21 +76,22 @@ class Request
    * @param string '/site/index/signin'
    * @return boolean
   */
-  public function path($request_string = '')
+  public function path($request = '')
   {
-    // modules dispnibles
-    $sally = \Sally::getInstance();
-    $modules = $sally->module->get();
+    if (is_string($request)) {
+      $request_explode = explode('?', urldecode($request));
 
-    $has_module = count($modules) > 0 ? true : false;
+      // path and datas
+      $path = $request_explode[0];
+      $datas = null;
+      if (isset($request_explode[1])) {
+        $datas = $request_explode[1];
+      }
 
-    $request_explode = explode('?', $request_string);
-
-    // path and datas
-    $path = $request_explode[0];
-    $datas = null;
-    if (isset($request_explode[1])) {
-      $datas = $request_explode[1];
+      $path_explode = explode('/', $path);
+    } else {
+      $path_explode = $request;
+      $datas = null;
     }
 
     // nom des principaux éléments
@@ -76,9 +103,6 @@ class Request
     $logic_controller_index = 0;
     $logic_action_index = 1;
     $logic_data_index = 2;
-
-    // analyse des éléments "path"
-    $path_explode = explode('/', $path);
     $path_index = 0;
 
     foreach ($path_explode as $key => $element) {
@@ -89,8 +113,8 @@ class Request
       }
       
       // définition du module
-      if ($has_module) {
-        if ($path_index === 0 && in_array($element, $modules)) {
+      if ($this->has_module) {
+        if ($path_index === 0 && in_array($element, $this->modules)) {
           $module_name = $element;
           $logic_controller_index++;
           $logic_action_index++;
@@ -131,7 +155,7 @@ class Request
       }
     }
 
-    if ($has_module) {
+    if ($this->has_module) {
       if ($module_name !== null) {
         $this->setModule($module_name);
       } else {

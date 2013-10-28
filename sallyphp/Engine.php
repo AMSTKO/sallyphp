@@ -41,17 +41,25 @@ class Engine
   /**
    * @param string, array
   */
-  public function __construct($request_string = '', $method = null, $data = array())
+  public function __construct($request = '', $method = null, $data = array())
   {
+    $sally = \Sally::getInstance();
+
     // first step
     $this->request = new Request($method, $data);
-    $this->request->path($request_string);
+    $this->request->path($request);
 
     // next
     $this->trafficker = new Trafficker($this);
     $this->view = new View($this);
     $this->layout = new Layout($this);
     $this->helper = new Helper($this);
+
+    // trafiquants chargé automatiquement
+    $traffickers = $sally->module->getTraffickersForModule($this->request->getModule());
+    foreach ($traffickers as $trafficker) {
+      $this->trafficker->add($trafficker);
+    }
   }
 
   /**
@@ -122,7 +130,7 @@ class Engine
         ob_end_clean();
 
         // contentDelivery action controller
-        if (method_exists($controller, '_delivery')) {
+        if (method_exists($controller, '_delivery') && !$this->_databack) {
           if ($content = $controller->_delivery($this->_content)) {
             $this->_content = $content;
           }

@@ -16,7 +16,7 @@ class Sally
    * @var string
   */
   const name = 'SallyPHP';
-  const version = '1.131003.1';
+  const version = '1.131028.1';
   const path = __DIR__;
 
   /**
@@ -29,6 +29,7 @@ class Sally
    * @var object
   */
   public $module;
+  public $prepare;
   
   /**
    * Instance
@@ -53,6 +54,7 @@ class Sally
     $this->_cfg['cookie.name'] = 'sally';
 
     $this->module = new sally\Module();
+    $this->prepare = new sally\Prepare();
   }
 
   /**
@@ -72,9 +74,9 @@ class Sally
    * @param string 'MyTrafficker', 'UserModel', 'Site_UserModel' 'sally\Request'
    * @return string response content
   */
-  public function prepare($request_string = '', $method = null, $data = array())
+  public function prepare($request = '', $method = null, $data = array())
   {
-    return new sally\Engine($request_string, $method, $data);
+    return new sally\Engine($request, $method, $data);
   }
 
   /**
