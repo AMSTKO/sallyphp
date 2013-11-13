@@ -25,7 +25,6 @@ class Request
   /**
    * @var array
   */
-  private $_segment = array();
   private $_data = array();
   private $modules = array();
 
@@ -39,7 +38,6 @@ class Request
     if ($method) {
       $this->setMethod($method);
       $this->_data = $data;
-      $this->_segment = $data;
     } else {
       $this->setMethod($_SERVER['REQUEST_METHOD']);
       $this->_data = $_POST;
@@ -131,7 +129,7 @@ class Request
         $element_explode = explode('=', $element);
 
         if (!empty($element_explode[0]) && isset($element_explode[1])) {
-          $this->setSegment($element_explode[0], $element_explode[1]);
+          $this->setData($element_explode[0], $element_explode[1]);
         }
       }
     }
@@ -175,31 +173,6 @@ class Request
   public function getMethod()
   {
     return $this->_method;
-  }
-
-  /**
-   * set segment
-   * @param string
-   * @param string
-  */
-  public function setSegment($name, $value)
-  {
-    $this->_segment[$name] = $value;
-    $this->setData($name, $value);
-  }
-
-  /**
-   * get segment
-   * @param string
-   * @return string
-  */
-  public function getSegment($name)
-  {
-    if (array_key_exists($name, $this->_segment)) {
-      return $this->_segment[$name];
-    } else {
-      return false;
-    }
   }
 
   /**
