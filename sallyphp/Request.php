@@ -14,7 +14,7 @@ namespace sally;
 class Request
 {
   /**
-   * @var boolean
+   * @var boolean 
   */
   private $_method = false;
   private $_module = false;
@@ -38,9 +38,8 @@ class Request
     // method
     if ($method) {
       $this->setMethod($method);
-      if ($method == 'POST' || $method == 'PUT' || $method == 'DELETE') {
-        $this->_data = $data;
-      }
+      $this->_data = $data;
+      $this->_segment = $data;
     } else {
       $this->setMethod($_SERVER['REQUEST_METHOD']);
       $this->_data = $_POST;
@@ -186,6 +185,7 @@ class Request
   public function setSegment($name, $value)
   {
     $this->_segment[$name] = $value;
+    $this->setData($name, $value);
   }
 
   /**

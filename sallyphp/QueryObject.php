@@ -71,7 +71,7 @@ class QueryObject
 
     // ajouter le nom de l'action au chemin
     array_push($this->path, $name);
-
+    
     $engine = new Engine($this->path, $method, $data);
 
     if ($this->execute) {

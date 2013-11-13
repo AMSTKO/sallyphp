@@ -14,6 +14,7 @@ Sommaire
 - [Notes](#notes)
 - [Sally](#sally)
 - [Engine](#engile)
+- [Query](#query)
 - [Request](#request)
 - [Model](#model)
 - [View](#view)
@@ -33,7 +34,7 @@ Points forts
 
 **Les requêtes préparées**
 
-Lorsque vous demandez une page à Sally, la requête est préparée, placée dans un contexte, puis executée. Ce type fonctionnement permet de simuler très simplement d'autres requêtes au coeur de l'application.
+Lorsque vous demandez une page à Sally, la requête est préparée, placée dans un contexte, puis executée. Ce type fonctionnement permet de simuler très simplement d'autres requêtes au coeur de l'application. Développez facilement votre API !
 
 
 **Les trafiquants**
@@ -54,7 +55,7 @@ Du MVC hiérarchisé permet d'avoir plusieurs structures MVC, séparées en modu
 
 **Clef en main**
 
-Sally est plutôt cool, vous devriez faire beaucoup de chose sans prise de tête. Je vous invite d'ailleurs à regarder les sources et voir comment ça se passe. Vous pouvez facilement modifier le framework pour répondre à des besoins spécifiques.
+Sally est plutôt cool, vous devriez faire beaucoup de chose sans prise de tête. On vous invite d'ailleurs à regarder les sources et voir comment ça se passe. Vous pouvez facilement modifier le framework pour répondre à des besoins spécifiques.
 
 
 Structure
@@ -74,6 +75,9 @@ Structure
       traffickers/
     public/
       static/
+        css/
+        js/
+        img/
     sallyphp/
 
 
@@ -82,6 +86,7 @@ Inventaire
 
 Depuis un contrôleur et un trafiquant vous pouvez accéder aux classes et objets suivants :
 
+    $this->query;
     $this->request;
     $this->layout;
     $this->view;
@@ -93,6 +98,7 @@ Depuis un contrôleur et un trafiquant vous pouvez accéder aux classes et objet
     $session = sally\Session::getInstance();
     $rijndael = sally\Rijndael::getInstance();
 
+Vous apprendrez à manipuler tout ça dans la doc' ci-dessous.
 
 Notes
 -----
@@ -111,7 +117,7 @@ En ajoutant un slash devant le chemin d'un élément à charger (helper, view ou
 Sally
 -----
 
-La classe Sally s'occupe des requêtes, de la configuration, du chargement des fichiers et des autres classes.
+La classe Sally s'occupe de la configuration globale, du chargement des fichiers et des autres classes nécessaires.
 
 **Récupérer l'instance**
 
@@ -122,7 +128,7 @@ La classe Sally s'occupe des requêtes, de la configuration, du chargement des f
     // il faut d'abord préparer la requête, cette méthode retourne 
     // un objet "singleton" de sally\Engine();, content d'autres 
     // objets spécifiques à la requête :
-    $engine = $sally->prepare($_SERVER['REQUEST_URI']);
+    $engine = $sally->query->prepare($_SERVER['REQUEST_URI']);
 
     // vous pouvez ensuite activer des trafiquants :
     $engine->trafficker->add('site', array('site'));
@@ -142,25 +148,6 @@ La classe Sally s'occupe des requêtes, de la configuration, du chargement des f
 
     // et finir par executer puis afficher le résultat :
     echo $engine->execute();
-
-**Pourquoi faire des sous-requêtes ?**
-
-En ayant un module pour le site et un module pour l'api vous devrez appeller l'api via le site sans effectuer de nouvelle requête HTTP. Il suffira de faire un helper "api" dont le rôle serait d'effectuer cette sous requête :
-
-    function api($uri, $method = 'GET', $data = array()) {
-      $sally = Sally::getInstance();
-      $engine = $sally->prepare('api/' . $uri, $method, $data);
-      $engine->trafficker->add('api', array('api'));
-      return json_decode($engine->execute(), true);
-    }
-
-    // et dans mon site je pourrai faire :
-    $result = api('users?id=' . Sally::get('user', 'id'));
-    // array('id' => 6, 'user' => 'pingu');
-
-Et faire en sorte que le trafiquant de l'api retourne du json,
-
-    {"id" : 6, "user" : "pingu"}
 
 **Définir un paramètre global**
 
@@ -192,16 +179,54 @@ Engine
 La classe Engine est instanciée à chaque nouvelle requête, elle va donner un "singleton" qui contiendra les différents éléments dédiés à une requête.
 
     // depuis un trafiquant et un contrôleur vous pourriez accédez à ses objets de cette manière,
+    $this->engine->query;
     $this->engine->request;
     $this->engine->layout;
     $this->engine->view;
     $this->engine->helper;
 
     // mais ils ont leur version raccourci,
+    $this->query;
     $this->request;
     $this->layout;
     $this->view;
     $this->helper;
+
+
+Query
+-----
+
+La classe Query met en oeuvre les demandes de requêtes à l'application. Il existe 2 manières de faire une demande:
+
+- avec une chaîne de caractère (/site/user/profile?id=1);
+- avec des objets imbriqués ($this->query->execute->get->site->user->profile(array('id' =>1)));
+
+Et vous pouvez,
+
+- préparer une demande pour modifier la requête ($this->query->prepare->...);
+- éxecuter directement une demande ($this->query->execute->...);
+
+**avec une chaîne de caractère**
+
+    // pour un serveur web classique
+    $engine = $sally->query->prepare($_SERVER['REQUEST_URI']);
+    if ($engine->request->getModule() == 'site') {
+      $engine->helper->add('mustache');
+    }
+    echo $engine->execute();
+
+    // je demande le résultat du controleur "users" du module "api",
+    $result = $sally->query->execute('api/users', 'GET', array('id' => 1));
+
+**avec des objets imbriqués**
+
+    /**
+     * simuler un POST http://domain.tld/api/users
+     * > name = "ping"
+    */
+    $result = $this->query->execute->post->api->users(array(
+      'name' => 'ping'
+    )); // {"id":"1"}
 
 
 Model
@@ -437,22 +462,18 @@ Request
 
 Une requête se compose de 2 parties :
 
-- 1. Le chemin : /module/controller/action
-- 2. Les données : ?user_name=pingu&page=2
+- 1. Le chemin : /module/controller/action;
+- 2. Les données : "?user_name=pingu&page=2" ou le corps de requête;
 
 Par exemple : domain.com/api/user/name?id=6
 
-**Récupérer les valeurs des données passées dans la requête**
+**Récupérer les valeurs des données de la requête**
 
-    $this->request->getSegment('dataName1'); // False si inexistante
+    $this->request->getData('dataName1'); // False si inexistante
 
-**Écraser des valeurs passées dans la requête**
+**Écraser des valeurs de la requête**
 
-    $this->request->setSegment('dataName1', 'dataValue1');
-
-**Récupérer des données $_POST**
-
-    $this->request->getData('name'); // value or false
+    $this->request->setData('dataName1', 'dataValue1');
 
 **Redéfinir le module**
 
