@@ -14,21 +14,15 @@ namespace sally;
 class Query
 {
   /**
-   * @var array
+   * Traitement d'une propriété (execute ou prepare)
+   * @param string
   */
-  private $path = array();
-
-  /**
-   * Query constructor
-   * @param mixed cumule les valeurs du chemin
-  */
-  public function __construct($path = false, $execute = false)
+  public function __get($name)
   {
-    if ($path) {
-      $this->path = $path;
+    if ($name == 'execute') {
+      return new QueryObject(false, true);
     } else {
-      $this->prepare = new QueryObject;
-      $this->execute = new QueryObject(false, true);
+      return new QueryObject;
     }
   }
 
