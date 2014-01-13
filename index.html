@@ -1,56 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=640" />
-
-    <link rel="stylesheet" href="stylesheets/core.css" media="screen"/>
-    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)"/>
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
-
-    <script type="text/javascript" src="javascripts/modernizr.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
-    <script type="text/javascript">
-      $(document).ready(function () {
-        $('#main_content').headsmart()
-      })
-    </script>
     <title>Sallyphp by MrPing</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
-
   <body>
-    <a id="forkme_banner" href="https://github.com/MrPing/sallyphp">View on GitHub</a>
-    <div class="shell">
-
+    <div class="wrapper">
       <header>
-        <span class="ribbon-outer">
-          <span class="ribbon-inner">
-            <h1>Sallyphp</h1>
-            <h2>Sally : PHP HMVC Framework</h2>
-          </span>
-          <span class="left-tail"></span>
-          <span class="right-tail"></span>
-        </span>
+        <h1 class="header">Sallyphp</h1>
+        <p class="header">Sally : PHP HMVC Framework</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/MrPing/sallyphp/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/MrPing/sallyphp/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/MrPing/sallyphp">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/MrPing">MrPing</a></p>
+
+
       </header>
-
-      <section id="downloads">
-        <span class="inner">
-          <a href="https://github.com/MrPing/sallyphp/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/MrPing/sallyphp/tarball/master" class="tgz"><em>download</em> .TGZ</a>
-        </span>
-      </section>
-
-
-      <span class="banner-fix"></span>
-
-
-      <section id="main_content">
-        <h1>SallyPHP</h1>
+      <section>
+        <h1>
+<a name="sallyphp" class="anchor" href="#sallyphp"><span class="octicon octicon-link"></span></a>SallyPHP</h1>
 
 <p>SallyPHP est un framework permettant de développer des applications web sur les modèles MVC et HMVC (hierarchical model–view–controller). Il fournit des outils simples, légés et rapides à prendre en main afin de créer des applications riches et structurées.</p>
 
-<h2>Hello world!</h2>
+<h2>
+<a name="hello-world" class="anchor" href="#hello-world"><span class="octicon octicon-link"></span></a>Hello world!</h2>
 
 <p>Caractéristes de l'exemple fournit avec les sources :</p>
 
@@ -65,7 +51,8 @@
 &lt;/Directory&gt;
 </code></pre>
 
-<h2>Sommaire</h2>
+<h2>
+<a name="sommaire" class="anchor" href="#sommaire"><span class="octicon octicon-link"></span></a>Sommaire</h2>
 
 <ul>
 <li><a href="#structure">Structure</a></li>
@@ -85,7 +72,8 @@
 <li><a href="#sally_rijndael">Sally_Rijndael</a></li>
 <li><a href="#sally_phpmailer">Sally_PHPMailer</a></li>
 <li><a href="#license">License</a></li>
-</ul><h2>Structure</h2>
+</ul><h2>
+<a name="structure" class="anchor" href="#structure"><span class="octicon octicon-link"></span></a>Structure</h2>
 
 <pre><code>application/
   helpers/
@@ -106,7 +94,8 @@ public/
 sallyphp/ (class of Sally)
 </code></pre>
 
-<h2>Inventaire</h2>
+<h2>
+<a name="inventaire" class="anchor" href="#inventaire"><span class="octicon octicon-link"></span></a>Inventaire</h2>
 
 <p>Liste des class auxquelles vous pourrez avoir besoin au cours de votre développement.</p>
 
@@ -126,13 +115,15 @@ $trafficker = Sally_Trafficker::getInstance();
 $PHPMailer = Sally_PHPMailer::getInstance();
 </code></pre>
 
-<h2>Notes</h2>
+<h2>
+<a name="notes" class="anchor" href="#notes"><span class="octicon octicon-link"></span></a>Notes</h2>
 
 <p><strong>slash devant éléments à charger</strong></p>
 
 <p>En ajoutant un slash devant le nom d'un élément à charger (helper, view, model, layout ou trafficker) celui ci sera cherché dans son répertoire à la racine de l'application. Sinon il sera cherché dans son répertoire depus le module demandé par la requête.</p>
 
-<h2>Sally</h2>
+<h2>
+<a name="sally" class="anchor" href="#sally"><span class="octicon octicon-link"></span></a>Sally</h2>
 
 <p><strong>Récupérer l'instance</strong></p>
 
@@ -169,7 +160,8 @@ $PHPMailer = Sally_PHPMailer::getInstance();
 <pre><code>$sally-&gt;getDataBack();
 </code></pre>
 
-<h2>Sally_Controller</h2>
+<h2>
+<a name="sally_controller" class="anchor" href="#sally_controller"><span class="octicon octicon-link"></span></a>Sally_Controller</h2>
 
 <p><strong>__contruct</strong></p>
 
@@ -240,14 +232,16 @@ $this-&gt;view-&gt;setData(array(
 
 <p>En accédant à l'index il y aura une redirection transparente vers l'action "maintenance" du controleur "erreur".</p>
 
-<h2>Sally_Model</h2>
+<h2>
+<a name="sally_model" class="anchor" href="#sally_model"><span class="octicon octicon-link"></span></a>Sally_Model</h2>
 
 <p><strong>Charger un model depuis un model</strong></p>
 
 <pre><code>$this-&gt;load('/other_model'); // return class object
 </code></pre>
 
-<h2>Sally_View</h2>
+<h2>
+<a name="sally_view" class="anchor" href="#sally_view"><span class="octicon octicon-link"></span></a>Sally_View</h2>
 
 <p><strong>Récupérer l'instance</strong></p>
 
@@ -264,7 +258,8 @@ $this-&gt;view-&gt;setData(array(
 <pre><code>$view-&gt;controllerViewIsEnabled(); // Boolean
 </code></pre>
 
-<h2>Sally_Layout</h2>
+<h2>
+<a name="sally_layout" class="anchor" href="#sally_layout"><span class="octicon octicon-link"></span></a>Sally_Layout</h2>
 
 <p><strong>Récupérer l'instance</strong></p>
 
@@ -305,7 +300,8 @@ $layout-&gt;setData(array(
 // in view file : echo $name1; // display value1
 </code></pre>
 
-<h2>Sally_Acl</h2>
+<h2>
+<a name="sally_acl" class="anchor" href="#sally_acl"><span class="octicon octicon-link"></span></a>Sally_Acl</h2>
 
 <p><strong>Récupérer l'instance</strong></p>
 
@@ -343,7 +339,8 @@ $acl-&gt;allow('user', 'account');
 }
 </code></pre>
 
-<h2>Sally_Db</h2>
+<h2>
+<a name="sally_db" class="anchor" href="#sally_db"><span class="octicon octicon-link"></span></a>Sally_Db</h2>
 
 <p><strong>Récupérer l'instance</strong></p>
 
@@ -412,7 +409,8 @@ $db-&gt;add(array(
 }
 </code></pre>
 
-<h2>Sally_Request</h2>
+<h2>
+<a name="sally_request" class="anchor" href="#sally_request"><span class="octicon octicon-link"></span></a>Sally_Request</h2>
 
 <p>Les requêtes peuvent être faites sous différentes formes :</p>
 
@@ -470,7 +468,8 @@ $db-&gt;add(array(
 <pre><code>$request-&gt;getAction();
 </code></pre>
 
-<h2>Sally_Session</h2>
+<h2>
+<a name="sally_session" class="anchor" href="#sally_session"><span class="octicon octicon-link"></span></a>Sally_Session</h2>
 
 <p>Sally créer un cookie dont la valeur est cryptée avec l'algo Rijndael en 128b (MCRYPT_RIJNDAEL_128). La valeur correspond à un tableau sérialisé contenant vos informations.</p>
 
@@ -511,7 +510,8 @@ $session-&gt;setContent(array(
 ));
 </code></pre>
 
-<h2>Sally_Helper</h2>
+<h2>
+<a name="sally_helper" class="anchor" href="#sally_helper"><span class="octicon octicon-link"></span></a>Sally_Helper</h2>
 
 <p>Les helpers sont de basiques fonctions PHP appelable n'importe ou.</p>
 
@@ -534,7 +534,8 @@ function toStrong($text)
 }
 </code></pre>
 
-<h2>Sally_Trafficker</h2>
+<h2>
+<a name="sally_trafficker" class="anchor" href="#sally_trafficker"><span class="octicon octicon-link"></span></a>Sally_Trafficker</h2>
 
 <p>Le trafiquant permet d'agir à 2 endroits :</p>
 
@@ -603,7 +604,8 @@ function toStrong($text)
 }
 </code></pre>
 
-<h2>Sally_Rijndael</h2>
+<h2>
+<a name="sally_rijndael" class="anchor" href="#sally_rijndael"><span class="octicon octicon-link"></span></a>Sally_Rijndael</h2>
 
 <p><strong>Récupérer l'instance</strong></p>
 
@@ -625,7 +627,8 @@ function toStrong($text)
 <pre><code>$rijndael-&gt;decrypt('dataCrypted');
 </code></pre>
 
-<h2>Sally_PHPMailer</h2>
+<h2>
+<a name="sally_phpmailer" class="anchor" href="#sally_phpmailer"><span class="octicon octicon-link"></span></a>Sally_PHPMailer</h2>
 
 <p>Pour d'avantage de documentation rendez-vous sur <a href="https://github.com/Synchro/PHPMailer">https://github.com/Synchro/PHPMailer</a></p>
 
@@ -656,7 +659,8 @@ $PHPMailer-&gt;AltBody = 'This is the body in plain text for non-HTML mail clien
 $PHPMailer-&gt;Send(); // Boolean
 </code></pre>
 
-<h2>License</h2>
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p><strong>New BSD License</strong></p>
 
@@ -670,21 +674,11 @@ Neither the name of Jonathan Amsellem nor the names of its contributors may be u
 
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
       </section>
-
       <footer>
-        <span class="ribbon-outer">
-          <span class="ribbon-inner">
-            <p>this project by <a href="https://github.com/MrPing">MrPing</a> can be found on <a href="https://github.com/MrPing/sallyphp">GitHub</a></p>
-          </span>
-          <span class="left-tail"></span>
-          <span class="right-tail"></span>
-        </span>
-        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
-        <span class="octocat"></span>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
       </footer>
-
     </div>
-
-    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
   </body>
 </html>
