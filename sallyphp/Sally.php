@@ -55,6 +55,7 @@ class Sally
 
     $this->module = new sally\Module();
     $this->query = new sally\Query();
+    $this->router = new sally\Router();
   }
 
   /**

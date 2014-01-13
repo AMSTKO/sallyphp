@@ -46,7 +46,10 @@ class Engine
   {
     $sally = \Sally::getInstance();
 
-    // first step
+    // router
+    $request = $sally->router->check($request);
+
+    // request
     $this->request = new Request($method, $data);
     $this->request->path($request);
 
